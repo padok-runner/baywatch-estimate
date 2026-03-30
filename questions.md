@@ -101,31 +101,3 @@ Max 2 groupes de plages horaires.
 
 Noter ce que le client ne peut pas fournir : ce qui manque, l'impact sur l'estimation, comment l'obtenir plus tard. Le skill `/qualify` génère une section dédiée.
 
----
-
-## Checklist
-
-### Obligatoire
-
-- [ ] Nom du client + SA assigné
-- [ ] Activité et motivation
-- [ ] Conformité / certifications
-- [ ] Infra en prod +6 mois ? (oui/non)
-- [ ] Équipe dev/IT (taille)
-- [ ] Inventaire des ressources (type, cloud, taille, complexité, environnement)
-- [ ] Plage horaire et SLA par environnement
-- [ ] Durée d'engagement
-
-### Si approche empirique
-
-- [ ] Historique des tickets
-- [ ] Effectifs et répartition MCO/build/gouvernance
-- [ ] Accès IaC
-
-### Complémentaire
-
-- [ ] Backlog d'évolutions + roadmap validée ou non
-- [ ] Résidence de données
-- [ ] SLAs contractuels existants
-- [ ] Mode de déploiement actuel
-- [ ] Informations manquantes identifiées
