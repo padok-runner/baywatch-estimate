@@ -1,103 +1,43 @@
-# Guide Commercial — Qualification Infogérance Cloud
-
-Informations à collecter auprès du client pour le skill `/qualify`.
-
----
+# Questions Client — Qualification Infogérance Cloud
 
 ## 1. Contexte et conformité
 
-- Nom du client
-- Solutions Architect assigné
-- Activité du client (secteur, produit/service)
-- Motivation pour l'infogérance (manque de ressources, conformité, montée en charge...)
-- **Conformité / certifications** : HDS, SecNumCloud, ISO 27001, RGPD... _(à clarifier en priorité — peut modifier le périmètre)_
-- Infra en production depuis plus de 6 mois ? → détermine l'approche empirique ou déductive
-
----
+1. Quelle est l'activité de votre entreprise ?
+2. Avez-vous des exigences de conformité ou certifications (HDS, SecNumCloud, ISO 27001, RGPD...) ?
+3. Depuis combien de temps votre infrastructure est-elle en production ?
 
 ## 2. Équipe
 
-- Taille de l'équipe dev/IT (développeurs, PO, CTO, ops...)
-- Mode de déploiement actuel (CI/CD automatisé, manuel, outils utilisés)
+4. Combien de personnes composent votre équipe dev/IT (développeurs, PO, CTO, ops...) ?
+5. Comment déployez-vous votre code et votre infrastructure aujourd'hui (CI/CD, manuel, outils utilisés) ?
 
----
+## 3. Inventaire des ressources
 
-## 3. Inventaire des ressources _(obligatoire)_
-
-Pour chaque ressource, collecter :
-
-| Champ | Exemples |
-|---|---|
-| Nom | "EC2 Prod #1", "RDS MySQL principale" |
-| Type | VM, cluster K8s, hyperviseur, BDD, app custom, app tierce |
-| Cloud | Public (AWS, GCP, Azure) ou privé |
-| Taille | CPU, RAM, volume de données (Go), RPS, noeuds... |
-| Complexité | very low / low / medium / high / very high |
-| Environnement | prod, recette, dev, shared, landing zone |
-
-Vérifier que tous les environnements sont couverts (prod, non-prod, services partagés, landing zone).
-
-Ne pas oublier : instances de calcul, bases de données, applications hébergées, infra partagée (bastion, CI/CD, monitoring).
-
----
+6. Pouvez-vous lister toutes vos ressources d'infrastructure par environnement (prod, recette, dev, shared...) avec pour chacune : le type (VM, cluster K8s, BDD, app...), le cloud provider, et la taille (CPU, RAM, volume de données) ?
+7. Combien d'applications hébergez-vous et de quel type sont-elles (legacy, custom, SPA, API...) ?
+8. Avez-vous des ressources d'infra partagée (bastion, CI/CD, monitoring, gestion de paquets...) ?
 
 ## 4. Niveaux de service
 
-Par environnement. Défauts : non-prod = Bronze/Standard, prod = Gold.
-Max 2 groupes de plages horaires.
+9. Sur quelles plages horaires vos utilisateurs accèdent-ils à vos services (heures de bureau, étendu, 24/7) ?
+10. Quel est le niveau de criticité de votre application en production (impact business si indisponible) ?
+11. Avez-vous des besoins différents entre vos environnements de production et de non-production ?
 
-| Plage horaire | Horaires | Usage typique |
-|---|---|---|
-| Standard | Lun-Ven, 09h30-18h30 | App interne France |
-| Étendue | Lun-Sam, 08h-22h | B2B multi-fuseaux |
-| Complète | 24/7 jours fériés inclus | B2C critique, santé |
+## 5. Données empiriques _(si infra en prod depuis +6 mois)_
 
-| SLA | Usage typique |
-|---|---|
-| Bronze | Non-prod, non critique |
-| Silver | App interne, impact modéré |
-| Gold | Client-facing, impact business |
-| Platine | Infrastructure vitale |
-
----
-
-## 5. Données empiriques _(si infra +6 mois)_
-
-### Tickets (6-12 derniers mois)
-
-- Nombre total
-- Répartition : incidents, demandes de service, changements, problèmes
-- Temps moyen de résolution
-- Patterns récurrents
-
-### Effectifs (FTE)
-
-- Nombre de personnes sur la plateforme
-- Répartition : MCO/run, évolutions/build, gouvernance
-
-### Accès IaC
-
-- Outil utilisé (Terraform, Pulumi, CloudFormation...)
-- Accès au repo possible ?
-
----
+12. Combien de tickets de support/ops avez-vous traités sur les 6 à 12 derniers mois (incidents, demandes, changements, problèmes) ?
+13. Quel est le temps moyen de résolution d'un incident ?
+14. Y a-t-il des sujets récurrents ou particulièrement chronophages ?
+15. Combien de personnes maintiennent la plateforme aujourd'hui, et comment se répartit leur temps entre le run (incidents, monitoring, patching), le build (évolutions) et la gouvernance (réunions, audits) ?
+16. Utilisez-vous un outil d'IaC (Terraform, Pulumi, CloudFormation...) et pouvons-nous y avoir accès ?
 
 ## 6. Évolutions prévues
 
-- Backlog à 6 mois (migrations, changements d'architecture, nouveaux services...)
-- Roadmap validée ou prévisionnelle ?
-
----
+17. Quelles évolutions d'infrastructure sont prévues dans les 6 prochains mois (migrations, changements d'architecture, nouveaux services...) ?
+18. Cette roadmap est-elle validée ou encore prévisionnelle ?
 
 ## 7. Contraintes complémentaires
 
-- Résidence de données / localisation géographique
-- SLAs contractuels existants envers les clients du client
-- Durée d'engagement souhaitée (1 an, 2 ans, 3+)
-
----
-
-## Informations manquantes
-
-Noter ce que le client ne peut pas fournir : ce qui manque, l'impact sur l'estimation, comment l'obtenir plus tard. Le skill `/qualify` génère une section dédiée.
-
+19. Avez-vous des contraintes de localisation géographique pour vos données ?
+20. Avez-vous des engagements de SLA envers vos propres clients ?
+21. Quelle durée d'engagement envisagez-vous (1 an, 2 ans, 3+) ?
