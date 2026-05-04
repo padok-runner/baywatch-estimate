@@ -122,6 +122,35 @@ For each environment, ask:
 
 ---
 
+## Phase C — Initialization Scope
+
+The initialization phase is a **one-time** scope that prepares the platform for managed services. It is paid once at the start of the engagement, in addition to the recurring monthly price.
+
+<reference>
+Read the file at `skills/shared/initialization.md` relative to the `.claude/skills` directory for the four components, the sizing abaques, the pricing rule, and the display rule.
+</reference>
+
+### Step 7: Determine initialization components
+
+Ask the user, **one question at a time** via `AskUserQuestion`. Use the abaques from `shared/initialization.md` to map the answers to j/h values:
+
+1. **Plateforme construite par Theodo ?** (Oui / Non)
+   - If **Oui**: audit and remediation are skipped.
+   - If **Non**: audit and remediation are required.
+   - If the platform is only partially Theodo-built, answer **Non** and capture the partial scope in "Informations manquantes" so `/estimate` can downsize the audit/remediation manually.
+
+2. **Sizing audit** (only if not built by Theodo): Small / Medium / Large.
+
+3. **Sizing monitoring**: Simple / Medium / Complex.
+
+4. **Sizing système d'agents IA**: Simple / Medium / Complex.
+
+5. **Magnitude de remédiation attendue** (only if not built by Theodo): Light / Medium / Heavy. If the user cannot estimate, record this in **"Informations manquantes"** with a default working assumption of "Medium".
+
+For each sizing answer, **resolve the j/h value immediately** using the abaques in `shared/initialization.md` (e.g. Medium audit → 7–10 j/h, midpoint 8.5; Light remediation → 5 j/h). Write the **picked value** to `qualification.md`, not the range.
+
+---
+
 ## Output
 
 Once all information is gathered, generate a file called `qualification.md` in the client's directory (`{client-name}/qualification.md`). Ask the user for the client name if not already known.
@@ -179,6 +208,21 @@ The file must follow this structure:
 |------------|---------------|-----|-----------|
 | {env} | {plage} | {level} | {coeff} |
 
+## Phase d'initialisation (one-shot)
+
+**Plateforme construite par Theodo :** {Oui / Non}
+
+> Monitoring et système d'agents IA sont **toujours** présents. Audit et remédiation prioritaire sont **conditionnés** à "Plateforme construite par Theodo = Non".
+
+| Composante | Sizing retenu | Effort retenu (j/h) |
+|------------|---------------|---------------------|
+| Audit | {Skip si Theodo / Small / Medium / Large} | {valeur résolue depuis l'abaque, ex. 8.5 ; ou "—" si skip} |
+| Remédiation prioritaire (cible ROSE/YAMAS) | {Skip si Theodo / Light / Medium / Heavy} | {valeur résolue, ex. 5 ; ou "—" si skip} |
+| Mise en place du monitoring | {Simple / Medium / Complex} | {valeur résolue, ex. 2.5} |
+| Mise en place du système d'agents IA | {Simple / Medium / Complex} | {valeur résolue, ex. 8.5} |
+
+> La remédiation est par nature dépendante des findings de l'audit ; la valeur indiquée ici est une hypothèse de cadrage.
+
 ## Informations manquantes
 
 {This section is MANDATORY. List every piece of information that was not provided or confirmed during qualification, and explain why it matters for the estimate. If nothing is missing, write "Aucune — toutes les informations nécessaires ont été collectées."}
@@ -234,6 +278,14 @@ Check the following:
    - Very high complexity on small/simple resources → suspicious
    - Production without at least Silver → worth flagging
    - Missing environments (e.g., no shared services when K8s is used)
+
+4. **Initialization scope:**
+   - Is the "Phase d'initialisation (one-shot)" section present?
+   - Is "Plateforme construite par Theodo" answered (Oui / Non) — and only those two values?
+   - If Non: are audit AND remediation sized with a specific value (not just a range)?
+   - If Oui: are audit and remediation rows marked "Skip si Theodo" with effort "—"?
+   - Are monitoring and AI agent system always sized (these apply regardless)?
+   - Are the picked j/h values consistent with the abaques in `shared/initialization.md`? Audit/monitoring/AI agent must each map to one of {2.5, [7,10], [15,20]}; remediation to one of {≈5, ≈15, ≈30+}. Flag any value that falls between paliers (e.g. audit_jh=4) as inconsistent with the recorded sizing.
 
 Report your findings as:
 - PASS: {check} — {brief explanation}
