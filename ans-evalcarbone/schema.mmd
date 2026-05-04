@@ -1,0 +1,34 @@
+C4Context
+title EvalCarbone SIH
+
+Person(dsi, "DSI hospitalier")
+
+Boundary(pfc, "PFC Cloud ANS (Openstack)") {
+  Boundary(reverse-proxy, "Reverse proxy") {
+    Container(reverse-proxy, "Reverse proxy", "Nginx")
+  }
+
+  Boundary(eval-carbone-sih, "EvalCarbone SIH") {
+    Container(front, "Frontend", "NextJs")
+  }
+
+  Boundary(num-eco-eval, "NumEcoEval") {
+    ContainerDb(db, "Database", "PostgreSQL")
+    Container(expositiondonneesentrees, "api-rest-expositiondonneesentrees", "Java")
+    Container(referentiels, "api-rest-referentiels", "Java")
+    Container(donneesentrees, "api-event-donneesentrees", "Java")
+    Container(calculs, "api-event-calculs", "Java")
+    Container(kafka, "Kafka", "kafka")
+    Container(zookeeper, "Zookeeper", "zookeeper")
+  }
+}
+
+BiRel(dsi, reverse-proxy, "")
+
+BiRel(kafka, zookeeper, "")
+
+Rel(expositiondonneesentrees, db, "write")
+
+BiRel(front, db, "write and read")
+BiRel(reverse-proxy, front, "")
+Rel(front, expositiondonneesentrees, "use", "Lancer le calcul et ajouter les equipements physiques")
