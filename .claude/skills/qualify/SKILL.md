@@ -122,6 +122,32 @@ For each environment, ask:
 
 ---
 
+## Phase C — Initialization Scope
+
+The initialization phase is a **one-time** scope that prepares the platform for managed services. It is paid once at the start of the engagement, in addition to the recurring monthly price.
+
+<reference>
+Read the file at `skills/shared/initialization.md` relative to the `.claude/skills` directory for the four components, the sizing abaques, the pricing rule, and the display rule.
+</reference>
+
+### Step 7: Determine initialization components
+
+Ask the user, **one question at a time** via `AskUserQuestion`. Use the abaques from `shared/initialization.md` to map the answers to j/h values:
+
+1. **Plateforme construite par Theodo ?** (Oui / Non / Partiellement)
+   - If **Oui**: audit and remediation are skipped.
+   - If **Non** or **Partiellement**: audit and remediation are required.
+
+2. **Sizing audit** (only if not built by Theodo): Small / Medium / Large.
+
+3. **Sizing monitoring**: Simple / Medium / Complex.
+
+4. **Sizing système d'agents IA**: Simple / Medium / Complex.
+
+5. **Magnitude de remédiation attendue** (only if not built by Theodo): Light / Medium / Heavy. If the user cannot estimate, record this in **"Informations manquantes"** with a default working assumption of "Medium".
+
+---
+
 ## Output
 
 Once all information is gathered, generate a file called `qualification.md` in the client's directory (`{client-name}/qualification.md`). Ask the user for the client name if not already known.
@@ -179,6 +205,19 @@ The file must follow this structure:
 |------------|---------------|-----|-----------|
 | {env} | {plage} | {level} | {coeff} |
 
+## Phase d'initialisation (one-shot)
+
+**Plateforme construite par Theodo :** {Oui / Non / Partiellement}
+
+| Composante | Périmètre | Sizing retenu | Effort indicatif (j/h) |
+|------------|-----------|---------------|------------------------|
+| Audit | {Skip si Theodo / Small / Medium / Large} | {description} | {2.5 à 20 — Lead Ops, ou — si skip} |
+| Remédiation prioritaire (cible ROSE/YAMAS) | {Skip si Theodo / Light / Medium / Heavy} | {description} | {5 / 15 / 30+ — ou — si skip} |
+| Mise en place du monitoring | {Simple / Medium / Complex} | {description} | {2.5 à 20} |
+| Mise en place du système d'agents IA | {Simple / Medium / Complex} | {description} | {2.5 à 20} |
+
+> Notes : l'audit et la remédiation ne s'appliquent que si la plateforme n'a pas été construite par Theodo. La remédiation est par nature dépendante des findings de l'audit ; la valeur indiquée ici est une hypothèse de cadrage.
+
 ## Informations manquantes
 
 {This section is MANDATORY. List every piece of information that was not provided or confirmed during qualification, and explain why it matters for the estimate. If nothing is missing, write "Aucune — toutes les informations nécessaires ont été collectées."}
@@ -234,6 +273,14 @@ Check the following:
    - Very high complexity on small/simple resources → suspicious
    - Production without at least Silver → worth flagging
    - Missing environments (e.g., no shared services when K8s is used)
+
+4. **Initialization scope:**
+   - Is the "Phase d'initialisation" section present?
+   - Is "Plateforme construite par Theodo" answered (Oui / Non / Partiellement)?
+   - If Non/Partiellement: are audit AND remediation sized?
+   - If Oui: are audit and remediation marked as "Skip" (and not counted)?
+   - Are monitoring and AI agent system always sized (these apply regardless)?
+   - Do the j/h ranges fall within 2.5–20 (audit, monitoring, AI agent) and within Light/Medium/Heavy bounds (remediation)?
 
 Report your findings as:
 - PASS: {check} — {brief explanation}

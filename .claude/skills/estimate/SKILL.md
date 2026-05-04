@@ -167,6 +167,19 @@ Total jour-homme/mois = MCO (deductive or calibrated) + Governance + Evolutions
 
 Determine the dispositif using the thresholds in `shared/pricing-rules.md`.
 
+### Step 5b: Initialization (one-time) estimate
+
+Read the **"Phase d'initialisation"** section from `qualification.md`. Convert each sizing answer to a j/h value using the abaques in `shared/initialization.md`, then compute the one-shot price using the pricing rule from the same file.
+
+<reference>
+Read the file at `skills/shared/initialization.md` relative to the `.claude/skills` directory for the components, sizing abaques, pricing rule, and display rule.
+</reference>
+
+Reminders (full detail in the shared file):
+- Audit and remédiation are **omitted** if the platform was built by Theodo.
+- Audit is priced at the **Lead Ops TJM**; the other three components use the **blended TJM** (see `shared/daily-rates.md`).
+- The initialization price is **paid once** and is **separate from the recurring monthly price** — never fold it into the monthly total or into the contingency calculation.
+
 ---
 
 ## Phase B — Pricing
@@ -233,8 +246,8 @@ Generate `estimate.md` in the client's directory (`{client-name}/estimate.md`).
 The file has three parts:
 
 1. **Analyse de réalisme** — the reality check comparing deductive vs calibrated estimates
-2. **Synthèse** — the client-facing summary table (primary deliverable, copy-pasteable into proposals)
-3. **Annexe** — calculation breakdown (supporting material for internal review)
+2. **Synthèse** — the client-facing summary, composed of a **one-shot initialization block** (above) and the **monthly synthesis table** (below). Primary deliverable, copy-pasteable into proposals.
+3. **Annexe** — calculation breakdown (supporting material for internal review): A) monthly detail, B) initialization detail, C) cross-check deductive vs empirical.
 
 The file must follow this structure:
 
@@ -289,6 +302,21 @@ The file must follow this structure:
 
 ## Synthèse
 
+**Phase d'initialisation (one-shot, payée une seule fois en début d'engagement)**
+
+Plateforme construite par Theodo : **{Oui / Non / Partiellement}**
+
+- {Si Non/Partiellement} **Audit** : {audit_jh} j/h Lead Ops — cartographie ressources, qualité, résilience, sécurité, observabilité.
+- {Si Non/Partiellement} **Remédiation prioritaire** (cible ROSE/YAMAS) : {remediation_jh} j/h — docs, durcissement résilience, gaps qualité.
+- **Mise en place du monitoring** : {monitoring_jh} j/h — métriques, alerting, dashboards, sondes, runbooks.
+- **Mise en place du système d'agents IA** : {ai_agent_jh} j/h — déploiement agent ChatOps, intégrations.
+
+**Total initialisation : {total_init_jh} j/h — {total_init_price}€ HT (one-shot)**
+
+> Cette enveloppe est payée une seule fois en début d'engagement. Elle est indépendante du prix mensuel récurrent ci-dessous.
+
+---
+
 This is the summary table for proposals and contracts. Each column is an environment category, plus a "Transverse" column for governance and evolutions.
 
 |                         | {Env 1 category}                                                                                                                                                                                       | {Env 2 category}                                                     | {Env N category} | Transverse                                                                                                          |
@@ -310,6 +338,7 @@ This is the summary table for proposals and contracts. Each column is an environ
 
 ### Notes on the synthesis table:
 
+- **Phase d'initialisation (one-shot)**: Block placed **above** the synthesis grid. Lists the four components (audit, remédiation, monitoring, agent IA) with their j/h, and shows a single one-shot total in €HT. Audit and remédiation lines are **omitted** if the platform was built by Theodo. This price is **never** added to the monthly recurring price.
 - **Inventaire**: List resources in human-readable form. Group by "Servers" (K8s clusters, VMs, hypervisors, managed DBs, networking) and "Applications" (off-the-shelf and custom). Include count, name, and size (S/M/L or specific).
 - **Services**: Describe what's included per environment. MCO goes in each env column. Governance and evolutions go in the "Transverse" column. Do NOT put the engagement model in the Services row — it is shown in the pricing table below.
 - **Transverse column**: Contains cross-cutting resources (organization, IAM, audit trail) in inventory, and governance + evolutions in services. No SLA or plage — these are inherently cross-env.
@@ -387,7 +416,25 @@ This is the summary table for proposals and contracts. Each column is an environ
 
 ---
 
-## Annexe B — Cross-check: Deductive vs Empirical
+## Annexe B — Initialisation (one-shot)
+
+| Composante | Sizing | j/h | TJM | Montant €HT |
+|------------|--------|-----|-----|-------------|
+| Audit (Lead Ops) | {Skip / Small / Medium / Large} | {audit_jh} | {tjm_lead}€ | {amount}€ |
+| Remédiation prioritaire | {Skip / Light / Medium / Heavy} | {remediation_jh} | {blended_tjm}€ | {amount}€ |
+| Mise en place du monitoring | {Simple / Medium / Complex} | {monitoring_jh} | {blended_tjm}€ | {amount}€ |
+| Mise en place système d'agents IA | {Simple / Medium / Complex} | {ai_agent_jh} | {blended_tjm}€ | {amount}€ |
+| **Total initialisation** | | **{total_jh}** | | **{total_price}€** |
+
+**Notes :**
+- Audit et remédiation **omis** si la plateforme a été construite par Theodo.
+- Audit facturé **TJM Lead Ops** (cf. `shared/daily-rates.md`).
+- Remédiation, monitoring et système d'agents IA facturés au **TJM blended**.
+- Cette enveloppe est **payée une seule fois** en début d'engagement et n'entre pas dans le prix mensuel récurrent.
+
+---
+
+## Annexe C — Cross-check: Deductive vs Empirical
 
 {Include this annexe ONLY if empirical data is available in qualification.md. Omit entirely for deductive-only clients.}
 
@@ -469,6 +516,17 @@ Check the following:
    - Flag if total MCO seems unusually high or low for the infrastructure size
    - Flag if governance doesn't match expected abaques for the dispositif
    - Flag if evolution days seem disproportionate to the backlog described
+
+8. **Initialization (one-shot):**
+   - Is the "Phase d'initialisation" block present in the Synthèse, ABOVE the monthly table?
+   - Is "Plateforme construite par Theodo" stated and consistent with qualification.md?
+   - If platform NOT built by Theodo: are audit AND remediation lines present and priced?
+   - If platform built by Theodo: are audit AND remediation lines absent (or marked "Skip", price = 0)?
+   - Are monitoring AND AI agent lines ALWAYS present (regardless of who built the platform)?
+   - Each component j/h within range: audit/monitoring/AI agent in [2.5, 20], remediation in {≈5, ≈15, ≈30+}?
+   - Audit priced at **TJM Lead Ops**, others at **blended TJM**?
+   - Initialization total is shown as a **one-shot** price and is **NOT** added to the monthly recurring price?
+   - Annexe B (Initialisation) present with breakdown matching the synthesis?
 
 Report your findings as:
 - PASS: {check} — {brief explanation}
