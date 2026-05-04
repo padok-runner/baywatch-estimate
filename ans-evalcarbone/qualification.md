@@ -8,7 +8,7 @@
 
 L'**Agence du Numérique en Santé (ANS)** opère **EvalCarbone SIH**, un outil de mesure de l'empreinte environnementale du parc IT des établissements de santé et médico-sociaux français (cible ~10 000 entités). En service depuis avril 2024, l'application combine un **front NextJS spécifique** et le **moteur de calcul open source NumEcoEval** (porté par le Ministère de la Transition Écologique).
 
-Le SI est hébergé sur la **Plateforme Cloud (PFC) ANS**, un cluster Kubernetes managé par Theodo dans une **prestation distincte** (bascule effective mars 2026). La présente prestation couvre uniquement les **9 conteneurs EvalCarbone SIH** (front + NumEcoEval) déployés sur ce cluster — d'où le qualificatif d'infogérance "light". Les conteneurs sont déployés via **Helm chart simple + ArgoCD**.
+Le SI est hébergé sur la **Plateforme Cloud (PFC) ANS**, un cluster **Kubernetes managé OVH** (service MKS d'OVH) **opéré par Theodo** dans une **prestation distincte** (bascule effective mars 2026). La présente prestation couvre uniquement les **9 conteneurs EvalCarbone SIH** (front + NumEcoEval) déployés sur ce cluster — d'où le qualificatif d'infogérance "light". Les conteneurs sont déployés via **Helm chart simple + ArgoCD**.
 
 L'authentification utilisateurs s'appuie sur le **SI tiers Plage (opéré par l'ATIH)**. Aucune donnée personnelle n'est traitée. La sécurité est qualifiée au niveau **faible** (pas de HDS, pas de RIE, pas de SOC/SIEM). Le code est public sur [github.com/ansforge/Eval-Carbone-SIH](https://github.com/ansforge/Eval-Carbone-SIH).
 
@@ -55,15 +55,15 @@ L'authentification utilisateurs s'appuie sur le **SI tiers Plage (opéré par l'
 
 | Resource | Type | Cloud | Size | Complexity |
 |----------|------|-------|------|------------|
-| Frontend NextJS (EvalCarbone) | Custom application | Public (PFC ANS K8s managé) | <1 RPS, faible CPU/RAM | Low |
-| Reverse proxy NGINX | Off-the-shelf application | Public (PFC ANS K8s managé) | <1 RPS | Very low |
-| PostgreSQL (NumEcoEval) | Off-the-shelf application | Public (PFC ANS K8s managé) | 23 tables, <10 GB | High (DB) |
-| Kafka (NumEcoEval) | Off-the-shelf application | Public (PFC ANS K8s managé) | Faible volume | Very high (kafka) |
-| Zookeeper (NumEcoEval) | Off-the-shelf application | Public (PFC ANS K8s managé) | Faible volume | Low |
-| api-rest-expositiondonneesentrees (Java) | Off-the-shelf application | Public (PFC ANS K8s managé) | <1 RPS | Low |
-| api-rest-referentiels (Java) | Off-the-shelf application | Public (PFC ANS K8s managé) | <1 RPS | Low |
-| api-event-donneesentrees (Java) | Off-the-shelf application | Public (PFC ANS K8s managé) | <1 RPS | Low |
-| api-event-calculs (Java) | Off-the-shelf application | Public (PFC ANS K8s managé) | <1 RPS | Low |
+| Frontend NextJS (EvalCarbone) | Custom application | Public (PFC ANS, K8s managé OVH opéré Theodo) | <1 RPS, faible CPU/RAM | Low |
+| Reverse proxy NGINX | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | <1 RPS | Very low |
+| PostgreSQL (NumEcoEval) | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | 23 tables, <10 GB | High (DB) |
+| Kafka (NumEcoEval) | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | Faible volume | Very high (kafka) |
+| Zookeeper (NumEcoEval) | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | Faible volume | Low |
+| api-rest-expositiondonneesentrees (Java) | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | <1 RPS | Low |
+| api-rest-referentiels (Java) | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | <1 RPS | Low |
+| api-event-donneesentrees (Java) | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | <1 RPS | Low |
+| api-event-calculs (Java) | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | <1 RPS | Low |
 
 ### Environment: Préproduction / dev
 **Plage horaire :** Standard
@@ -73,17 +73,17 @@ Identique à la production : 9 conteneurs (mêmes images, même topologie, dimen
 
 | Resource | Type | Cloud | Size | Complexity |
 |----------|------|-------|------|------------|
-| Frontend NextJS (EvalCarbone) | Custom application | Public (PFC ANS K8s managé) | <1 RPS | Low |
-| Reverse proxy NGINX | Off-the-shelf application | Public (PFC ANS K8s managé) | <1 RPS | Very low |
-| PostgreSQL (NumEcoEval) | Off-the-shelf application | Public (PFC ANS K8s managé) | <10 GB | High (DB) |
-| Kafka (NumEcoEval) | Off-the-shelf application | Public (PFC ANS K8s managé) | Faible volume | Very high (kafka) |
-| Zookeeper (NumEcoEval) | Off-the-shelf application | Public (PFC ANS K8s managé) | Faible volume | Low |
-| api-rest-expositiondonneesentrees (Java) | Off-the-shelf application | Public (PFC ANS K8s managé) | <1 RPS | Low |
-| api-rest-referentiels (Java) | Off-the-shelf application | Public (PFC ANS K8s managé) | <1 RPS | Low |
-| api-event-donneesentrees (Java) | Off-the-shelf application | Public (PFC ANS K8s managé) | <1 RPS | Low |
-| api-event-calculs (Java) | Off-the-shelf application | Public (PFC ANS K8s managé) | <1 RPS | Low |
+| Frontend NextJS (EvalCarbone) | Custom application | Public (PFC ANS, K8s managé OVH opéré Theodo) | <1 RPS | Low |
+| Reverse proxy NGINX | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | <1 RPS | Very low |
+| PostgreSQL (NumEcoEval) | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | <10 GB | High (DB) |
+| Kafka (NumEcoEval) | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | Faible volume | Very high (kafka) |
+| Zookeeper (NumEcoEval) | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | Faible volume | Low |
+| api-rest-expositiondonneesentrees (Java) | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | <1 RPS | Low |
+| api-rest-referentiels (Java) | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | <1 RPS | Low |
+| api-event-donneesentrees (Java) | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | <1 RPS | Low |
+| api-event-calculs (Java) | Off-the-shelf application | Public (PFC ANS, K8s managé OVH opéré Theodo) | <1 RPS | Low |
 
-> **Note scope** : le cluster K8s PFC ANS lui-même n'apparaît pas dans l'inventaire — il est managé par Theodo dans une **prestation distincte**. Cette prestation-ci ne gère que les 9 applications conteneurisées EvalCarbone SIH par environnement.
+> **Note scope** : le cluster K8s PFC ANS lui-même n'apparaît pas dans l'inventaire — il est managé par OVH (MKS) et opéré par Theodo dans une **prestation distincte**. Cette prestation-ci ne gère que les 9 applications conteneurisées EvalCarbone SIH par environnement.
 
 ## Service Commitments Summary
 
@@ -140,7 +140,7 @@ Identique à la production : 9 conteneurs (mêmes images, même topologie, dimen
 
 ### Périmètre
 - **TMA EXCLUE** de cette prestation — fera l'objet d'un mémoire technique et d'une prestation distincts (cf. MT slide 13).
-- **Cluster K8s PFC ANS hors scope** — managé par Theodo dans une autre prestation.
+- **Cluster K8s PFC ANS hors scope** — managé par OVH (MKS) et opéré par Theodo dans une autre prestation.
 - Périmètre couvert : **infogérance light des 9 conteneurs EvalCarbone SIH** (prod + préprod) + mise à jour des images NumEcoEval (~1 majeure / an).
 
 ### SLA EdB (production)
