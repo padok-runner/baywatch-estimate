@@ -25,6 +25,8 @@ L'inventaire a été fourni par le client sous forme d'un CSV (cf. [input.md](in
 
 Cloud : **Public Cloud Managed (S3ns / GCP)** pour tous les projets.
 
+> **Note importante :** les clusters GKE sont déployés en mode **Autopilot** — Google gère intégralement les nodes (provisioning, scaling, patching, sécurité OS). L'effort opérationnel se limite aux workloads, network policies, IAM et applicatif. Coefficient de complexité réduit en conséquence (0.5 au lieu de 0.8-1).
+
 ---
 
 ### Environment: Production (prod)
@@ -34,10 +36,10 @@ Cloud : **Public Cloud Managed (S3ns / GCP)** pour tous les projets.
 
 | Resource | Type | Cloud | Size | Complexity |
 |----------|------|-------|------|------------|
-| Cluster GKE — Data Orchestration | Public Cloud Managed K8s Cluster | public | <32 CPU, <50 GB | low (0.8) |
-| Cluster GKE — Shared Services | Public Cloud Managed K8s Cluster | public | <32 CPU, <50 GB | medium (1) |
-| Cluster GKE — Data Exploration | Public Cloud Managed K8s Cluster | public | <32 CPU, <50 GB | medium (1) |
-| Cluster GKE — Bulles sécurisées | Public Cloud Managed K8s Cluster | public | variable (n) | medium (1) |
+| Cluster GKE Autopilot — Data Orchestration | Public Cloud Managed K8s Cluster | public | <32 CPU, <50 GB | very low (0.5) — Autopilot |
+| Cluster GKE Autopilot — Shared Services | Public Cloud Managed K8s Cluster | public | <32 CPU, <50 GB | very low (0.5) — Autopilot |
+| Cluster GKE Autopilot — Data Exploration | Public Cloud Managed K8s Cluster | public | <32 CPU, <50 GB | very low (0.5) — Autopilot |
+| Cluster GKE Autopilot — Bulles sécurisées | Public Cloud Managed K8s Cluster | public | variable (n) | very low (0.5) — Autopilot |
 | 2 VMs — Interco | Public Cloud Managed VM | public | <16 CPU, <10 GB | very low (0.5) |
 | 10+n BigQuery datasets (Data Warehouse, Bulles sécurisées, Data Ident, Transit Zone) | Off-the-shelf app | public | n Go (à préciser) | medium (1) |
 | 11+n GCS buckets (tous projets) | Public Cloud Managed VM (proxy storage) | public | faible | very low (0.5) |
@@ -82,7 +84,7 @@ Regroupe l'outillage transverse : CI/CD (ArgoCD), observabilité (stack LGTM : L
 
 | Resource | Type | Cloud | Size | Complexity |
 |----------|------|-------|------|------------|
-| Cluster GKE Shared Services | Public Cloud Managed K8s Cluster | public | <32 CPU, <50 GB | medium (1) |
+| Cluster GKE Autopilot Shared Services | Public Cloud Managed K8s Cluster | public | <32 CPU, <50 GB | very low (0.5) — Autopilot |
 | Stack observabilité (LGTM + Alloy) | Off-the-shelf application (×5) | public | medium | high (2) pour logging/monitoring |
 | ArgoCD | Off-the-shelf application | public | small | low (0.8) |
 | Authentik + Vault + Vault Secrets Operator | Off-the-shelf application (×3) | public | small | medium (1) |
