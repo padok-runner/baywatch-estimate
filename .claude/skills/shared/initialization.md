@@ -6,10 +6,12 @@ L'initialisation est une **enveloppe payée une seule fois** en début d'engagem
 
 | Composante | Périmètre | Quand l'inclure | Rôle facturé |
 |------------|-----------|-----------------|--------------|
-| **Audit** | Cartographie ressources, qualité code/IaC, résilience, sécurité, observabilité | **Uniquement si plateforme NON construite par Theodo** | Lead Ops |
-| **Remédiation prioritaire** | Docs manquantes, durcissement résilience, gaps cibles ROSE/YAMAS | **Uniquement si plateforme NON construite par Theodo** | Mix Lead Ops + Ops (TJM blended) |
-| **Mise en place du monitoring** | Métriques, alerting, dashboards, sondes, runbooks | **Toujours** | Mix Lead Ops + Ops (TJM blended) |
-| **Mise en place du système d'agents IA** | Déploiement agent ChatOps, intégrations métier, MCP custom | **Toujours** | Mix Lead Ops + Ops (TJM blended) |
+| **Audit** | Cartographie ressources, qualité code/IaC, résilience, sécurité, observabilité | **Uniquement si plateforme NON construite par Theodo** | Lead Ops (TJM Lead Ops) |
+| **Remédiation prioritaire** | Docs manquantes, durcissement résilience, gaps cibles ROSE/YAMAS | **Uniquement si plateforme NON construite par Theodo** | TJM blended (Ops + Lead Ops + DM) |
+| **Mise en place du monitoring** | Métriques, alerting, dashboards, sondes, runbooks | **Toujours** | TJM blended (Ops + Lead Ops + DM) |
+| **Mise en place du système d'agents IA** | Déploiement agent ChatOps, intégrations métier, MCP custom | **Toujours** | TJM blended (Ops + Lead Ops + DM) |
+
+> Le statut "construite par Theodo" est binaire (Oui / Non). Une plateforme partiellement construite par Theodo est traitée comme **Non**, et le périmètre partiel est documenté en hypothèses dans `qualification.md` pour permettre à `/estimate` de réduire manuellement l'audit/remédiation.
 
 ## Abaques de sizing
 
@@ -64,5 +66,5 @@ TJM Lead Ops et TJM blended : voir `daily-rates.md`.
 ## Règle d'affichage
 
 - Bloc **"Phase d'initialisation (one-shot)"** placé **au-dessus** du tableau de synthèse mensuelle dans `estimate.md`.
-- Si la plateforme a été construite par Theodo : audit et remédiation **omis** (lignes non affichées, prix = 0).
+- Si la plateforme a été construite par Theodo : audit et remédiation **omis** dans **toutes** les sorties d'`estimate.md` — Synthèse **et** Annexe B (lignes non affichées, prix = 0). Convention unique pour éviter toute divergence entre vues client et vues internes.
 - Le total one-shot ne doit **jamais** être additionné au prix mensuel récurrent ni intégré dans la contingence forfait.

@@ -169,7 +169,7 @@ Determine the dispositif using the thresholds in `shared/pricing-rules.md`.
 
 ### Step 5b: Initialization (one-time) estimate
 
-Read the **"Phase d'initialisation"** section from `qualification.md`. Convert each sizing answer to a j/h value using the abaques in `shared/initialization.md`, then compute the one-shot price using the pricing rule from the same file.
+Read the **"Phase d'initialisation (one-shot)"** section from `qualification.md`. The picked j/h values are already resolved there (qualify writes specific values, not ranges). Compute the one-shot price using the pricing rule from `shared/initialization.md`.
 
 <reference>
 Read the file at `skills/shared/initialization.md` relative to the `.claude/skills` directory for the components, sizing abaques, pricing rule, and display rule.
@@ -302,18 +302,20 @@ The file must follow this structure:
 
 ## Synthèse
 
-**Phase d'initialisation (one-shot, payée une seule fois en début d'engagement)**
+### Phase d'initialisation (one-shot)
 
-Plateforme construite par Theodo : **{Oui / Non / Partiellement}**
+Plateforme construite par Theodo : **{Oui / Non}**
 
-- {Si Non/Partiellement} **Audit** : {audit_jh} j/h Lead Ops — cartographie ressources, qualité, résilience, sécurité, observabilité.
-- {Si Non/Partiellement} **Remédiation prioritaire** (cible ROSE/YAMAS) : {remediation_jh} j/h — docs, durcissement résilience, gaps qualité.
+> Monitoring et système d'agents IA sont **toujours** présents. Audit et remédiation prioritaire **n'apparaissent que si** la plateforme n'a pas été construite par Theodo (sinon, omettre les deux lignes).
+
+- {Si Non} **Audit** : {audit_jh} j/h Lead Ops — cartographie ressources, qualité, résilience, sécurité, observabilité.
+- {Si Non} **Remédiation prioritaire** (cible ROSE/YAMAS) : {remediation_jh} j/h — docs, durcissement résilience, gaps qualité.
 - **Mise en place du monitoring** : {monitoring_jh} j/h — métriques, alerting, dashboards, sondes, runbooks.
 - **Mise en place du système d'agents IA** : {ai_agent_jh} j/h — déploiement agent ChatOps, intégrations.
 
-**Total initialisation : {total_init_jh} j/h — {total_init_price}€ HT (one-shot)**
+**Total initialisation : {total_init_jh} j/h — {total_init_price}€ HT (one-shot, payée une seule fois en début d'engagement)**
 
-> Cette enveloppe est payée une seule fois en début d'engagement. Elle est indépendante du prix mensuel récurrent ci-dessous.
+> Cette enveloppe est indépendante du prix mensuel récurrent ci-dessous.
 
 ---
 
@@ -420,16 +422,16 @@ This is the summary table for proposals and contracts. Each column is an environ
 
 | Composante | Sizing | j/h | TJM | Montant €HT |
 |------------|--------|-----|-----|-------------|
-| Audit (Lead Ops) | {Skip / Small / Medium / Large} | {audit_jh} | {tjm_lead}€ | {amount}€ |
-| Remédiation prioritaire | {Skip / Light / Medium / Heavy} | {remediation_jh} | {blended_tjm}€ | {amount}€ |
+| {Si Non} Audit (Lead Ops) | {Small / Medium / Large} | {audit_jh} | {tjm_lead_ops}€ | {amount}€ |
+| {Si Non} Remédiation prioritaire | {Light / Medium / Heavy} | {remediation_jh} | {blended_tjm}€ | {amount}€ |
 | Mise en place du monitoring | {Simple / Medium / Complex} | {monitoring_jh} | {blended_tjm}€ | {amount}€ |
 | Mise en place système d'agents IA | {Simple / Medium / Complex} | {ai_agent_jh} | {blended_tjm}€ | {amount}€ |
-| **Total initialisation** | | **{total_jh}** | | **{total_price}€** |
+| **Total initialisation** | | **{total_init_jh}** | | **{total_init_price}€** |
 
 **Notes :**
-- Audit et remédiation **omis** si la plateforme a été construite par Theodo.
-- Audit facturé **TJM Lead Ops** (cf. `shared/daily-rates.md`).
-- Remédiation, monitoring et système d'agents IA facturés au **TJM blended**.
+- Audit et remédiation **omis** (lignes non affichées) si la plateforme a été construite par Theodo. Convention identique à la Synthèse pour éviter toute divergence.
+- Audit facturé au **TJM Lead Ops** (cf. `shared/daily-rates.md`).
+- Remédiation, monitoring et système d'agents IA facturés au **TJM blended (Ops + Lead Ops + DM)**.
 - Cette enveloppe est **payée une seule fois** en début d'engagement et n'entre pas dans le prix mensuel récurrent.
 
 ---
@@ -518,15 +520,15 @@ Check the following:
    - Flag if evolution days seem disproportionate to the backlog described
 
 8. **Initialization (one-shot):**
-   - Is the "Phase d'initialisation" block present in the Synthèse, ABOVE the monthly table?
-   - Is "Plateforme construite par Theodo" stated and consistent with qualification.md?
-   - If platform NOT built by Theodo: are audit AND remediation lines present and priced?
-   - If platform built by Theodo: are audit AND remediation lines absent (or marked "Skip", price = 0)?
+   - Is the "Phase d'initialisation (one-shot)" block present in the Synthèse, ABOVE the monthly table?
+   - Is "Plateforme construite par Theodo" stated as **Oui** or **Non** (binary, no other value) and consistent with qualification.md?
+   - If platform NOT built by Theodo: are audit AND remediation lines present and priced in BOTH Synthèse AND Annexe B?
+   - If platform built by Theodo: are audit AND remediation lines **completely omitted** in BOTH Synthèse AND Annexe B (no "Skip" sentinel row, no zero-priced row)?
    - Are monitoring AND AI agent lines ALWAYS present (regardless of who built the platform)?
-   - Each component j/h within range: audit/monitoring/AI agent in [2.5, 20], remediation in {≈5, ≈15, ≈30+}?
-   - Audit priced at **TJM Lead Ops**, others at **blended TJM**?
-   - Initialization total is shown as a **one-shot** price and is **NOT** added to the monthly recurring price?
-   - Annexe B (Initialisation) present with breakdown matching the synthesis?
+   - Are j/h values consistent with the abaques in `shared/initialization.md`: audit/monitoring/AI agent each in {2.5, [7,10], [15,20]}, remediation in {≈5, ≈15, ≈30+}? Flag any value falling between paliers (e.g. audit_jh=4) as inconsistent with the recorded sizing label.
+   - Audit priced at **TJM Lead Ops** (placeholder `{tjm_lead_ops}`), the other three at **TJM blended (Ops + Lead Ops + DM)**?
+   - Initialization total is shown as a **one-shot** price and is **NOT** added to the monthly recurring price nor to the forfait contingency base?
+   - Annexe B (Initialisation) present with breakdown matching the Synthèse exactly (same omitted lines, same j/h, same total)?
 
 Report your findings as:
 - PASS: {check} — {brief explanation}

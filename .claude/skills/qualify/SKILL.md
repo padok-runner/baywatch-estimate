@@ -134,9 +134,10 @@ Read the file at `skills/shared/initialization.md` relative to the `.claude/skil
 
 Ask the user, **one question at a time** via `AskUserQuestion`. Use the abaques from `shared/initialization.md` to map the answers to j/h values:
 
-1. **Plateforme construite par Theodo ?** (Oui / Non / Partiellement)
+1. **Plateforme construite par Theodo ?** (Oui / Non)
    - If **Oui**: audit and remediation are skipped.
-   - If **Non** or **Partiellement**: audit and remediation are required.
+   - If **Non**: audit and remediation are required.
+   - If the platform is only partially Theodo-built, answer **Non** and capture the partial scope in "Informations manquantes" so `/estimate` can downsize the audit/remediation manually.
 
 2. **Sizing audit** (only if not built by Theodo): Small / Medium / Large.
 
@@ -145,6 +146,8 @@ Ask the user, **one question at a time** via `AskUserQuestion`. Use the abaques 
 4. **Sizing système d'agents IA**: Simple / Medium / Complex.
 
 5. **Magnitude de remédiation attendue** (only if not built by Theodo): Light / Medium / Heavy. If the user cannot estimate, record this in **"Informations manquantes"** with a default working assumption of "Medium".
+
+For each sizing answer, **resolve the j/h value immediately** using the abaques in `shared/initialization.md` (e.g. Medium audit → 7–10 j/h, midpoint 8.5; Light remediation → 5 j/h). Write the **picked value** to `qualification.md`, not the range.
 
 ---
 
@@ -207,16 +210,18 @@ The file must follow this structure:
 
 ## Phase d'initialisation (one-shot)
 
-**Plateforme construite par Theodo :** {Oui / Non / Partiellement}
+**Plateforme construite par Theodo :** {Oui / Non}
 
-| Composante | Périmètre | Sizing retenu | Effort indicatif (j/h) |
-|------------|-----------|---------------|------------------------|
-| Audit | {Skip si Theodo / Small / Medium / Large} | {description} | {2.5 à 20 — Lead Ops, ou — si skip} |
-| Remédiation prioritaire (cible ROSE/YAMAS) | {Skip si Theodo / Light / Medium / Heavy} | {description} | {5 / 15 / 30+ — ou — si skip} |
-| Mise en place du monitoring | {Simple / Medium / Complex} | {description} | {2.5 à 20} |
-| Mise en place du système d'agents IA | {Simple / Medium / Complex} | {description} | {2.5 à 20} |
+> Monitoring et système d'agents IA sont **toujours** présents. Audit et remédiation prioritaire sont **conditionnés** à "Plateforme construite par Theodo = Non".
 
-> Notes : l'audit et la remédiation ne s'appliquent que si la plateforme n'a pas été construite par Theodo. La remédiation est par nature dépendante des findings de l'audit ; la valeur indiquée ici est une hypothèse de cadrage.
+| Composante | Sizing retenu | Effort retenu (j/h) |
+|------------|---------------|---------------------|
+| Audit | {Skip si Theodo / Small / Medium / Large} | {valeur résolue depuis l'abaque, ex. 8.5 ; ou "—" si skip} |
+| Remédiation prioritaire (cible ROSE/YAMAS) | {Skip si Theodo / Light / Medium / Heavy} | {valeur résolue, ex. 5 ; ou "—" si skip} |
+| Mise en place du monitoring | {Simple / Medium / Complex} | {valeur résolue, ex. 2.5} |
+| Mise en place du système d'agents IA | {Simple / Medium / Complex} | {valeur résolue, ex. 8.5} |
+
+> La remédiation est par nature dépendante des findings de l'audit ; la valeur indiquée ici est une hypothèse de cadrage.
 
 ## Informations manquantes
 
@@ -275,12 +280,12 @@ Check the following:
    - Missing environments (e.g., no shared services when K8s is used)
 
 4. **Initialization scope:**
-   - Is the "Phase d'initialisation" section present?
-   - Is "Plateforme construite par Theodo" answered (Oui / Non / Partiellement)?
-   - If Non/Partiellement: are audit AND remediation sized?
-   - If Oui: are audit and remediation marked as "Skip" (and not counted)?
+   - Is the "Phase d'initialisation (one-shot)" section present?
+   - Is "Plateforme construite par Theodo" answered (Oui / Non) — and only those two values?
+   - If Non: are audit AND remediation sized with a specific value (not just a range)?
+   - If Oui: are audit and remediation rows marked "Skip si Theodo" with effort "—"?
    - Are monitoring and AI agent system always sized (these apply regardless)?
-   - Do the j/h ranges fall within 2.5–20 (audit, monitoring, AI agent) and within Light/Medium/Heavy bounds (remediation)?
+   - Are the picked j/h values consistent with the abaques in `shared/initialization.md`? Audit/monitoring/AI agent must each map to one of {2.5, [7,10], [15,20]}; remediation to one of {≈5, ≈15, ≈30+}. Flag any value that falls between paliers (e.g. audit_jh=4) as inconsistent with the recorded sizing.
 
 Report your findings as:
 - PASS: {check} — {brief explanation}
