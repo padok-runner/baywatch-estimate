@@ -24,7 +24,7 @@
 | H8 | Pas de contingence forfait | — (choix SA) | +0% sur (MCO + Gouv) | SA confirme connaissance fine du scope (repo public, opérations connues, bascule PFC déjà absorbée par l'autre prestation Theodo) | **Élevé** — pas de matelas si surprise opérationnelle (saturation disque récidivante, défaillance Kafka inhabituelle, montée de version NumEcoEval problématique) |
 | H9 | Pas d'immobilisation | Dispositif assimilé Semi-dédié | 0€/mois (Semi-dédié × Standard, conforme `service-levels.md`) | EvalCarbone SIH s'inscrit dans l'équipe dédiée ANS (déjà en place via la prestation PFC). Pas de coût d'immobilisation supplémentaire | Faible — basculer vers Mutualisé pur réintroduirait +500€/mois |
 
-> **⚠ Sensibilité — H3 + H8 + H9 cumulés** : la combinaison "calibrée + pas de contingence + pas d'immobilisation" produit le prix le plus tendu possible (3 064€/mois HT vs ~10 200€ déductif strict avec immobilisation et +10%). **Aucun matelas** dans la structure de prix. Si la réalité opérationnelle s'approche du déductif (Kafka instable, incidents fréquents), le forfait sera structurellement insuffisant. **Recommandation** : revue formelle des indicateurs en fin de période 1 (mois 3), ajustement à la hausse au renouvellement si nécessaire (réintégration possible d'une contingence +10–20% ou réévaluation de la calibration).
+> **⚠ Sensibilité — H3 + H8 + H9 cumulés** : la combinaison "calibrée + pas de contingence + pas d'immobilisation" produit le prix le plus tendu possible (3 064€/mois HT vs ~12 841€ déductif strict avec immobilisation et +10%). **Aucun matelas** dans la structure de prix. Si la réalité opérationnelle s'approche du déductif (Kafka instable, incidents fréquents), le forfait sera structurellement insuffisant. **Recommandation** : revue formelle des indicateurs en fin de période 1 (mois 3), ajustement à la hausse au renouvellement si nécessaire (réintégration possible d'une contingence +10–20% ou réévaluation de la calibration).
 
 ---
 
@@ -61,8 +61,8 @@
 
 | Approche | j/h/mois | Prix mensuel HT (sans contingence ni immo) | Écart |
 |----------|----------|---------------------------------------------|-------|
-| Déductive pure (avec gouv 1.1) | 14.10 | ~12 168€ | référence |
-| **Calibrée retenue (gouv 0.55, sans contingence, sans immo)** | **3.55** | **3 064€** | **−75%** |
+| Déductive pure (avec gouv 1.1) | 13.00 | ~11 219€ | référence |
+| **Calibrée retenue (gouv 0.55, sans contingence, sans immo)** | **3.55** | **3 064€** | **−73%** |
 
 **Décision :** retenir la **calibrée**. Le déductif sur-estime fortement à cause du coefficient Kafka ×5 (sur un déploiement faible volumétrie) et de la duplication intégrale du MCO sur la préprod (alors qu'en pratique la préprod en Bronze nécessite un effort moindre). Les 8 événements/an observés ne justifient pas 13 j/h/mois. Le déductif sert de **plafond** ; un écart soutenu vers le haut sur la période 1 déclencherait une revue.
 
