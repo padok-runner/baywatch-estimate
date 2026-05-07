@@ -1,7 +1,7 @@
 # Estimate — RDG (Rail Delivery Group) — V1/V2 Redirect Proxy
 
-**Date:** 2026-05-06 (rev. with Omar's load-test data)
-**Based on:** [qualification.md](qualification.md) (2026-05-06)
+**Date:** 2026-05-07 (rev. with Omar's auto-scale test report)
+**Based on:** [qualification.md](qualification.md) (rev. 2026-05-07)
 **TJM blended:** 863€ (Ops 750€ × 1.00 + Lead Ops 1 200€ × 0.34 + DM 850€ × 0.16, blended)
 **TJM Lead Ops (audit):** 1 200€
 **Dispositif:** Mutualisé (total < 10 j/h/mois)
@@ -15,13 +15,13 @@
 | #  | Hypothèse | Information manquante | Valeur retenue | Justification | Impact si l'hypothèse est fausse |
 |----|-----------|-----------------------|----------------|---------------|----------------------------------|
 | ~~H1~~ | ~~Pic de trafic prod > 1000 RPS~~ | **RÉSOLU 2026-05-06** | Coefficient size **2** (high, <1000 RPS) | Données Omar : 3 workers prod, CPU peaks <50%, scaling threshold à 800 TPS jamais atteint. | — (résolu) |
-| H2 | Trafic spiky / steep ramp-up géré sans dégradation | Test de spike non encore réalisé (Omar engage à le faire) | Pas de buffer MCO supplémentaire au-delà du Platine | Sizing actuel (3 workers) absorbe le pic stable ; le risque concerne uniquement les rampes brutales | Si scaling fragile au spike : +0.5–1 j/h MCO/mois → +432–863€/mois. Ré-évaluer après réception du test. |
+| ~~H2~~ | ~~Trafic spiky / steep ramp-up géré sans dégradation~~ | **RÉSOLU 2026-05-07** | Pas de buffer MCO supplémentaire | Auto-scale test (`Proxy Auto Scale Test.pdf`) : 1 367 RPS sustained, 0 erreurs, P95 336ms, scale-out 2→4 tâches validé. Headroom ~60% au-dessus du pic prod attendu. | — (résolu) |
 | H3 | TJM blended Theodo = 863€ | Le repère SA est en £ (~£2 000/mois) avec un TJM inconnu | Grille standard `shared/daily-rates.md` | Convention interne | Aucun (taux interne) ; la comparaison à l'ancrage £2k reste sensible au taux de change |
 | H4 | Aucune évolution mensuelle | Confirmation explicite SA | 0 j/h/mois | Décision client : modifications de routage gérées par RDG en autonomie | Si évolutions apparaissent → ligne Temps passé ajoutée au contrat |
 | H5 | Composantes init AI agents et Remédiation hors scope | Décision explicite de qualification | 0 j/h, omises de l'init | AI agents déjà fournis par le contrat RDG existant ; documentation du proxy déjà très fournie | Si re-scoping : +2.5 j/h AI agents (≈2 158€) +5 j/h remédiation (≈4 315€) = +6 473€ one-shot |
 | **H6** | **Pas de rate limiting devant le proxy** (nouveau risque, 2026-05-06) | Décision architecturale RDG | MCO réactif standard ; pas de buffer dédié | Sol a flaggé le risque ; Omar confirme que les backends sont rate-limités mais pas le proxy lui-même | Si un caller déraisonnable inonde le proxy → incidents répétés, +1–2 j/h MCO/mois (+863–1 726€/mois). À adresser avec RDG avant go-live. |
 
-> **⚠ Sensibilité résiduelle** : depuis la résolution de H1, la sensibilité dominante du prix est H2 (spike-test) et H6 (rate-limiting). Combinés, ils représentent un risque de +1 500 à +2 500€/mois sur le pire cas. **À monitorer dans les 3 premiers mois post go-live.**
+> **⚠ Sensibilité résiduelle** : depuis la résolution de H1 et H2, **seul H6 (rate-limiting absent devant le proxy) reste un risque opérationnel ouvert** — sensibilité +863–1 726€/mois en pire cas si non adressé par RDG avant go-live. Le risque est désormais essentiellement architectural (côté client) et non lié à la robustesse du proxy lui-même. **À monitorer dans les 3 premiers mois post go-live.**
 
 ---
 
@@ -36,6 +36,7 @@
 | Évolution backlog | Modifications config routage S3 (non facturées en MCO) | qualification.md |
 | Stabilité infra documentée | Très bonne — runbooks, load tests, plans rollback en place | PDF du call |
 | Charge actuelle prod (V1) | <50% CPU, <800 TPS, 3 workers absorbent le pic | Omar 2026-05-06 |
+| Capacité validée (auto-scale test) | **1 367 RPS sustained, 0 erreurs, P95 336ms, scale-out 2→4 tasks OK** | Omar 2026-05-07 (`Proxy Auto Scale Test.pdf`) |
 | Repère contractuel similaire | ~£2 000/mois + 2 j init pour add-ons RDG comparables | SA |
 
 ### Calibration empirique
@@ -43,22 +44,22 @@
 | Composante | j/h/mois | Raisonnement |
 |------------|----------|--------------|
 | MCO réactif | 1.0 | Estimation 1–2 tickets/mois × 0.5 j/h. Un peu plus de tickets possibles à cause de H6 (pas de rate limit proxy) — capté en sensibilité. |
-| MCO proactif | 1.5 | 1.5× le réactif. Infra simple, charge stable bien en deçà des limites, runbooks déjà en place. (Multiplicateur réduit vs version précédente : sizing confirmé conservateur.) |
-| Buffer SLA Platine | 1.5 | Platine sur prod (24/7) impose une disponibilité de réaction renforcée, mais ajustée à la baisse car charge réelle modérée. |
+| MCO proactif | 1.5 | 1.5× le réactif. Infra simple, charge stable bien en deçà des limites, runbooks et auto-scaling validés. |
+| Buffer SLA Platine | 1.0 | Réduit vs estimation précédente (1.5 → 1.0) suite à la résolution de H2 : auto-scaling validé et headroom de capacité ~60% au-dessus du pic attendu réduisent le risque opérationnel. |
 | Gouvernance | 0.33 | Selon abaque mutualisé — inchangé |
-| **Total calibré** | **4.33** | |
+| **Total calibré** | **3.83** | |
 
 ### Comparaison
 
 | Approche | j/h/mois | Prix mensuel (hors immo.) | Prix mensuel (avec immo. 1 000€) | Écart vs déductive |
 |----------|----------|---------------------------|----------------------------------|--------------------|
 | Déductive pure | 3.33 | 2 876€ | **3 876€** | — |
-| Calibrée | 4.33 | 3 738€ | 4 738€ | +22% |
+| Calibrée | 3.83 | 3 305€ | 4 305€ | +15% |
 | **Repère SA (£2k/mois)** | ~2.7 (à 863€) | ~2 330€ (≈£2 000) | ~3 330€ | -14% |
 
-**Lecture :** la calibrée dépasse la déductive de **22%** (juste au-dessus du seuil de 20%). Cela suggère qu'on **pourrait sous-estimer** légèrement, principalement à cause du buffer SLA Platine + l'incertitude résiduelle (H2 spike-test, H6 rate-limit).
+**Lecture :** la calibrée dépasse la déductive de **15%** (auparavant 22%). Le delta s'est réduit suite à la validation de l'auto-scaling (résolution de H2). Les deux méthodes sont désormais **clairement cohérentes** (delta < 20%).
 
-**Décision :** on retient la **déductive (3 876€/mois)** comme base de pricing — c'est la méthode standard, auditable et granulaire. Le delta de 22% avec la calibrée est explicable par le buffer SLA et reste dans une zone gérable. **À surveiller dans les 3 premiers mois post go-live** : si le volume d'incidents dépasse 2/mois (notamment liés à H6), re-négocier en avenant.
+**Décision :** on retient la **déductive (3 876€/mois)** — méthode standard, auditable. Le delta de 15% avec la calibrée est dans la zone normale (sous le seuil de 20%) et confirme la robustesse de l'estimation. **À surveiller post go-live** : si le volume d'incidents lié à H6 (rate-limit absent devant le proxy) dépasse 2/mois, re-négocier en avenant.
 
 **Vs repère £2k :** désormais à **-14%** seulement (vs -46% avant la résolution de H1). Le résiduel est expliqué par Platine prod (+coeff 1.20) + Complète immobilisation (1 000€/mois) que les contrats anchor ne portent vraisemblablement pas. **Le prix est désormais cohérent avec le repère.**
 
@@ -216,11 +217,12 @@ Non applicable — pas de données empiriques (FTE, historique de tickets) dispo
 - **HDS** : non applicable (rail UK, pas de données de santé).
 - **Nearshore** : non sollicité par le client. Avec le prix mensuel désormais cohérent avec le repère £2k, ce levier n'est pas activé.
 - **Repère £2k/mois** : cohérence atteinte (-14% écart). Confirmer avec finance le TJM des contrats RDG existants pour un alignement final.
-- **Risques résiduels (post-résolution H1)** :
-  1. **H2** (spike-test pending) — Omar lance un test steep ramp-up. Re-évaluer si les résultats montrent une dégradation.
-  2. **H6** (pas de rate limit devant le proxy) — risque architectural à remonter à RDG avant go-live ; pourrait peser sur le MCO réactif si non adressé.
-  3. **Lock-in Platine sur prod** — valider avec le client que la SLA Platine reflète bien la criticité business. Drop à Gold = -376€/mois.
+- **Risques résiduels (post-résolution H1, H2)** :
+  1. **H6** (pas de rate limit devant le proxy) — seul risque opérationnel ouvert. À remonter à RDG avant go-live ; pourrait peser sur le MCO réactif si non adressé. +1–2 j/h MCO/mois en pire cas.
+  2. **Lock-in Platine sur prod** — valider avec le client que la SLA Platine reflète bien la criticité business. Drop à Gold = -376€/mois.
+  3. **Sub-second spike** non testé (le test du 2026-05-07 valide une rampe de 5 min, pas un saut sub-seconde). Risque considéré faible étant donné le headroom de capacité validé, mais à mentionner si RDG demande une SLA de réactivité spike-instant.
 - **Référence externe** : compatible avec [qualification.md](qualification.md) section « Constraints & Notes ».
 - **Historique de versions** :
   - v1 (2026-05-06 matin) — initial estimate à 6 206€/mois avec coeff 5 (hypothèse SA).
-  - **v2 (2026-05-06 PM) — révisé à 3 876€/mois suite aux données de load-test d'Omar (coeff 2 confirmé). Gain de 2 330€/mois.**
+  - v2 (2026-05-06 PM) — révisé à 3 876€/mois suite aux données initiales d'Omar (coeff 2 confirmé). Gain de 2 330€/mois.
+  - **v3 (2026-05-07) — résolution de H2 suite au rapport `Proxy Auto Scale Test.pdf` : auto-scaling validé, capacité 1 367 RPS sustained sans erreur. Prix mensuel inchangé (3 876€/mois) ; calibration empirique resserrée (delta calibré-déductif passe de +22% à +15%). Confiance accrue dans le pricing.**
