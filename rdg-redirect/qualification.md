@@ -20,7 +20,7 @@ Not applicable — service not yet live. **Reference anchor (provided by SA):** 
 
 ## Resource Inventory
 
-> Per the SA's modeling decision, the redirect-proxy stack is captured as **two MCO items per environment**: (1) the Fargate cluster (hosting layer, modeled as Public Cloud Managed Kubernetes Cluster — Fargate is the closest equivalent in the catalogue) and (2) the NGINX/OpenResty redirect application (off-the-shelf NGINX extended with a thin Lua layer). Ancillary resources (S3 config bucket, admin Lambda, NLB, CloudWatch dashboard, SNS topics, Route53 CNAMEs) are operationally bundled into the application sizing — they are not separately MCO-priced because they have no independent ops footprint.
+> Per the SA's modeling decision, the redirect-proxy stack is captured as **two MCO items per environment**: (1) the Fargate cluster, modeled as **Public Cloud Managed Container** (item type added to `shared/item-types.md` 2026-05-08, base 0.1 j/h — distinguishes container-as-a-service offerings like ECS / Cloud Run / Fargate from full managed K8s clusters which carry a heavier operational burden: no control plane, no kubectl/Helm, no node-group lifecycle), and (2) the NGINX/OpenResty redirect application (off-the-shelf NGINX extended with a thin Lua layer). Ancillary resources (S3 config bucket, admin Lambda, NLB, CloudWatch dashboard, SNS topics, Route53 CNAMEs) are operationally bundled into the application sizing — they are not separately MCO-priced because they have no independent ops footprint.
 
 ### Environment: dev
 **Plage horaire:** Standard
@@ -28,7 +28,7 @@ Not applicable — service not yet live. **Reference anchor (provided by SA):** 
 
 | Resource | Type | Cloud | Size | Complexity |
 |----------|------|-------|------|------------|
-| Fargate cluster (NGINX/OpenResty hosting) | Public Cloud Managed Kubernetes Cluster | Public (AWS) | <10 RPS, small Fargate tasks | Very low |
+| Fargate cluster (NGINX/OpenResty hosting) | Public Cloud Managed Container | Public (AWS) | <10 RPS, small Fargate tasks | Very low |
 | NGINX/OpenResty redirect app (+ S3 config, admin Lambda, NLB, CW dashboard, SNS, Route53) | Off-the-shelf application (NGINX extended) | Public (AWS) | <10 RPS feature-test traffic | Very low |
 
 ### Environment: preprod (acc)
@@ -37,7 +37,7 @@ Not applicable — service not yet live. **Reference anchor (provided by SA):** 
 
 | Resource | Type | Cloud | Size | Complexity |
 |----------|------|-------|------|------------|
-| Fargate cluster (NGINX/OpenResty hosting) | Public Cloud Managed Kubernetes Cluster | Public (AWS) | <10 RPS (perf-test branch) | Very low |
+| Fargate cluster (NGINX/OpenResty hosting) | Public Cloud Managed Container | Public (AWS) | <10 RPS (perf-test branch) | Very low |
 | NGINX/OpenResty redirect app (+ S3 config, admin Lambda, NLB, CW dashboard, SNS, Route53) | Off-the-shelf application (NGINX extended) | Public (AWS) | <10 RPS (perf-test branch) | Very low |
 
 ### Environment: prod
@@ -46,7 +46,7 @@ Not applicable — service not yet live. **Reference anchor (provided by SA):** 
 
 | Resource | Type | Cloud | Size | Complexity |
 |----------|------|-------|------|------------|
-| Fargate cluster (NGINX/OpenResty hosting) | Public Cloud Managed Kubernetes Cluster | Public (AWS) | ~300–800 RPS at peak (current V1 traffic) ; cluster physique très petit (<1 vCPU au pic) | Very low |
+| Fargate cluster (NGINX/OpenResty hosting) | Public Cloud Managed Container | Public (AWS) | ~300–800 RPS at peak (current V1 traffic) ; cluster physique très petit (<1 vCPU au pic) | Very low |
 | NGINX/OpenResty redirect app (+ S3 config, admin Lambda, NLB, CW dashboard, SNS, Route53) | Off-the-shelf application (NGINX extended) | Public (AWS) | ~300–800 RPS at peak | Very low |
 
 > **Coefficient rule for `/estimate`:** Non-prod → coeff 0.8 (driven by size <10 RPS ; complexity 0.5 dominée). Prod → **coeff 1 — SA judgment override (2026-05-08)**. La table stricte du framework mappe <1000 RPS → coeff 2, mais le SA applique un coeff réduit à 1 car : (1) auto-scaling validé sans erreur (`Proxy Auto Scale Test.pdf`), (2) cluster physique sous-utilisé (<1 vCPU consommé au pic réel), (3) très basse complexité (NGINX+Lua minimal), (4) headroom de capacité ~60% au-dessus du pic prod. **Cet override est explicite et documenté pour `/estimate`.**
