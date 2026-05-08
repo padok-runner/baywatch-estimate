@@ -5,6 +5,7 @@
 | Item                                                                                 | jour-homme / mois |
 | ------------------------------------------------------------------------------------ | ----------------- |
 | Public Cloud Managed Kubernetes Cluster                                              | 0.25              |
+| Public Cloud Managed Container (e.g. ECS, Cloud Run, Fargate)                        | 0.1               |
 | Public Cloud Managed Virtual Machine                                                 | 0.1               |
 | Public Cloud Managed Hypervisor                                                      | 0.25              |
 | Private Cloud Managed Kubernetes Cluster                                             | 0.5               |
