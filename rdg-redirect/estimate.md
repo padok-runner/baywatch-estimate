@@ -1,6 +1,6 @@
 # Estimate — RDG (Rail Delivery Group) — V1/V2 Redirect Proxy
 
-**Date:** 2026-05-08 v5 (item type Container ECS/Fargate)
+**Date:** 2026-05-08 v6 (init downsized: Audit 1 j/h, Monitoring 2 j/h)
 **Based on:** [qualification.md](qualification.md) (rev. 2026-05-08)
 **TJM blended:** 863€ (Ops 750€ × 1.00 + Lead Ops 1 200€ × 0.34 + DM 850€ × 0.16, blended)
 **TJM Lead Ops (audit):** 1 200€
@@ -87,16 +87,16 @@ Plateforme construite par Theodo : **Non**
 
 > **Décision de scope (cf. qualification.md)** : Remédiation et Système d'agents IA sont **hors périmètre** de cet add-on. La remédiation est exclue car la documentation existante est déjà très fournie (load tests, runbooks, plans de rollback) ; le système d'agents IA est exclu car déjà provisionné par le contrat RDG existant. Lignes omises ci-dessous **et** dans l'Annexe B.
 
-- **Audit** : 2.5 j/h Lead Ops — cartographie ressources, qualité IaC (CDK), résilience, sécurité, observabilité.
-- **Mise en place du monitoring** : 2.5 j/h — métriques CloudWatch, dashboards, alarmes SNS, runbooks adaptés à nos équipes.
+- **Audit** : 1 j/h Lead Ops — cartographie ressources, qualité IaC (CDK), résilience, sécurité, observabilité. Downsized vs palier Small (2.5 j/h) car documentation déjà très complète (runbooks, load tests, rollback plans, auto-scaling validé).
+- **Mise en place du monitoring** : 2 j/h — métriques CloudWatch, dashboards, alarmes SNS, runbooks adaptés à nos équipes. Downsized vs palier Simple (2.5 j/h) car le pattern existe déjà sur les services RDG actuels (réutilisation directe).
 - **Support go-live (fine-tuning + on-watch)** : 1 j/h — supplément SA pour réduire le risque de la phase de déploiement (« the riskiest process »). Ligne hors abaque init mais payée one-shot avec l'init.
 
 | Composante | Sizing | j/h | TJM | Montant |
 |------------|--------|-----|-----|---------|
-| Audit | Small | 2.5 | 1 200€ | 3 000€ |
-| Monitoring | Simple | 2.5 | 863€ | 2 158€ |
+| Audit | Small (SA downsized) | 1.0 | 1 200€ | 1 200€ |
+| Monitoring | Simple (SA downsized) | 2.0 | 863€ | 1 726€ |
 | Support go-live | — | 1.0 | 863€ | 863€ |
-| **Total initialisation** | | **6.0** | | **6 021€ HT** |
+| **Total initialisation** | | **4.0** | | **3 789€ HT** |
 
 > Cette enveloppe est **payée une seule fois** en début d'engagement et **n'entre pas** dans le prix mensuel récurrent.
 
@@ -206,14 +206,15 @@ Plateforme construite par Theodo : **Non**
 
 | Composante | Sizing | j/h | TJM | Montant €HT |
 |------------|--------|-----|-----|-------------|
-| Audit (Lead Ops) | Small | 2.5 | 1 200€ | 3 000€ |
-| Mise en place du monitoring | Simple | 2.5 | 863€ | 2 158€ |
+| Audit (Lead Ops) | Small *(SA downsized de 2.5 → 1)* | 1.0 | 1 200€ | 1 200€ |
+| Mise en place du monitoring | Simple *(SA downsized de 2.5 → 2)* | 2.0 | 863€ | 1 726€ |
 | Support go-live (fine-tuning + on-watch) | — | 1.0 | 863€ | 863€ |
-| **Total initialisation** | | **6.0** | | **6 021€** |
+| **Total initialisation** | | **4.0** | | **3 789€** |
 
 **Notes :**
 - **Remédiation prioritaire** : ligne **omise** par décision explicite du SA (cf. qualification.md). La documentation existante (runbooks, load tests, plans rollback) est jugée suffisante pour ne pas nécessiter de remédiation pré-production. Tout findings d'audit nécessitant des actions correctives sera traité hors initialisation.
 - **Système d'agents IA** : ligne **omise** par décision explicite du SA. Le système d'agents IA est déjà provisionné par le contrat RDG existant — aucun setup incrémental requis pour cet add-on.
+- **SA downsizing (2026-05-08)** : Audit (1 j/h) et Monitoring (2 j/h) sont en dessous des paliers framework (Small/Simple = 2.5 j/h chacun). Justifié par : (1) documentation existante très complète permettant un audit éclair, (2) pattern monitoring CloudWatch+SNS déjà en place sur les services RDG existants → réutilisation directe. Aligne avec l'estimation SA dans le call (« 2–3 days ») et le repère £2k (2 j init). **Déviation framework documentée pour le verifier.**
 - **Audit** facturé au TJM Lead Ops (1 200€) ; **Monitoring** et **Support go-live** facturés au TJM blended (863€).
 - **Support go-live** (1 j/h) ajouté hors abaque init standard, conformément à l'engagement SA dans le call (« add a day for fine-tuning or being on watch during the go-live, deployment phase is the riskiest process »).
 - Cette enveloppe est **payée une seule fois** en début d'engagement et **n'entre pas** dans le prix mensuel récurrent ni dans la base de calcul de la contingence forfait.
@@ -242,4 +243,5 @@ Non applicable — pas de données empiriques (FTE, historique de tickets) dispo
   - v2 (2026-05-06 PM) — révisé à 3 876€/mois suite aux données initiales d'Omar (coeff 2 confirmé). Gain de 2 330€/mois.
   - v3 (2026-05-07) — résolution de H2 suite au rapport `Proxy Auto Scale Test.pdf` : auto-scaling validé, capacité 1 367 RPS sustained sans erreur. Prix mensuel inchangé (3 876€/mois) ; calibration empirique resserrée (delta calibré-déductif passe de +22% à +15%). Confiance accrue dans le pricing.
   - v4 (2026-05-08) — SA override coeff size prod : 2 → 1. Justifié par la robustesse opérationnelle validée + cluster physique très petit + très basse complexité. Prix mensuel passe à 3 099€/mois (-777€/mois vs v3). Déviation framework documentée explicitement (H7) ; calibrée et déductive *strict framework* coïncident toutes deux à 3 876€/mois et restent disponibles comme re-pricing si l'override est challengé.
-  - **v5 (2026-05-08) — Correction méthodologique : ajout du nouvel item type *Public Cloud Managed Container* (base 0.1 j/h) au framework `shared/item-types.md`. Le Fargate cluster, précédemment modélisé comme Public Cloud Managed K8s (0.25), est désormais correctement classé en Container — reflète la réalité opérationnelle (pas de control plane, pas de kubectl, pas de node-group lifecycle). Prix mensuel passe à 2 737€/mois (-362€/mois vs v4). Override H7 conservé. Strict-framework Container ressort à 3 358€/mois si H7 challengé.**
+  - v5 (2026-05-08) — Correction méthodologique : ajout du nouvel item type *Public Cloud Managed Container* (base 0.1 j/h) au framework `shared/item-types.md`. Le Fargate cluster, précédemment modélisé comme Public Cloud Managed K8s (0.25), est désormais correctement classé en Container — reflète la réalité opérationnelle (pas de control plane, pas de kubectl, pas de node-group lifecycle). Prix mensuel passe à 2 737€/mois (-362€/mois vs v4). Override H7 conservé. Strict-framework Container ressort à 3 358€/mois si H7 challengé.
+  - **v6 (2026-05-08) — SA downsizing init : Audit Small 2.5 → 1 j/h, Monitoring Simple 2.5 → 2 j/h. Justifié par la documentation déjà très complète et la réutilisation du pattern monitoring CloudWatch+SNS existant sur les services RDG. Init total passe de 6 021€ → 3 789€ (-2 232€ one-shot). Aligne avec l'estimation SA du call (« 2–3 days ») et le repère £2k (2 j init). Prix mensuel inchangé (2 737€/mois).**

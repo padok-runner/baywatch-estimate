@@ -71,14 +71,14 @@ Time-slot groups: **2** (Standard for non-prod, Complète for prod) — within t
 >
 > This is a deliberate scoping decision and overrides the framework's default (which keeps AI agents always-on). `/estimate` must honor this decision: do not auto-restore those line items.
 
-| Composante                                    | Sizing retenu                  | Effort retenu (j/h) |
-|-----------------------------------------------|--------------------------------|---------------------|
-| Audit                                         | Small                          | 2.5                 |
-| Remédiation prioritaire (cible ROSE/YAMAS)    | Hors périmètre (scope decision)| —                   |
-| Mise en place du monitoring                   | Simple                         | 2.5                 |
-| Mise en place du système d'agents IA          | Hors périmètre (scope decision)| —                   |
+| Composante                                    | Sizing retenu                       | Effort retenu (j/h) |
+|-----------------------------------------------|-------------------------------------|---------------------|
+| Audit                                         | Small (downsized SA, < palier 2.5)  | 1                   |
+| Remédiation prioritaire (cible ROSE/YAMAS)    | Hors périmètre (scope decision)     | —                   |
+| Mise en place du monitoring                   | Simple (downsized SA, < palier 2.5) | 2                   |
+| Mise en place du système d'agents IA          | Hors périmètre (scope decision)     | —                   |
 
-**Total init retenu : 5 j/h** (Audit + Monitoring uniquement). Aligns with the SA's "~2 days init for similar add-on contracts" anchor when blended-TJM hours are accounted for, plus an extra day for go-live fine-tuning / on-watch (see Constraints).
+**Total init retenu : 3 j/h** (Audit + Monitoring uniquement). **SA downsizing decision (2026-05-08):** the abaques in `shared/initialization.md` set the lowest paliers at 2.5 j/h each, but the SA judges that for this add-on the documentation is so complete (runbooks, load tests, rollback plans, validated auto-scaling) and the scope so narrow that audit can be done in 1 day and monitoring setup in 2 days. This aligns with the SA's call commitment ("2–3 days for doc review, onboarding, workshop") and the £2k anchor's "2-day init" reference. Plus an extra day for go-live fine-tuning / on-watch (see Constraints) — total init = 4 j/h.
 
 ## Informations manquantes
 
