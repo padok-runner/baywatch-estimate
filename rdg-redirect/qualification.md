@@ -46,10 +46,10 @@ Not applicable — service not yet live. **Reference anchor (provided by SA):** 
 
 | Resource | Type | Cloud | Size | Complexity |
 |----------|------|-------|------|------------|
-| Fargate cluster (NGINX/OpenResty hosting) | Public Cloud Managed Kubernetes Cluster | Public (AWS) | <1000 RPS at peak (current V1 traffic, well below 800 TPS scaling threshold) | Very low |
-| NGINX/OpenResty redirect app (+ S3 config, admin Lambda, NLB, CW dashboard, SNS, Route53) | Off-the-shelf application (NGINX extended) | Public (AWS) | <1000 RPS at peak | Very low |
+| Fargate cluster (NGINX/OpenResty hosting) | Public Cloud Managed Kubernetes Cluster | Public (AWS) | ~300–800 RPS at peak (current V1 traffic) ; cluster physique très petit (<1 vCPU au pic) | Very low |
+| NGINX/OpenResty redirect app (+ S3 config, admin Lambda, NLB, CW dashboard, SNS, Route53) | Off-the-shelf application (NGINX extended) | Public (AWS) | ~300–800 RPS at peak | Very low |
 
-> **Coefficient rule reminder for `/estimate`:** apply the higher of size vs complexity. Prod → **coeff 2** (driven by size, <1000 RPS — confirmed by Omar's load-test data on 2026-05-06: prod CPU peaks <50%, scaling threshold at 800 TPS not reached). Non-prod → coeff 0.8 (driven by size; complexity 0.5 is lower).
+> **Coefficient rule for `/estimate`:** Non-prod → coeff 0.8 (driven by size <10 RPS ; complexity 0.5 dominée). Prod → **coeff 1 — SA judgment override (2026-05-08)**. La table stricte du framework mappe <1000 RPS → coeff 2, mais le SA applique un coeff réduit à 1 car : (1) auto-scaling validé sans erreur (`Proxy Auto Scale Test.pdf`), (2) cluster physique sous-utilisé (<1 vCPU consommé au pic réel), (3) très basse complexité (NGINX+Lua minimal), (4) headroom de capacité ~60% au-dessus du pic prod. **Cet override est explicite et documenté pour `/estimate`.**
 
 ## Service Commitments Summary
 
