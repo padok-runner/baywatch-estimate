@@ -40,6 +40,17 @@ Read the file at `skills/shared/services.md` relative to the `.claude/skills` di
 
 ---
 
+## Conventions de précision
+
+**Tous les j/h/mois sont exprimés au dixième de jour près** (ex. 0.4, 1.2, 2.1). N'arrondissez **jamais** au demi-jour ou au jour entier — chaque arrondi unitaire ajoute 100 à 800€/mois à la facture client sans justification, ce qui rend l'offre non compétitive face à des concurrents qui calculent finement.
+
+- **Calculs intermédiaires** : garder 2 décimales (ex. `5/12 = 0.42`, `0.42 × 3 = 1.25`).
+- **Tableaux de synthèse client** : afficher 1 décimale (ex. `0.4`, `1.3`, total `2.1`).
+- **Total final** : somme des composantes au dixième. Si la somme des affichages diverge légèrement de la somme précise (effet de l'arrondi composante par composante), prévaut la somme précise arrondie au dixième.
+- **Ne pas arrondir un coefficient SLA en un forfait j/h.** Appliquer `coefficient × MCO_prod` directement (ex. Gold = +10% sur la portion prod), pas `+1.0 j/h flat`.
+
+---
+
 ## Phase A — Quantity Estimation
 
 ### Step 0: Identify missing information and define working assumptions
@@ -133,9 +144,9 @@ Build a bottom-up "calibrated" estimate from observable data:
 
 | Composante | How to estimate |
 |------------|----------------|
-| **MCO réactif** | `(tickets per year × avg effort per ticket) / 12`. If avg effort unknown, assume 0.5-1 j/h per ticket. |
-| **MCO proactif** | Monitoring, patching, security updates. Typically 3-5× the reactive effort for well-managed infra. Adjust for infra complexity: simple LAMP stack = 3×, complex K8s+microservices = 5×. |
-| **Buffer SLA** | Add overhead proportional to SLA commitment: Bronze = 0, Silver = +0.5, Gold = +1.0, Platine = +2.0 j/h/mois. Higher plage (Étendue, Complète) adds astreinte overhead. |
+| **MCO réactif** | `(tickets per year × avg effort per ticket) / 12`. If avg effort unknown, assume 0.5-1 j/h per ticket. **Garder le résultat au dixième sans arrondi sup** (ex. 5/12 = 0.42 → afficher 0.4, pas 0.5). |
+| **MCO proactif** | Monitoring, patching, security updates. Typically 3-5× the reactive effort for well-managed infra. Adjust for infra complexity: simple LAMP stack = 3×, complex K8s+microservices = 5×. **Choisir le multiplicateur correspondant à la stack réelle** — utiliser ×5 sur du LAMP est une erreur fréquente (gonfle le prix de ~860€/mois pour 0.5 j/h réactif). |
+| **Buffer SLA** | Appliquer le coefficient SLA de `shared/service-levels.md` sur la **portion prod** du MCO base : `Buffer = MCO_prod × (coeff − 1)` avec coeff = 1.05 Silver, 1.10 Gold, 1.20 Platine. Estimer la portion prod du MCO calibré (typiquement 60–75% selon le poids de prod dans l'inventaire). **Ne pas utiliser un forfait j/h** (`+0.5`, `+1.0`...) — l'astreinte 24/7 est déjà couverte par l'immobilisation Étendue/Complète, et un forfait j/h doublonne avec elle. |
 | **Gouvernance** | Keep the abaque calculation (unchanged). |
 
 #### 4b. Compare deductive vs calibrated

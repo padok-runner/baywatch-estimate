@@ -1,6 +1,6 @@
 # Qualification — Carenity
 
-**Date:** 2026-03-30
+**Date:** 2026-05-08
 **Approach:** Both (Empirical + Deductive)
 **Solutions Architect:** —
 
@@ -87,6 +87,24 @@ Carenity est une plateforme santé avec une stack LAMP (PHP CodeIgniter / PHP Sl
 | Production | Complète (24/7) | Gold | 1.10 |
 | Recette (non-prod) | Standard | Bronze | 1 |
 | Shared / Infra | Standard | Bronze | 1 |
+
+## Phase d'initialisation (one-shot)
+
+**Plateforme construite par Theodo :** Non
+
+> Monitoring et système d'agents IA sont **toujours** présents. Audit et remédiation prioritaire sont **conditionnés** à "Plateforme construite par Theodo = Non".
+
+| Composante | Sizing retenu | Effort retenu (j/h) |
+|------------|---------------|---------------------|
+| Audit | Small (custom, ajusté à 5 j/h) | 5 |
+| Remédiation prioritaire (cible ROSE/YAMAS) | Light | 5 |
+| Mise en place du monitoring | Custom (réutilisation stack standard, sous-Simple) | 1 |
+| Mise en place du système d'agents IA | Omis (hors périmètre Carenity) | 0 |
+
+> La remédiation est par nature dépendante des findings de l'audit ; la valeur indiquée ici est une hypothèse de cadrage.
+> Audit à 5 j/h : entre les paliers Small (2.5) et Medium (7), justifié par ~28 ressources mais stack LAMP simple sans K8s/microservices.
+> Monitoring à 1 j/h : sous le palier Simple, justifié par la réutilisation directe d'une stack monitoring standard sans dashboards custom.
+> Agent IA omis : décision client/SA — hors périmètre du forfait initialisation Carenity.
 
 ## Informations manquantes
 
