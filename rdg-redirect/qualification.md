@@ -78,7 +78,9 @@ Time-slot groups: **2** (Standard for non-prod, Complète for prod) — within t
 | Mise en place du monitoring                   | Simple (downsized SA, < palier 2.5) | 2                   |
 | Mise en place du système d'agents IA          | Hors périmètre (scope decision)     | —                   |
 
-**Total init retenu : 3 j/h** (Audit + Monitoring uniquement). **SA downsizing decision (2026-05-08):** the abaques in `shared/initialization.md` set the lowest paliers at 2.5 j/h each, but the SA judges that for this add-on the documentation is so complete (runbooks, load tests, rollback plans, validated auto-scaling) and the scope so narrow that audit can be done in 1 day and monitoring setup in 2 days. This aligns with the SA's call commitment ("2–3 days for doc review, onboarding, workshop") and the £2k anchor's "2-day init" reference. Plus an extra day for go-live fine-tuning / on-watch (see Constraints) — total init = 4 j/h.
+**Total init abaque : 3 j/h** (Audit 1 + Monitoring 2 ; Remédiation et AI agents hors périmètre). With the +1 j/h go-live support documented in Constraints, **grand total init = 4 j/h**.
+
+**SA downsizing decision (2026-05-08):** the abaques in `shared/initialization.md` set the lowest paliers at 2.5 j/h each, but the SA judges that for this add-on the documentation is so complete (runbooks, load tests, rollback plans, validated auto-scaling) and the scope so narrow that audit can be done in 1 day and monitoring setup in 2 days. This aligns with the SA's call commitment ("2–3 days for doc review, onboarding, workshop") and the £2k anchor's "2-day init" reference.
 
 ## Informations manquantes
 
