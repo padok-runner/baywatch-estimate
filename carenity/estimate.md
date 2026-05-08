@@ -10,47 +10,47 @@
 
 ## Hypothèses de travail
 
-| #   | Hypothèse               | Valeur retenue                  | Impact si fausse                                  |
-| --- | ----------------------- | ------------------------------- | ------------------------------------------------- |
-| H1  | Taille des EC2 prod     | Coefficient 0.8 (medium)        | ±190€/mois                                        |
-| H2  | Volume Opensearch       | Coefficient 1 (medium, <100 Go) | +475€/mois si >100 Go                             |
-| H3  | Roadmap évolutions 2026 | 0 j/h dans le forfait           | 20-30 j/h en temps passé si migrations confirmées |
+| #   | Hypothèse                                | Information manquante                            | Valeur retenue                  | Justification                                  | Impact si fausse                                                                                |
+| --- | ---------------------------------------- | ------------------------------------------------ | ------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| H1  | Taille des EC2 prod                      | Sizing exact non fourni                          | Coefficient 0.8 (medium)        | Profil standard pour Web LAMP                  | ±70€/mois si réel = 0.5 (petit) ou 1.0 (gros)                                                   |
+| H2  | Volume Opensearch                        | Métriques de volume non fournies                 | Coefficient 1 (medium, <100 Go) | Hypothèse conservative LAMP+search             | +285€/mois si réel >100 Go (passage coefficient 2)                                              |
+| H3  | Roadmap évolutions 2026                  | Non validée par le client                        | 0 j/h dans le forfait           | Migrations MySQL / Redis / Debian non confirmées | 20-30 j/h en temps passé si confirmées (à 863€/jour, soit ~17 000-26 000€ one-shot sur 2026) |
+
+> **⚠ Sensibilité** : H2 (volume Opensearch) est l'hypothèse la plus sensible (+15% du forfait MCO si l'hypothèse de volume est invalide). À confirmer avant contractualisation.
 
 ---
 
-## Analyse de réalisme
+## Calibration empirique
 
-Le modèle déductif produit **6.81 j/h MCO/mois**. L'historique réel montre :
+**Signaux empiriques observés (depuis qualification.md) :**
 
-| Signal empirique     | Valeur                        |
-| -------------------- | ----------------------------- |
-| Tickets sur 12 mois  | ~5                            |
-| Incidents            | 1 (PHP-FPM, pic de charge)    |
-| Problèmes récurrents | 0                             |
-| Évolutions infra     | 2-3 tickets (Opensearch, IAM) |
+| Signal | Valeur |
+|---|---|
+| Tickets sur 12 mois | 5 → 0.42/mois |
+| Incidents | 1 (PHP-FPM, pic de charge) |
+| Problèmes récurrents | 0 |
+| FTE empirique | Non communiqué |
+| Stabilité observée | Très haute (1 incident en 12 mois, infra LAMP simple, pas de pattern récurrent) |
 
-**Constat :** le déductif surestime l'effort réel. Cette infra LAMP est stable, peu complexe (pas de K8s, pas de microservices), avec un historique d'incidents quasi nul.
+**Discount appliqué : −40% sur la MCO déductive**
 
-**Calibration empirique :**
+**Justification :** Pas de FTE communiqué ; tickets nettement < 1/mois (0.42) sur 12 mois ; aucun problème récurrent → ligne *"No FTE; tickets < 1/mois on 12 mois; no recurring problems"* de la table de discounts du skill estimate (Step 3). Fourchette autorisée : −30% à −50%. Retenu **−40%** (milieu de fourchette) pour deux raisons opposées qui se compensent :
+- Borne haute (−50%) tempérée par : contexte HDS régulé, 28 ressources, multi-engine DB (4 distincts) qui demandent une vigilance proactive même en l'absence de tickets.
+- Borne basse (−30%) tempérée par : aucun incident majeur sur 12 mois, infra stable, pas de pattern récurrent → l'effort réel est inférieur à ce que prévoit l'abaque déductive.
 
-| Composante                                       | j/h/mois | Raisonnement                                                       |
-| ------------------------------------------------ | -------- | ------------------------------------------------------------------ |
-| MCO réactif (incidents, demandes)                | 0.4      | 5 tickets/an ÷ 12 ≈ 0.42                                           |
-| MCO proactif (monitoring, patching, veille sécu) | 1.3      | ×3 du réactif (LAMP simple) → 0.42 × 3 = 1.25                      |
-| Buffer SLA Gold (coeff ×1.10 sur prod)           | 0.1      | ×1.10 sur portion prod (~70% du MCO) ; astreinte couverte par immo |
-| Gouvernance                                      | 0.3      | COPROD trimestriel + 2 audits semestriels (ROSE, YAMAS)            |
-| **Total calibré**                                | **2.1**  |                                                                    |
+**Ajustement MCO :**
 
-> **Note rounding** : MCO proactif utilise le multiplicateur LAMP simple (×3), pas le multiplicateur K8s/microservices (×5). Le buffer SLA Gold applique le coefficient ×1.10 sur la portion prod du MCO, pas un forfait arrondi à 1 j/h ; l'astreinte 24/7 est déjà couverte par l'immobilisation Complète (1 000€).
+| | Déductive | Discount | Final |
+|---|---|---|---|
+| MCO (toutes envs, SLA appliqué) | 6.81 | −40% | 4.1 |
+| Gouvernance | 0.3 | (jamais discountée) | 0.3 |
+| **Total mensuel j/h** | **7.1** | | **4.4** |
 
-**Comparaison :**
-
-| Approche               | j/h/mois | Prix/mois  | Écart |
-| ---------------------- | -------- | ---------- | ----- |
-| Déductive pure         | 7.23     | 7 239€     | —     |
-| **Calibrée (retenue)** | **2.1**  | **2 812€** | -61%  |
-
-Le prix retenu est basé sur l'estimation calibrée : le déductif sert de plafond, l'empirique de plancher. Sur cette infra ultra-stable (5 tickets/an), l'écart au déductif est important — c'est attendu et défendable.
+> **Garde-fous appliqués :**
+> - Discount −40% < cap −50% ✓
+> - Gouvernance non discountée (audits ROSE/YAMAS contractuels) ✓
+> - SLA déjà appliqué au niveau ressource (Gold ×1.10 sur prod) — pas réappliqué ici ✓
+> - Immobilisation séparée, jamais discountée ✓
 
 ---
 
@@ -65,13 +65,15 @@ Plateforme construite par Theodo : **Non**
 - **Audit** : 5 j/h Lead Ops — cartographie ressources, qualité, résilience, sécurité, observabilité.
 - **Remédiation prioritaire** (cible ROSE/YAMAS) : 5 j/h — docs, durcissement résilience, gaps qualité.
 - **Mise en place du monitoring** : 1 j/h — métriques, alerting, dashboards, sondes, runbooks (réutilisation stack standard).
-- **Mise en place du système d'agents IA** : omise (hors périmètre Carenity).
+- **Mise en place du système d'agents IA** : omise (hors périmètre Carenity, décision SA/client documentée en qualification).
 
 **Total initialisation : 11 j/h — 11 178€ HT (one-shot, payée une seule fois en début d'engagement)**
 
 > Cette enveloppe est indépendante du prix mensuel récurrent ci-dessous.
 
 ---
+
+### Tableau de synthèse mensuelle
 
 |                         | Production                                                                                                 | Non-production                                                                 | Shared / Infra                         | Transverse                            |
 | ----------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------- | ------------------------------------- |
@@ -85,47 +87,97 @@ Plateforme construite par Theodo : **Non**
 
 | Mode            | Périmètre                                                           | j/h/mois | Montant €HT/mois |
 | --------------- | ------------------------------------------------------------------- | -------- | ---------------- |
-| **Forfait**     | MCO + Gouvernance + Immobilisation                                  | 2.1      | 2 812€           |
+| **Forfait**     | MCO + Gouvernance + Immobilisation                                  | 4.4      | 4 797€           |
 | **Temps passé** | Évolutions (à la demande, TJM Ops 750€ / Lead Ops 1 200€ / DM 850€) | —        | Sur consommation |
-|                 | **Total forfait**                                                   | **2.1**  | **2 812€**       |
+|                 | **Total forfait**                                                   | **4.4**  | **4 797€**       |
 
-**Total annuel : 33 744€ HT**
+**Total annuel : 57 564€ HT**
 
 ---
 
-## Annexe — Détail du calcul
+## Annexe A — Détail du calcul
 
-### MCO calibré
+### MCO déductive — par environnement
 
-| Composante    | Détail                                                                              | j/h/mois |
-| ------------- | ----------------------------------------------------------------------------------- | -------- |
-| MCO réactif   | Incidents + demandes (5 tickets/an ÷ 12 ≈ 0.42)                                     | 0.4      |
-| MCO proactif  | Monitoring, patching OS/DB, veille sécu (×3 du réactif LAMP simple → 1.25)          | 1.3      |
-| Buffer SLA    | Coefficient Gold ×1.10 sur portion prod (~70% du MCO) ; astreinte couverte par immo | 0.1      |
-| **Total MCO** |                                                                                     | **1.8**  |
+#### Production (SLA Gold ×1.10)
+
+| Ressource              | Item Type                         | Base Rate | Coeff | MCO base (j/h/mois) |
+|------------------------|-----------------------------------|-----------|-------|---------------------|
+| 5 EC2 prod (medium)    | Public Cloud Managed VM           | 0.1       | 0.8   | 0.40                |
+| 2 RDS MySQL 8 (medium) | Off-the-shelf application         | 0.5       | 1.0   | 1.00                |
+| 1 Opensearch (medium)  | Off-the-shelf application         | 0.5       | 1.0   | 0.50                |
+| 1 Redis (low)          | Off-the-shelf application         | 0.5       | 0.8   | 0.40                |
+| 1 MySQL 5 SH (medium)  | Off-the-shelf application         | 0.5       | 1.0   | 0.50                |
+| 1 MPA Legacy (medium)  | Custom application                | 0.25      | 1.0   | 0.25                |
+| 3 MPA CodeIgniter (low)| Custom application                | 0.25      | 0.8   | 0.60                |
+| 2 SPA VueJS/Slim (low) | Custom application                | 0.25      | 0.8   | 0.40                |
+| 2 apps infra (very low)| Custom application                | 0.25      | 0.5   | 0.25                |
+| **Sous-total prod base** |                                 |           |       | **4.30**            |
+| **× SLA Gold 1.10**    |                                   |           |       | **4.73**            |
+
+#### Recette (SLA Bronze ×1.0)
+
+| Ressource              | Item Type                         | Base Rate | Coeff | MCO (j/h/mois) |
+|------------------------|-----------------------------------|-----------|-------|----------------|
+| 3 EC2 recette (medium) | Public Cloud Managed VM           | 0.1       | 0.8   | 0.24           |
+| 1 RDS (low, <15 Go)    | Off-the-shelf application         | 0.5       | 0.8   | 0.40           |
+| 1 Opensearch (low)     | Off-the-shelf application         | 0.5       | 0.8   | 0.40           |
+| 1 Redis (low)          | Off-the-shelf application         | 0.5       | 0.8   | 0.40           |
+| 1 MySQL 5 SH (low)     | Off-the-shelf application         | 0.5       | 0.8   | 0.40           |
+| **Sous-total recette** |                                   |           |       | **1.84**       |
+
+#### Shared (SLA Bronze ×1.0)
+
+| Ressource                              | Item Type                  | Base | Coeff | MCO (j/h/mois) |
+|----------------------------------------|----------------------------|------|-------|----------------|
+| 3 EC2 (bastion, packages, déploiement) | Public Cloud Managed VM    | 0.1  | 0.8   | 0.24           |
+| **Sous-total shared**                  |                            |      |       | **0.24**       |
+
+#### MCO Summary
+
+| Environment              | MCO ajusté SLA |
+|--------------------------|----------------|
+| Production (Gold ×1.10)  | 4.73           |
+| Recette (Bronze ×1.0)    | 1.84           |
+| Shared (Bronze ×1.0)     | 0.24           |
+| **Total MCO déductive**  | **6.81**       |
+
+### Discount empirique
+
+| Étape                              | j/h/mois |
+|------------------------------------|----------|
+| MCO déductive                      | 6.81     |
+| × (1 − discount 40%)               | 4.09     |
+| **MCO finale**                     | **4.1**  |
 
 ### Gouvernance
 
 | Activité    | Fréquence   | Effort  | j/h/mois (précis) |
-| ----------- | ----------- | ------- | ----------------- |
+|-------------|-------------|---------|-------------------|
 | COPROD      | trimestriel | 0.5 j/h | 0.17              |
 | ROSE        | semestriel  | 0.5 j/h | 0.08              |
 | YAMAS (HDS) | semestriel  | 0.5 j/h | 0.08              |
 | **Total**   |             |         | **0.33 → 0.3**    |
 
+### Total quantité
+
+| Catégorie    | j/h/mois |
+|--------------|----------|
+| MCO finale   | 4.1      |
+| Gouvernance  | 0.3      |
+| Évolutions   | 0        |
+| **Total**    | **4.4**  |
+
 ### Prix
 
-| Ligne                                 | j/h/mois | Montant     |
-| ------------------------------------- | -------- | ----------- |
-| MCO                                   | 1.8      | 1 553€      |
-| Gouvernance                           | 0.3      | 259€        |
-| Immobilisation (Complète × Mutualisé) | —        | 1 000€      |
-| **Total mensuel**                     | **2.1**  | **2 812€**  |
-| **Total annuel**                      |          | **33 744€** |
-
-### Référence déductive (plafond)
-
-Pour mémoire, le modèle déductif pur donnait 7.23 j/h/mois (7 239€/mois). Le détail ressource par ressource est disponible dans l'historique de qualification.
+| Ligne                                 | j/h/mois | TJM    | Montant     |
+|---------------------------------------|----------|--------|-------------|
+| MCO finale                            | 4.1      | 863€   | 3 538€      |
+| Gouvernance                           | 0.3      | 863€   | 259€        |
+| **Sous-total**                        | **4.4**  |        | **3 797€**  |
+| Immobilisation (Complète × Mutualisé) | —        |        | 1 000€      |
+| **Total mensuel**                     |          |        | **4 797€**  |
+| **Total annuel**                      |          |        | **57 564€** |
 
 ---
 
@@ -155,3 +207,4 @@ Pour mémoire, le modèle déductif pur donnait 7.23 j/h/mois (7 239€/mois). L
 - **HDS applicable** — Audit YAMAS inclus. Périmètre HDS exact à confirmer.
 - **Engagement 1 an** — Pas de remise multi-annuelle.
 - **Évolutions** — Les 3 migrations potentielles 2026 (MySQL, Redis, Debian) non incluses. Si confirmées : ~20-30 j/h en temps passé (863€/jour).
+- **Méthodologie** — Le prix repose sur la MCO déductive (abaque `item × coeff × SLA`) avec discount empirique explicite de −40% justifié par la stabilité de l'infra (5 tickets/an, 1 incident, 0 problème récurrent). C'est la seule méthode du skill — pas de calcul parallèle de "calibration" avec multiplicateur.
