@@ -5,9 +5,9 @@ This is the exact structure to follow when generating `{client-name}/estimate.md
 The file has four parts:
 
 1. **Hypothèses de travail** — assumptions for missing info from the qualification
-2. **Calibration empirique** — discount justification (Step 3)
+2. **Cross-check empirique** — sanity comparison vs FTE / ticket signals (no adjustment, just flag)
 3. **Synthèse** — client-facing summary (init block + monthly grid + price table)
-4. **Annexes** — calculation detail (A: monthly, B: initialization, C: cross-check if FTE data)
+4. **Annexes** — calculation detail (A: monthly with bucket-by-bucket scaling, B: initialization)
 
 ## Template
 
@@ -34,7 +34,9 @@ The file has four parts:
 
 ---
 
-## Calibration empirique
+## Cross-check empirique
+
+> **Note :** ce bloc est un **sanity check**, pas un ajustement. La méthode déductive (abaque + scaling sublinéaire de `shared/item-types.md`) produit le chiffre final tel quel. Les signaux empiriques permettent de **flagger des anomalies** mais ne modifient pas le total.
 
 **Signaux empiriques observés (depuis qualification.md) :**
 
@@ -46,22 +48,18 @@ The file has four parts:
 | FTE empirique (si disponible) | {N} j/h/mois |
 | Stabilité observée | {commentaire qualitatif} |
 
-**Discount appliqué : {−X%} sur la MCO déductive**
+**Comparaison déductive vs empirique (si FTE disponible) :**
 
-**Justification :** {Cite la ligne de la table de discounts du Step 3 du skill qui correspond. Ex: "Pas de FTE communiqué ; tickets < 1/mois (5/an = 0.42/mois) sur 12 mois ; aucun problème récurrent → ligne 'infra ultra-stable' → fourchette −30% à −50%, retenu −X% (mid-range / borne basse / borne haute)."}
-
-**Ajustement MCO :**
-
-| | Déductive | Discount | Final |
+| | Déductive (calculée) | FTE × 20 | Delta % |
 |---|---|---|---|
-| MCO (toutes envs, SLA appliqué) | {X} | −{X%} | {X × (1−d)} |
-| Gouvernance | {Y} | (jamais discountée) | {Y} |
-| **Total mensuel j/h** | **{X+Y}** | | **{(X(1−d)+Y)}** |
+| Total j/h/mois | {X} | {Y} | {%} |
 
-> **Garde-fous :**
-> - Discount plafonné à −50% (au-delà : justification SA + revue stakeholder requise)
-> - Gouvernance jamais discountée (audits ROSE/YAMAS/LEAF + COPROD = engagement contractuel)
-> - SLA et immobilisation jamais discountés (déjà appliqués au niveau ressource ou plateforme)
+**Verdict :**
+- Delta < ±20% : ✅ déductive confirmée par l'empirique. Pas de flag.
+- Déductive > FTE par >20% : ⚠ client peut-être sous-staffé aujourd'hui ; ou inventaire inclut du non-MCO. À investiguer, pas à compenser.
+- FTE > Déductive par >20% : ⚠ inventaire incomplet ou complexité cachée. À investiguer, pas à compenser.
+
+> Le scaling sublinéaire de l'abaque (`multiplier(N) = min(N,3) + log10(max(N/3,1))`) intègre déjà le bénéfice automation/orchestration sur les ressources identiques. Aucun discount n'est appliqué après coup.
 
 ---
 
@@ -129,20 +127,18 @@ Plateforme construite par Theodo : **{Oui / Non}**
 
 {Repeat for each environment.}
 
-#### MCO Summary
+#### MCO bucket-by-bucket (avec scaling)
 
-| Environment   | MCO base (j/h/mois) | SLA Coeff | MCO ajusté SLA |
-| ------------- | ------------------- | --------- | -------------- |
-| {env}         | {days}              | {coeff}   | {adjusted}     |
-| **Total MCO déductive** |             |           | **{total}**    |
+| Bucket (item type, coeff) | N | base | mult(N) | coeff | MCO base bucket | Distribution par env (prorata count) | MCO après SLA |
+|---|---|---|---|---|---|---|---|
+| {ex. Public managed VM, 0.8} | {N} | {base} | {mult} | {coeff} | {base × mult × coeff} | {prod: x, recette: y, shared: z} | {x×SLA_prod + y×SLA_rec + z×SLA_sh} |
 
-### Discount empirique
+#### MCO total
 
-| Étape | j/h/mois |
+| | j/h/mois |
 |---|---|
-| MCO déductive | {X} |
-| × (1 − discount {d%}) | {X × (1−d)} |
-| **MCO finale** | **{final}** |
+| Sum buckets après SLA par env | {total} |
+| **Total MCO** | **{total}** |
 
 ### Gouvernance
 
