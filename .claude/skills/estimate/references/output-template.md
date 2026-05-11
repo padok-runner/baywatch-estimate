@@ -93,19 +93,9 @@ Plateforme construite par Theodo : **{Oui / Non}**
 | **Plages de service**   | {Standard / Étendue / Complète}                                                                                                                                                                        | {plage}                                                              | {plage}          | —                                                                                                                   |
 | **Dispositif**          | Ops : {X} j/mois, Lead Ops : {Y} j/mois, Delivery Manager : {Z} j/mois                                                                                                                                |                                                                      |                  |                                                                                                                     |
 
-#### Prix mensuel €HT
+#### Prix mensuel €HT — Forfait socle + carnet temps passé
 
-Présenter la configuration retenue. Si le client est éligible et intéressé par la Configuration B (voir `shared/pricing-rules.md`), montrer les deux côte à côte pour qu'il choisisse explicitement.
-
-**Configuration A — Forfait étendu (par défaut)**
-
-| Mode | Périmètre | j/h/mois | Montant €HT/mois |
-|------|-----------|----------|-------------------|
-| **Forfait** | MCO ({x} j/h) + Gouvernance ({y} j/h) + Contingence {z}% + Immobilisation | {x+y} | {amount}€ |
-| **Temps passé** | Évolutions | {e} | Sur consommation |
-| | **Total engagé** | **{total}** | **{total amount}€** |
-
-**Configuration B — Forfait socle + carnet** *(si applicable : infra stable, engagement ≥2 ans)*
+Configuration par défaut (engagement ≥2 ans). Voir `shared/pricing-rules.md` pour les cas particuliers (Forfait classique si <2 ans, Temps passé pur si PoC).
 
 | Mode | Périmètre | j/h/mois | Montant €HT/mois |
 |------|-----------|----------|-------------------|
@@ -114,9 +104,9 @@ Présenter la configuration retenue. Si le client est éligible et intéressé p
 | **Temps passé Évolutions** | À la demande | — | Sur consommation |
 | | **Mensuel socle seul** (0 j/h MCO consommé) | **{y}** | **{amount_socle}€** |
 | | **Mensuel espéré** ({avg conso} j/h MCO) | **{y + avg}** | **~{expected}€** |
-| | **Référence enveloppe déductive (= Conf. A)** | **{x+y}** | **{cap total}€** |
+| | **Référence enveloppe déductive (Forfait classique équivalent)** | **{x+y}** | **{cap total}€** |
 
-> Si Configuration B retenue : engagement contractuel ≥2 ans (remise -3% / -8% applicable). L'immobilisation et la gouvernance forment le socle protégeant la capacité réservée et la cadence contractuelle. La consommation MCO est facturée à la réalité, sans plancher ni plafond ; la référence déductive sert de jalon de dimensionnement et de pédagogie client.
+> Engagement contractuel ≥2 ans (remise -3% / -8% applicable). L'immobilisation et la gouvernance forment le socle protégeant la capacité réservée et la cadence contractuelle. La consommation MCO est facturée à la réalité, sans plancher ni plafond ; la référence déductive sert de jalon de dimensionnement et de pédagogie client.
 
 ### Notes on the synthesis table
 
@@ -124,7 +114,7 @@ Présenter la configuration retenue. Si le client est éligible et intéressé p
 - **Inventaire**: human-readable. Group by "Servers" (K8s clusters, VMs, hypervisors, managed DBs, networking) and "Applications" (off-the-shelf and custom). Include count, name, size.
 - **Services**: MCO per env column; governance + evolutions in "Transverse". Don't put the engagement model here — it's in the price table.
 - **Transverse column**: cross-cutting resources (org, IAM, audit trail) in inventory; governance + evolutions in services. No SLA/plage.
-- **Prix mensuel**: separate table below the grid. Always show two rows (forfait vs temps passé) to make committed vs consumed clear.
+- **Prix mensuel**: separate table below the grid. Three rows in the default model — Forfait socle (engagé) / Temps passé MCO (consommation) / Temps passé Évolutions (à la demande) — to make committed vs consumed clear.
 
 ---
 

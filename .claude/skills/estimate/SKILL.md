@@ -154,32 +154,31 @@ Note: SLA was already applied per env in Step 2. Don't apply it again here.
 
 From `shared/service-levels.md`, dispositif × plage horaire. If multiple plages, use the highest. For Étendue/Complète, also note the prix horaire HNO.
 
-### Step 9: Engagement model + scope configuration
+### Step 9: Engagement model
 
 Two billing modes (`shared/pricing-rules.md`):
 - **Forfait** : billed in full on the envelope.
-- **Temps passé** : billed on actual consumption, capped by the envelope.
+- **Temps passé** : billed on actual consumption.
 
-The **scope allocation** between the two modes is a configuration choice — present the relevant configurations in the output:
+**Configuration par défaut : Forfait socle + carnet temps passé** (engagement ≥2 ans requis) :
+- **Forfait socle** : Gouvernance + Audits + Immobilisation
+- **Temps passé** : MCO (toutes catégories) + Évolutions
+- Pas de plancher, pas de plafond. Le socle (immobilisation + gouvernance) et l'engagement multi-annuel forment la protection.
 
-- **Configuration A — Forfait étendu** (par défaut) : Forfait = MCO + Gouv + Immo ; Temps passé = Évolutions. Maximum predictability.
-- **Configuration B — Forfait socle + carnet** : Forfait = Gouv + Audits + Immo ; Temps passé = **toute** MCO + Évolutions. Lower entry price, variable bill. **Requires 2-year minimum + protections** (cf. `shared/pricing-rules.md`).
-- **Configuration C — Temps passé pur** : rarely used, skip unless explicitly requested.
+```
+Forfait socle      = Gouv × (1 + contingency) + Immobilisation
+Temps passé MCO    = conso_réelle × TJM blended
+Total mensuel      = Forfait socle + Temps passé MCO + Évolutions consommées
+```
 
-For Forfait, add contingency to MCO + Governance only (not evolutions):
+Contingence Forfait socle (sur Gouv uniquement, jamais sur évolutions) :
 - No uncertainty: 0% / Low: +10% / Medium: +20% / High: +30 to 40%
 
-```
-Configuration A price = (MCO + Governance) × (1 + contingency) + Evolutions + Immobilisation
-Configuration B price :
-  Forfait socle      = Gouv × (1 + contingency) + Immobilisation
-  Temps passé MCO    = conso_réelle × TJM   (pas de plancher, pas de plafond)
-  Total mensuel      = Forfait socle + Temps passé MCO + Évolutions consommées
-```
+L'enveloppe MCO déductive (calculée par `/estimate`) sert de référence de **dimensionnement** capacitaire et de pédagogie client (« voici ce que tu paierais en forfait classique »), mais n'est pas un plafond contractuel.
 
-L'enveloppe MCO déductive (calculée par `/estimate`) sert de référence de **dimensionnement** capacitaire et de pédagogie client (« voici ce que tu paierais en forfait classique »), mais n'est pas un plafond contractuel en Configuration B.
-
-**When to propose Configuration B**: stable infra (historical incidents <2/trimestre), price-sensitive client, 2-year+ engagement on the table. Otherwise default to A.
+**Cas particuliers** (à mentionner uniquement si pertinent, pas par défaut) :
+- **Forfait classique** (engagement <2 ans ou prédictibilité absolue exigée) : tout dans le forfait (MCO + Gouv + Immo), évolutions en temps passé. Repli si engagement multi-annuel impossible.
+- **Temps passé pur** : très rare, PoC / audit-only seulement.
 
 ### Step 10: Multi-year discounts & nearshore
 

@@ -69,9 +69,9 @@ Plateforme construite par Theodo : **Non**
 | **Niveaux de services** | Gold                                                                                                       | Bronze                                                                         | Bronze                                 | —                                     |
 | **Plages de service**   | Complète (24/7)                                                                                            | Standard                                                                       | Standard                               | —                                     |
 
-#### Prix mensuel €HT — Configuration B : Forfait socle + carnet temps passé
+#### Prix mensuel €HT — Forfait socle + carnet temps passé
 
-> Profil Carenity : 5 tickets / 12 mois, 1 incident / 12 mois, infra LAMP stable. Le forfait MCO classique fait payer une enveloppe de 4.5 j/h que l'historique ne justifie pas. Configuration B aligne **toute** la facturation MCO sur la consommation réelle. Le socle (gouvernance + immobilisation) couvre la cadence contractuelle, les audits HDS et la capacité 24/7.
+> Profil Carenity : 5 tickets / 12 mois, 1 incident / 12 mois, infra LAMP stable. Le forfait MCO classique ferait payer une enveloppe de 4.5 j/h que l'historique ne justifie pas. Le modèle proposé aligne **toute** la facturation MCO sur la consommation réelle. Le socle (gouvernance + immobilisation) couvre la cadence contractuelle, les audits HDS et la capacité 24/7.
 
 | Mode                       | Périmètre                                                                                                                 | j/h/mois  | Montant €HT/mois |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------- | ---------------- |
@@ -87,7 +87,7 @@ Plateforme construite par Theodo : **Non**
 - **Annuel socle seul** : 16 140€ HT *(uniquement socle, 0 j/h MCO consommé sur l'année)*
 - **Annuel espéré** : ~31 700€ HT *(basé sur l'historique : ~1.5 j/h MCO consommé/mois en moyenne)*
 
-> **Conditions Configuration B** : engagement contractuel ≥2 ans (remise -3% applicable, -8% si 3 ans). Le socle (immobilisation + gouvernance) protège le revenu sur les mois calmes ; la consommation MCO suit l'usage réel sans plancher ni plafond. Si la consommation dérive structurellement au-dessus de l'enveloppe déductive, revue contractuelle conjointe (avenant Forfait ou élargissement enveloppe).
+> **Conditions** : engagement contractuel ≥2 ans (remise -3% applicable, -8% si 3 ans). Le socle (immobilisation + gouvernance) protège le revenu sur les mois calmes ; la consommation MCO suit l'usage réel sans plancher ni plafond. Si la consommation dérive structurellement au-dessus de l'enveloppe déductive, revue contractuelle conjointe (avenant Forfait ou élargissement enveloppe).
 
 ---
 
@@ -134,7 +134,7 @@ Plateforme construite par Theodo : **Non**
 | Évolutions   | 0        |
 | **Total**    | **4.9**  |
 
-### Prix — Configuration B
+### Prix — Forfait socle + carnet temps passé
 
 | Ligne                                       | j/h/mois | TJM  | Montant         |
 |---------------------------------------------|----------|------|-----------------|
@@ -147,7 +147,7 @@ Plateforme construite par Theodo : **Non**
 
 **Annuel attendu** : socle seul **16 140€** | espérance **~31 700€**.
 
-> Base déductive `/estimate` (référence non plafonnée contractuellement) : MCO 4.5 j/h × 863€ + Gouv 0.4 j/h × 863€ + Immo 1 000€ = 5 229€/mois. Cette enveloppe sert de dimensionnement capacitaire et de point de comparaison avec un Forfait étendu classique. La Configuration B aligne la facturation MCO sur la consommation réelle.
+> Référence déductive `/estimate` (non plafonnée contractuellement) : MCO 4.5 j/h × 863€ + Gouv 0.4 j/h × 863€ + Immo 1 000€ = 5 229€/mois. Cette enveloppe sert de dimensionnement capacitaire et de point de comparaison avec un Forfait classique. Le modèle proposé aligne la facturation MCO sur la consommation réelle.
 
 ---
 
@@ -175,8 +175,8 @@ Plateforme construite par Theodo : **Non**
 ## Notes
 
 - **HDS applicable** — Audit YAMAS inclus dans le socle. Périmètre HDS exact à confirmer.
-- **Engagement requis** — **Configuration B exige un engagement ≥2 ans** (remise -3% applicable) ou ≥3 ans (-8%). Sans cet engagement, retour à un Forfait étendu classique à 5 229€/mois.
+- **Engagement requis** — Le modèle proposé exige un engagement contractuel **≥2 ans** (remise -3%) ou **≥3 ans** (-8%). Sans engagement multi-annuel, repli sur un Forfait classique à 5 229€/mois (cf. `shared/pricing-rules.md`).
 - **Évolutions** — Les 3 migrations potentielles 2026 (MySQL 8.4, Redis 8.4, Debian 13) non incluses. Si confirmées : ~20-30 j/h en temps passé (863€/jour).
-- **Pourquoi Configuration B pour Carenity** — Historique ultra-stable (5 tickets/12 mois, 1 incident/12 mois) ne justifie pas de payer une enveloppe MCO de 4.5 j/h chaque mois. La consommation réelle attendue est ~1.5 j/h/mois → ~31 700€/an au lieu de 62 748€/an. Si l'infra se déstabilise, la facturation suit la consommation réelle (la référence déductive 4.5 j/h/mois sert de jalon de comparaison ; au-delà d'une dérive structurelle, revue contractuelle conjointe).
+- **Pourquoi ce modèle pour Carenity** — Historique ultra-stable (5 tickets/12 mois, 1 incident/12 mois) ne justifie pas de payer une enveloppe MCO de 4.5 j/h chaque mois. La consommation réelle attendue est ~1.5 j/h/mois → ~31 700€/an au lieu de 62 748€/an. Si l'infra se déstabilise, la facturation suit la consommation réelle (la référence déductive 4.5 j/h/mois sert de jalon de comparaison ; au-delà d'une dérive structurelle, revue contractuelle conjointe).
 - **Méthodologie** — Le prix repose sur l'abaque déductive (`item × multiplier(N) × coeff × SLA`) avec scaling sublinéaire intégré pour les ressources identiques. Pas de discount empirique appliqué — le scaling capture déjà l'amortissement automation.
 - **Self-hosted vs managed** — Les MySQL 5 (self-hosted) sont valorisés à 0.6 j/h base (vs 0.3 pour le managed RDS), reflétant l'overhead de patching DB manuel et tuning. Le cumul VM substrate + app self-hosted est intentionnel (la VM couvre l'OS, l'app couvre le moteur DB).

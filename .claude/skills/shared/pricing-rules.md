@@ -29,30 +29,14 @@ Deux modes de facturation, à combiner selon la configuration de périmètre cho
   - Incertitude haute : +30 à 40%
 - **Le forfait n'est jamais appliqué aux évolutions** (par construction, hors-périmètre contingence).
 
-## Configurations de périmètre (quel scope dans quel mode ?)
-
-Le périmètre alloué à chaque mode est un **choix de configuration**, pas une règle fixe. Trois configurations courantes :
-
-### Configuration A — Forfait étendu (par défaut)
-
-- **Forfait** : MCO + Gouvernance + Immobilisation
-- **Temps passé** : Évolutions uniquement
-- **Profil client** : recherche la prédictibilité maximale du budget mensuel. Aucune incertitude sur le montant récurrent.
-
-### Configuration B — Forfait socle + carnet temps passé
+## Configuration par défaut : Forfait socle + carnet temps passé
 
 - **Forfait socle** : Gouvernance + Audits + Immobilisation. Couvre la cadence contractuelle (ceremonies, audits HDS/ROSE/LEAF) et la capacité réservée (24/7 si plage Étendue/Complète).
-- **Temps passé** : **MCO (toutes catégories : incidents, demandes, problèmes, changements, patching, monitoring)** + Évolutions. Le client paie ce qu'il consomme, plafonné par l'enveloppe MCO déductive de `/estimate`.
-- **Profil client** : infra stable, historique d'incidents faible, sensible au prix d'entrée. Permet un montant mensuel plancher significativement plus bas, avec montant réel proportionnel à la consommation.
+- **Temps passé** : **MCO (toutes catégories : incidents, demandes, problèmes, changements, patching, monitoring)** + Évolutions. Le client paie ce qu'il consomme.
+- **Profil client visé** : tout client avec engagement ≥2 ans. Particulièrement avantageux pour les infras stables ou compétitives sur le prix d'entrée.
 - **Réservée aux clients engagés ≥2 ans** (voir règles de protection ci-dessous).
 
-### Configuration C — Temps passé pur
-
-- **Forfait** : Immobilisation uniquement (capacité réservée 24/7 si plage Étendue/Complète).
-- **Temps passé** : tout le reste (MCO + Gouvernance + Évolutions).
-- **Profil client** : rare. La gouvernance et les audits HDS ont une cadence contractuelle qui s'accommode mal d'une facturation pure consommation. Réservée à des contextes très spécifiques (PoC, audit-only, etc.).
-
-## Règles de protection pour Configurations B et C
+### Règles de protection
 
 Le modèle repose sur la consommation pure côté MCO. La protection principale vient du **forfait socle** (immobilisation + gouvernance) et de l'**engagement multi-annuel**.
 
@@ -64,7 +48,21 @@ Le modèle repose sur la consommation pure côté MCO. La protection principale 
 
 > Pas de plancher mensuel ni de plafond contractuel sur la consommation MCO. Si le client consomme zéro un mois, il paie le socle. Si la consommation explose, elle est facturée intégralement — ce qui doit déclencher une revue avec le client (peut-être faut-il passer en avenant Forfait, ou élargir l'enveloppe d'évolutions).
 
-> Configuration A par défaut. Proposer Configuration B explicitement si (a) infra stable historiquement (<2 incidents/trimestre), (b) client en compétition sur le prix d'entrée, (c) engagement ≥2 ans acceptable.
+## Cas particulier : Forfait classique (engagement <2 ans)
+
+Si le client refuse l'engagement ≥2 ans ou exige une prédictibilité absolue du budget mensuel, repli sur un **Forfait classique** :
+
+- **Forfait** : MCO + Gouvernance + Immobilisation (= enveloppe déductive complète calculée par `/estimate`)
+- **Temps passé** : Évolutions uniquement
+- À traiter comme une exception ; la valeur compétitive du modèle se trouve dans la Configuration par défaut.
+
+## Cas particulier : Temps passé pur (rare)
+
+Pour des contextes très spécifiques (PoC, audit-only) où même la gouvernance ne peut être engagée :
+
+- **Forfait** : Immobilisation uniquement
+- **Temps passé** : tout le reste (MCO + Gouvernance + Évolutions)
+- Rare en pratique — la gouvernance et les audits HDS ont une cadence contractuelle qui s'accommode mal d'une facturation pure consommation.
 
 ## Remises multi-annuelles
 
