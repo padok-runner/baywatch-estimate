@@ -10,20 +10,63 @@
 
 ## Modes d'engagement
 
-### 1. Temps passé (par défaut)
+Deux modes de facturation, à combiner selon la configuration de périmètre choisie (voir section suivante).
+
+### 1. Temps passé
 
 - Enveloppe de jours-homme staffée et reportable sur le mois suivant uniquement (M+1).
+- **Facturation à la consommation réelle**, plafonnée par l'enveloppe.
 - Priorités dans l'enveloppe : incidents > problèmes > versions > changements mineurs.
 - S'adapte aux besoins du client, au budget et aux aléas.
 
 ### 2. Forfait
 
+- **Facturation engagée** : le client paie l'enveloppe en totalité, qu'il la consomme ou non.
 - Enveloppe + contingence pour risque :
   - Pas d'incertitude : +0%
   - Incertitude faible : +10%
   - Incertitude moyenne : +20%
   - Incertitude haute : +30 à 40%
-- **Le forfait n'est PAS sur les jours d'évolution** (uniquement MCO + gouvernance).
+- **Le forfait n'est jamais appliqué aux évolutions** (par construction, hors-périmètre contingence).
+
+## Configurations de périmètre (quel scope dans quel mode ?)
+
+Le périmètre alloué à chaque mode est un **choix de configuration**, pas une règle fixe. Trois configurations courantes :
+
+### Configuration A — Forfait étendu (par défaut)
+
+- **Forfait** : MCO + Gouvernance + Immobilisation
+- **Temps passé** : Évolutions uniquement
+- **Profil client** : recherche la prédictibilité maximale du budget mensuel. Aucune incertitude sur le montant récurrent.
+
+### Configuration B — Forfait socle + carnet temps passé
+
+- **Forfait socle** : Gouvernance + Audits + Immobilisation + **MCO non-discrétionnaire** (patching cadencé, monitoring drift review, capacity planning) ~0.3 j/h/mois
+- **Temps passé** : MCO discrétionnaire (incidents, demandes, problèmes, changements non-récurrents) + Évolutions
+- **Profil client** : infra stable, historique d'incidents faible, sensible au prix d'entrée. Permet un montant mensuel plancher significativement plus bas, avec montant réel proportionnel à la consommation.
+- **Réservée aux clients engagés ≥2 ans** (voir règles de protection ci-dessous).
+
+### Configuration C — Temps passé pur
+
+- **Forfait** : Immobilisation uniquement (capacité réservée 24/7 si plage Étendue/Complète).
+- **Temps passé** : tout le reste (MCO + Gouvernance + Évolutions).
+- **Profil client** : rare. La gouvernance et les audits HDS ont une cadence contractuelle qui s'accommode mal d'une facturation pure consommation. Réservée à des contextes très spécifiques (PoC, audit-only, etc.).
+
+## Règles de protection pour Configurations B et C
+
+La facturation à la consommation expose à un risque de sous-revenu sur les mois calmes. Les protections suivantes sont **obligatoires** :
+
+1. **Plancher mensuel MCO en temps passé** : 0.5 j/h/mois minimum facturé, même si consommation réelle inférieure. Couvre la baseline opérationnelle (patching applicatif, revue logs/alertes, capacity check).
+
+2. **MCO non-discrétionnaire dans le socle** : le patching mensuel, le monitoring drift review et le capacity planning sont **non-négociables** et restent en forfait socle (~0.3 j/h/mois). Le client ne peut pas les "défer" pour économiser.
+
+3. **Engagement contractuel ≥2 ans** : indispensable. La remise multi-annuelle (-3% / -8%) s'applique normalement.
+
+4. **Plafond MCO temps passé** : limité à l'enveloppe déductive (`MCO total` calculée par `/estimate`). Au-delà, retour à un avenant Forfait pour le surplus — évite la dérive non-maîtrisée côté client et côté équipe.
+
+5. **Enveloppe annuelle minimum** : 24 j/h/an de consommation MCO minimum (≈ 2 j/h/mois moyen). Sous-consommation = report M+3 maximum, pas de remboursement.
+
+> Configuration A par défaut. Proposer Configuration B explicitement si (a) infra stable historiquement (<2 incidents/trimestre), (b) client en compétition sur le prix d'entrée, (c) engagement ≥2 ans acceptable.
 
 ## Remises multi-annuelles
 

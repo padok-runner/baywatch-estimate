@@ -95,11 +95,28 @@ Plateforme construite par Theodo : **{Oui / Non}**
 
 #### Prix mensuel €HT
 
+Présenter la configuration retenue. Si le client est éligible et intéressé par la Configuration B (voir `shared/pricing-rules.md`), montrer les deux côte à côte pour qu'il choisisse explicitement.
+
+**Configuration A — Forfait étendu (par défaut)**
+
 | Mode | Périmètre | j/h/mois | Montant €HT/mois |
 |------|-----------|----------|-------------------|
 | **Forfait** | MCO ({x} j/h) + Gouvernance ({y} j/h) + Contingence {z}% + Immobilisation | {x+y} | {amount}€ |
-| **Temps passé** | Évolutions | {e} | {amount}€ |
-| | **Total** | **{total}** | **{total amount}€** |
+| **Temps passé** | Évolutions | {e} | Sur consommation |
+| | **Total engagé** | **{total}** | **{total amount}€** |
+
+**Configuration B — Forfait socle + carnet** *(si applicable : infra stable, engagement ≥2 ans)*
+
+| Mode | Périmètre | j/h/mois | Montant €HT/mois |
+|------|-----------|----------|-------------------|
+| **Forfait socle** | Gouvernance ({y}) + Audits + MCO non-disc. (~0.3 j/h, patching/monitoring/capacity) + Immobilisation | {socle} | {amount_socle}€ |
+| **Temps passé MCO** | MCO discrétionnaire (incidents/demandes/changements). Plancher 0.5 j/h, plafond {x - 0.3} j/h. | 0.5 – {x-0.3} | {amount_floor}€ – {amount_cap}€ |
+| **Temps passé Évolutions** | À la demande | — | Sur consommation |
+| | **Plancher mensuel** | **{0.7 + 0.5}** | **{floor total}€** |
+| | **Plafond mensuel (= Conf. A)** | **{x+y}** | **{cap total}€** |
+| | **Espérance ({avg conso} j/h MCO)** | — | **~{expected}€** |
+
+> Si Configuration B retenue : engagement contractuel ≥2 ans, enveloppe annuelle minimum 24 j/h MCO, report M+3 maximum sur sous-consommation.
 
 ### Notes on the synthesis table
 

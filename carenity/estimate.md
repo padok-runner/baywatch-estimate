@@ -69,15 +69,39 @@ Plateforme construite par Theodo : **Non**
 | **Niveaux de services** | Gold                                                                                                       | Bronze                                                                         | Bronze                                 | —                                     |
 | **Plages de service**   | Complète (24/7)                                                                                            | Standard                                                                       | Standard                               | —                                     |
 
-#### Prix mensuel €HT
+#### Prix mensuel €HT — deux configurations proposées
+
+Le périmètre alloué entre Forfait et Temps passé est un choix de configuration (voir `shared/pricing-rules.md`). Pour Carenity, deux options sont proposées :
+
+##### Configuration A — Forfait étendu (prédictibilité maximale)
 
 | Mode            | Périmètre                                                           | j/h/mois | Montant €HT/mois |
 | --------------- | ------------------------------------------------------------------- | -------- | ---------------- |
 | **Forfait**     | MCO + Gouvernance + Immobilisation                                  | 4.9      | 5 229€           |
 | **Temps passé** | Évolutions (à la demande, TJM Ops 750€ / Lead Ops 1 200€ / DM 850€) | —        | Sur consommation |
-|                 | **Total forfait**                                                   | **4.9**  | **5 229€**       |
+|                 | **Total engagé**                                                    | **4.9**  | **5 229€**       |
 
-**Total annuel : 62 748€ HT**
+**Total annuel engagé : 62 748€ HT**
+
+##### Configuration B — Forfait socle + carnet temps passé (recommandée vu le profil ultra-stable)
+
+> Profil Carenity : 5 tickets / 12 mois, 1 incident / 12 mois, infra LAMP stable. Le forfait MCO classique fait payer une enveloppe de 4.5 j/h que l'historique ne justifie pas. Configuration B aligne la facturation MCO sur la consommation réelle tout en gardant un socle protégeant gouvernance, audits HDS et capacité 24/7.
+
+| Mode                       | Périmètre                                                                                          | j/h/mois    | Montant €HT/mois  |
+| -------------------------- | -------------------------------------------------------------------------------------------------- | ----------- | ----------------- |
+| **Forfait socle**          | Gouvernance (0.4) + MCO non-discrétionnaire (0.3 — patching, monitoring drift, capacity) + Immo  | 0.7         | 1 604€            |
+| **Temps passé MCO**        | MCO discrétionnaire (incidents, demandes, problèmes, changements). Plancher 0.5 j/h, plafond 4.2 j/h | 0.5 – 4.2 | 432€ – 3 625€     |
+| **Temps passé Évolutions** | À la demande                                                                                       | —           | Sur consommation  |
+|                            | **Plancher mensuel**                                                                               | **1.2**     | **2 036€**        |
+|                            | **Plafond mensuel** (= Configuration A)                                                            | **4.9**     | **5 229€**        |
+|                            | **Espérance** (1.5 j/h MCO/mois — basé sur historique 5 tickets/12 mois)                          | **2.2**     | **~2 900€**       |
+
+**Estimations annuelles (Configuration B) :**
+- **Plancher annuel** : 24 432€ HT (uniquement socle + plancher MCO 0.5 j/h)
+- **Espérance annuelle** : ~34 800€ HT *(basé sur l'historique : ~1.5 j/h MCO consommé/mois)*
+- **Plafond annuel** : 62 748€ HT *(= Configuration A si saturation enveloppe MCO chaque mois)*
+
+> **Conditions Configuration B** : engagement contractuel ≥2 ans (remise -3%), enveloppe MCO annuelle minimum 24 j/h consommés, report M+3 maximum en cas de sous-consommation, retour automatique à un avenant Forfait au-delà du plafond enveloppe MCO discrétionnaire.
 
 ---
 
@@ -124,7 +148,7 @@ Plateforme construite par Theodo : **Non**
 | Évolutions   | 0        |
 | **Total**    | **4.9**  |
 
-### Prix
+### Prix — base déductive (Configuration A = plafond Configuration B)
 
 | Ligne                                 | j/h/mois | TJM    | Montant     |
 |---------------------------------------|----------|--------|-------------|
@@ -132,8 +156,32 @@ Plateforme construite par Theodo : **Non**
 | Gouvernance                           | 0.4      | 863€   | 345€        |
 | **Sous-total**                        | **4.9**  |        | **4 229€**  |
 | Immobilisation (Complète × Mutualisé) | —        |        | 1 000€      |
-| **Total mensuel**                     |          |        | **5 229€**  |
-| **Total annuel**                      |          |        | **62 748€** |
+| **Total mensuel (Config. A)**         |          |        | **5 229€**  |
+| **Total annuel (Config. A)**          |          |        | **62 748€** |
+
+### Décomposition pour Configuration B
+
+Le MCO total (4.5 j/h) est scindé en deux poches :
+
+| Poche MCO                       | j/h/mois | TJM  | Description                                                          | Montant      |
+|---------------------------------|----------|------|----------------------------------------------------------------------|--------------|
+| MCO non-discrétionnaire (socle) | 0.3      | 863€ | Patching mensuel cadencé, monitoring drift review, capacity planning | 259€         |
+| MCO discrétionnaire (carnet)    | 4.2      | 863€ | Incidents, demandes, problèmes, changements (plafond enveloppe)      | 0€ – 3 625€  |
+
+| Ligne (Configuration B)                  | j/h/mois | TJM  | Montant         |
+|------------------------------------------|----------|------|-----------------|
+| Gouvernance                              | 0.4      | 863€ | 345€            |
+| MCO non-discrétionnaire                  | 0.3      | 863€ | 259€            |
+| Immobilisation                           | —        | —    | 1 000€          |
+| **Forfait socle**                        | **0.7**  |      | **1 604€**      |
+| Plancher MCO temps passé                 | 0.5      | 863€ | 432€            |
+| **Total mensuel plancher (Config. B)**   | **1.2**  |      | **2 036€**      |
+| Espérance MCO consommé (historique)      | 1.5      | 863€ | 1 295€          |
+| **Total mensuel espéré (Config. B)**     | **2.2**  |      | **~2 900€**     |
+| Plafond MCO temps passé                  | 4.2      | 863€ | 3 625€          |
+| **Total mensuel plafond (Config. B)**    | **4.9**  |      | **5 229€**      |
+
+Annuel : plancher **24 432€** | espérance **~34 800€** | plafond **62 748€** (= Config. A).
 
 ---
 
@@ -161,7 +209,8 @@ Plateforme construite par Theodo : **Non**
 ## Notes
 
 - **HDS applicable** — Audit YAMAS inclus. Périmètre HDS exact à confirmer.
-- **Engagement 1 an** — Pas de remise multi-annuelle.
+- **Engagement 1 an** — Pas de remise multi-annuelle pour la Configuration A. **Configuration B exige un engagement ≥2 ans** (remise -3% applicable) ou ≥3 ans (-8%).
 - **Évolutions** — Les 3 migrations potentielles 2026 (MySQL 8.4, Redis 8.4, Debian 13) non incluses. Si confirmées : ~20-30 j/h en temps passé (863€/jour).
+- **Configurations A vs B** — Configuration B recommandée pour Carenity vu l'historique ultra-stable (5 tickets/12 mois). Configuration A reste préférable si le client privilégie la prédictibilité absolue du budget mensuel. Différence attendue : ~28 000€/an d'économie sur le mensuel récurrent en Configuration B, au prix d'un montant variable.
 - **Méthodologie** — Le prix repose sur l'abaque déductive (`item × multiplier(N) × coeff × SLA`) avec scaling sublinéaire intégré pour les ressources identiques. Pas de discount empirique appliqué — le scaling capture déjà l'amortissement automation.
 - **Self-hosted vs managed** — Les MySQL 5 (self-hosted) sont valorisés à 0.6 j/h base (vs 0.3 pour le managed RDS), reflétant l'overhead de patching DB manuel et tuning. Le cumul VM substrate + app self-hosted est intentionnel (la VM couvre l'OS, l'app couvre le moteur DB).

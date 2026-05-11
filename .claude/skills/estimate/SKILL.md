@@ -154,19 +154,30 @@ Note: SLA was already applied per env in Step 2. Don't apply it again here.
 
 From `shared/service-levels.md`, dispositif × plage horaire. If multiple plages, use the highest. For Étendue/Complète, also note the prix horaire HNO.
 
-### Step 9: Engagement model
+### Step 9: Engagement model + scope configuration
 
-**Temps passé (default):** Price = MCO + Governance + Evolutions + Immobilisation.
+Two billing modes (`shared/pricing-rules.md`):
+- **Forfait** : billed in full on the envelope.
+- **Temps passé** : billed on actual consumption, capped by the envelope.
 
-**Forfait:** add contingency to MCO + Governance only (not evolutions):
-- No uncertainty: 0%
-- Low: +10%
-- Medium: +20%
-- High: +30 to 40%
+The **scope allocation** between the two modes is a configuration choice — present the relevant configurations in the output:
+
+- **Configuration A — Forfait étendu** (par défaut) : Forfait = MCO + Gouv + Immo ; Temps passé = Évolutions. Maximum predictability.
+- **Configuration B — Forfait socle + carnet** : Forfait = Gouv + Audits + Immo + MCO non-discrétionnaire (~0.3 j/h, patching cadencé + monitoring drift + capacity planning) ; Temps passé = MCO discrétionnaire + Évolutions. Lower entry price, variable bill. **Requires 2-year minimum + protections** (cf. `shared/pricing-rules.md`).
+- **Configuration C — Temps passé pur** : rarely used, skip unless explicitly requested.
+
+For Forfait, add contingency to MCO + Governance only (not evolutions):
+- No uncertainty: 0% / Low: +10% / Medium: +20% / High: +30 to 40%
 
 ```
-Forfait price = (MCO + Governance) × (1 + contingency) + Evolutions + Immobilisation
+Configuration A price = (MCO + Governance) × (1 + contingency) + Evolutions + Immobilisation
+Configuration B price :
+  Forfait socle      = (Gouv + Audits + MCO_non_disc) × (1 + contingency) + Immobilisation
+  Temps passé MCO    = max(0.5 j/h × TJM, conso_réelle × TJM)  jusqu'à plafond enveloppe MCO_disc
+  Total mensuel      = Forfait socle + Temps passé MCO + Évolutions consommées
 ```
+
+**When to propose Configuration B**: stable infra (historical incidents <2/trimestre), price-sensitive client, 2-year+ engagement on the table. Otherwise default to A.
 
 ### Step 10: Multi-year discounts & nearshore
 
