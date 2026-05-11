@@ -71,23 +71,23 @@ Plateforme construite par Theodo : **Non**
 
 #### Prix mensuel €HT — Configuration B : Forfait socle + carnet temps passé
 
-> Profil Carenity : 5 tickets / 12 mois, 1 incident / 12 mois, infra LAMP stable. Le forfait MCO classique fait payer une enveloppe de 4.5 j/h que l'historique ne justifie pas. Configuration B aligne **toute** la facturation MCO sur la consommation réelle, tout en gardant un socle protégeant gouvernance, audits HDS et capacité 24/7 (immobilisation).
+> Profil Carenity : 5 tickets / 12 mois, 1 incident / 12 mois, infra LAMP stable. Le forfait MCO classique fait payer une enveloppe de 4.5 j/h que l'historique ne justifie pas. Configuration B aligne **toute** la facturation MCO sur la consommation réelle. Le socle (gouvernance + immobilisation) couvre la cadence contractuelle, les audits HDS et la capacité 24/7.
 
 | Mode                       | Périmètre                                                                                                                 | j/h/mois  | Montant €HT/mois |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------- | ---------------- |
 | **Forfait socle**          | Gouvernance (0.4 — COPROD + ROSE + YAMAS + LEAF) + Immobilisation (Complète × Mutualisé)                                  | 0.4       | 1 345€           |
-| **Temps passé MCO**        | MCO (toutes catégories : incidents, demandes, problèmes, changements, patching, monitoring). Plancher 0.5 j/h, plafond 4.5 j/h (enveloppe déductive). | 0.5 – 4.5 | 432€ – 3 884€    |
+| **Temps passé MCO**        | MCO (toutes catégories : incidents, demandes, problèmes, changements, patching, monitoring). Facturé à la consommation réelle (TJM blended 863€). | sur conso | Sur consommation |
 | **Temps passé Évolutions** | À la demande (TJM Ops 750€ / Lead Ops 1 200€ / DM 850€)                                                                   | —         | Sur consommation |
-|                            | **Plancher mensuel**                                                                                                      | **0.9**   | **1 777€**       |
-|                            | **Espérance** (1.5 j/h MCO/mois — basé sur historique 5 tickets/12 mois)                                                  | **1.9**   | **~2 640€**      |
-|                            | **Plafond mensuel** (saturation enveloppe MCO)                                                                            | **4.9**   | **5 229€**       |
+|                            | **Mensuel socle seul** (0 j/h MCO consommé)                                                                               | **0.4**   | **1 345€**       |
+|                            | **Mensuel espéré** (1.5 j/h MCO/mois — historique 5 tickets/12 mois)                                                      | **1.9**   | **~2 640€**      |
 
-**Estimations annuelles :**
-- **Plancher annuel** : 21 324€ HT *(uniquement socle + plancher MCO 0.5 j/h chaque mois)*
-- **Espérance annuelle** : ~31 700€ HT *(basé sur l'historique : ~1.5 j/h MCO consommé/mois en moyenne)*
-- **Plafond annuel** : 62 748€ HT *(saturation enveloppe MCO chaque mois — équivalent à un forfait étendu classique)*
+**Référence enveloppe déductive (pour info — non plafonnée contractuellement) : 4.5 j/h MCO/mois → 5 229€/mois → 62 748€/an, équivalent à un Forfait étendu classique.**
 
-> **Conditions Configuration B** : engagement contractuel ≥2 ans (remise -3% applicable, -8% si 3 ans), enveloppe MCO annuelle minimum 24 j/h consommés, report M+3 maximum en cas de sous-consommation, retour automatique à un avenant Forfait au-delà du plafond enveloppe MCO.
+**Estimations annuelles attendues :**
+- **Annuel socle seul** : 16 140€ HT *(uniquement socle, 0 j/h MCO consommé sur l'année)*
+- **Annuel espéré** : ~31 700€ HT *(basé sur l'historique : ~1.5 j/h MCO consommé/mois en moyenne)*
+
+> **Conditions Configuration B** : engagement contractuel ≥2 ans (remise -3% applicable, -8% si 3 ans). Le socle (immobilisation + gouvernance) protège le revenu sur les mois calmes ; la consommation MCO suit l'usage réel sans plancher ni plafond. Si la consommation dérive structurellement au-dessus de l'enveloppe déductive, revue contractuelle conjointe (avenant Forfait ou élargissement enveloppe).
 
 ---
 
@@ -141,16 +141,13 @@ Plateforme construite par Theodo : **Non**
 | Gouvernance (COPROD + ROSE + YAMAS + LEAF)  | 0.4      | 863€ | 345€            |
 | Immobilisation (Complète × Mutualisé)       | —        | —    | 1 000€          |
 | **Forfait socle**                           | **0.4**  |      | **1 345€**      |
-| Plancher MCO temps passé (0.5 j/h facturé)  | 0.5      | 863€ | 432€            |
-| **Total mensuel plancher**                  | **0.9**  |      | **1 777€**      |
-| Espérance MCO consommé (1.5 j/h, historique 5 tickets/12 mois) | 1.5 | 863€ | 1 295€ |
-| **Total mensuel espéré**                    | **1.9**  |      | **~2 640€**     |
-| Plafond MCO temps passé (saturation enveloppe 4.5 j/h) | 4.5 | 863€ | 3 884€ |
-| **Total mensuel plafond**                   | **4.9**  |      | **5 229€**      |
+| MCO consommé (facturé à la réalité, TJM blended 863€) | sur conso | 863€ | Sur consommation |
+| **Total mensuel — socle seul** (0 j/h consommé) | **0.4** |     | **1 345€**      |
+| **Total mensuel — espérance** (1.5 j/h consommé, historique 5 tickets/12 mois) | 1.9 |  | **~2 640€**     |
 
-**Annuel** : plancher **21 324€** | espérance **~31 700€** | plafond **62 748€**.
+**Annuel attendu** : socle seul **16 140€** | espérance **~31 700€**.
 
-> Base déductive `/estimate` (= plafond Configuration B) : MCO 4.5 j/h × 863€ + Gouv 0.4 j/h × 863€ + Immo 1 000€ = 5 229€/mois. Configuration B aligne la facturation MCO sur la consommation réelle plutôt que sur l'enveloppe complète.
+> Base déductive `/estimate` (référence non plafonnée contractuellement) : MCO 4.5 j/h × 863€ + Gouv 0.4 j/h × 863€ + Immo 1 000€ = 5 229€/mois. Cette enveloppe sert de dimensionnement capacitaire et de point de comparaison avec un Forfait étendu classique. La Configuration B aligne la facturation MCO sur la consommation réelle.
 
 ---
 
@@ -180,6 +177,6 @@ Plateforme construite par Theodo : **Non**
 - **HDS applicable** — Audit YAMAS inclus dans le socle. Périmètre HDS exact à confirmer.
 - **Engagement requis** — **Configuration B exige un engagement ≥2 ans** (remise -3% applicable) ou ≥3 ans (-8%). Sans cet engagement, retour à un Forfait étendu classique à 5 229€/mois.
 - **Évolutions** — Les 3 migrations potentielles 2026 (MySQL 8.4, Redis 8.4, Debian 13) non incluses. Si confirmées : ~20-30 j/h en temps passé (863€/jour).
-- **Pourquoi Configuration B pour Carenity** — Historique ultra-stable (5 tickets/12 mois, 1 incident/12 mois) ne justifie pas de payer une enveloppe MCO de 4.5 j/h chaque mois. La consommation réelle attendue est ~1.5 j/h/mois → ~31 700€/an au lieu de 62 748€/an. Si l'infra se déstabilise, la facturation suit la consommation (jusqu'au plafond 5 229€/mois qui équivaut au forfait classique).
+- **Pourquoi Configuration B pour Carenity** — Historique ultra-stable (5 tickets/12 mois, 1 incident/12 mois) ne justifie pas de payer une enveloppe MCO de 4.5 j/h chaque mois. La consommation réelle attendue est ~1.5 j/h/mois → ~31 700€/an au lieu de 62 748€/an. Si l'infra se déstabilise, la facturation suit la consommation réelle (la référence déductive 4.5 j/h/mois sert de jalon de comparaison ; au-delà d'une dérive structurelle, revue contractuelle conjointe).
 - **Méthodologie** — Le prix repose sur l'abaque déductive (`item × multiplier(N) × coeff × SLA`) avec scaling sublinéaire intégré pour les ressources identiques. Pas de discount empirique appliqué — le scaling capture déjà l'amortissement automation.
 - **Self-hosted vs managed** — Les MySQL 5 (self-hosted) sont valorisés à 0.6 j/h base (vs 0.3 pour le managed RDS), reflétant l'overhead de patching DB manuel et tuning. Le cumul VM substrate + app self-hosted est intentionnel (la VM couvre l'OS, l'app couvre le moteur DB).

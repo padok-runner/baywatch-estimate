@@ -54,15 +54,15 @@ Le périmètre alloué à chaque mode est un **choix de configuration**, pas une
 
 ## Règles de protection pour Configurations B et C
 
-La facturation à la consommation expose à un risque de sous-revenu sur les mois calmes. Les protections suivantes sont **obligatoires** :
+Le modèle repose sur la consommation pure côté MCO. La protection principale vient du **forfait socle** (immobilisation + gouvernance) et de l'**engagement multi-annuel**.
 
-1. **Plancher mensuel MCO en temps passé** : 0.5 j/h/mois minimum facturé, même si consommation réelle inférieure. Protège le revenu sur les mois calmes (la capacité reste réservée).
+1. **Engagement contractuel ≥2 ans** : indispensable. La remise multi-annuelle (-3% pour 2 ans, -8% pour 3+ ans) s'applique normalement.
 
-2. **Engagement contractuel ≥2 ans** : indispensable. La remise multi-annuelle (-3% / -8%) s'applique normalement.
+2. **Immobilisation comme protection capacitaire** : l'immobilisation mensuelle couvre la capacité réservée (24/7 si plage Étendue/Complète, slot équipe en mutualisé). C'est elle qui protège le revenu sur les mois calmes — pas un plancher artificiel sur le MCO.
 
-3. **Plafond MCO temps passé** : limité à l'enveloppe déductive (`MCO total` calculée par `/estimate`). Au-delà, retour à un avenant Forfait pour le surplus — évite la dérive non-maîtrisée côté client et côté équipe.
+3. **TJM facturé à la consommation** : MCO temps passé facturé au TJM blended (cf. `daily-rates.md`) ou au TJM par rôle pour les évolutions, selon ce qui est convenu contractuellement.
 
-4. **Enveloppe annuelle minimum** : 24 j/h/an de consommation MCO minimum (≈ 2 j/h/mois moyen). Sous-consommation = report M+3 maximum, pas de remboursement.
+> Pas de plancher mensuel ni de plafond contractuel sur la consommation MCO. Si le client consomme zéro un mois, il paie le socle. Si la consommation explose, elle est facturée intégralement — ce qui doit déclencher une revue avec le client (peut-être faut-il passer en avenant Forfait, ou élargir l'enveloppe d'évolutions).
 
 > Configuration A par défaut. Proposer Configuration B explicitement si (a) infra stable historiquement (<2 incidents/trimestre), (b) client en compétition sur le prix d'entrée, (c) engagement ≥2 ans acceptable.
 

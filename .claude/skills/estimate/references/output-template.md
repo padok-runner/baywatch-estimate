@@ -110,13 +110,13 @@ Présenter la configuration retenue. Si le client est éligible et intéressé p
 | Mode | Périmètre | j/h/mois | Montant €HT/mois |
 |------|-----------|----------|-------------------|
 | **Forfait socle** | Gouvernance ({y}) + Audits + Immobilisation | {y} | {amount_socle}€ |
-| **Temps passé MCO** | MCO (toutes catégories : incidents, demandes, problèmes, changements, patching, monitoring). Plancher 0.5 j/h, plafond {x} j/h (enveloppe déductive). | 0.5 – {x} | {amount_floor}€ – {amount_cap}€ |
+| **Temps passé MCO** | MCO (toutes catégories : incidents, demandes, problèmes, changements, patching, monitoring). Facturé à la consommation réelle. | sur conso | Sur consommation |
 | **Temps passé Évolutions** | À la demande | — | Sur consommation |
-| | **Plancher mensuel** | **{y + 0.5}** | **{floor total}€** |
-| | **Plafond mensuel (= Conf. A)** | **{x+y}** | **{cap total}€** |
-| | **Espérance ({avg conso} j/h MCO)** | — | **~{expected}€** |
+| | **Mensuel socle seul** (0 j/h MCO consommé) | **{y}** | **{amount_socle}€** |
+| | **Mensuel espéré** ({avg conso} j/h MCO) | **{y + avg}** | **~{expected}€** |
+| | **Référence enveloppe déductive (= Conf. A)** | **{x+y}** | **{cap total}€** |
 
-> Si Configuration B retenue : engagement contractuel ≥2 ans, enveloppe annuelle minimum 24 j/h MCO, report M+3 maximum sur sous-consommation.
+> Si Configuration B retenue : engagement contractuel ≥2 ans (remise -3% / -8% applicable). L'immobilisation et la gouvernance forment le socle protégeant la capacité réservée et la cadence contractuelle. La consommation MCO est facturée à la réalité, sans plancher ni plafond ; la référence déductive sert de jalon de dimensionnement et de pédagogie client.
 
 ### Notes on the synthesis table
 

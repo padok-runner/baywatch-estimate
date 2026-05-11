@@ -173,9 +173,11 @@ For Forfait, add contingency to MCO + Governance only (not evolutions):
 Configuration A price = (MCO + Governance) × (1 + contingency) + Evolutions + Immobilisation
 Configuration B price :
   Forfait socle      = Gouv × (1 + contingency) + Immobilisation
-  Temps passé MCO    = max(0.5 j/h × TJM, conso_réelle × TJM)  jusqu'à plafond enveloppe MCO total
+  Temps passé MCO    = conso_réelle × TJM   (pas de plancher, pas de plafond)
   Total mensuel      = Forfait socle + Temps passé MCO + Évolutions consommées
 ```
+
+L'enveloppe MCO déductive (calculée par `/estimate`) sert de référence de **dimensionnement** capacitaire et de pédagogie client (« voici ce que tu paierais en forfait classique »), mais n'est pas un plafond contractuel en Configuration B.
 
 **When to propose Configuration B**: stable infra (historical incidents <2/trimestre), price-sensitive client, 2-year+ engagement on the table. Otherwise default to A.
 
