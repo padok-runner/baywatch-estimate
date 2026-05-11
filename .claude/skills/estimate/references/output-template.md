@@ -59,7 +59,7 @@ The file has four parts:
 - Déductive > FTE par >20% : ⚠ client peut-être sous-staffé aujourd'hui ; ou inventaire inclut du non-MCO. À investiguer, pas à compenser.
 - FTE > Déductive par >20% : ⚠ inventaire incomplet ou complexité cachée. À investiguer, pas à compenser.
 
-> Le scaling sublinéaire de l'abaque (`multiplier(N) = min(N,3) + log10(max(N/3,1))`) intègre déjà le bénéfice automation/orchestration sur les ressources identiques. Aucun discount n'est appliqué après coup.
+> Le scaling sublinéaire de l'abaque (`multiplier(N) = min(N,3) + sqrt(max(N/3,1)) - 1`) intègre déjà le bénéfice automation/orchestration sur les ressources identiques, sans aplatir abusivement comme le ferait du log10. Aucun discount n'est appliqué après coup.
 
 ---
 

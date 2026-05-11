@@ -28,7 +28,7 @@ For the output structure, read `references/output-template.md`.
 
 Tous les j/h/mois sont exprimés au **dixième de jour** près (ex. 0.4, 1.2, 2.1). N'arrondissez jamais au demi-jour ou au jour entier.
 
-- Calculs intermédiaires : 2 décimales (ex. `multiplier(11) = 3.564`).
+- Calculs intermédiaires : 2 décimales (ex. `multiplier(11) = 3.915`).
 - Tableaux de synthèse : 1 décimale.
 - Total final : somme précise des composantes, arrondie une seule fois au dixième.
 
@@ -39,7 +39,7 @@ The price is built from one rigorous calculation. There is no parallel heuristic
 ```
 For each (item type, coefficient) bucket :
   MCO_bucket = base_rate × multiplier(N) × coefficient
-  where multiplier(N) = min(N, 3) + log10(max(N/3, 1))
+  where multiplier(N) = min(N, 3) + sqrt(max(N/3, 1)) - 1
 
 Distribute MCO_bucket across envs prorata of count, apply SLA per env.
 Sum across all buckets and envs.

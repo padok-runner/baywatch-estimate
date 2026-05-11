@@ -34,7 +34,7 @@
 | FTE empirique | Non communiqué |
 | Stabilité observée | Très haute (1 incident en 12 mois, infra LAMP simple, pas de pattern récurrent) |
 
-**Verdict :** infra ultra-stable, mais le scaling sublinéaire de l'abaque (`multiplier(N) = min(N,3) + log10(max(N/3,1))`) intègre déjà l'amortissement de l'orchestration sur les ressources identiques. Pas de discount appliqué.
+**Verdict :** infra ultra-stable, mais le scaling sublinéaire de l'abaque (`multiplier(N) = min(N,3) + sqrt(max(N/3,1)) - 1`, racine carrée piecewise) intègre déjà l'amortissement de l'orchestration sur les ressources identiques sans aplatir abusivement comme le ferait du log10. Pas de discount appliqué.
 
 Pas de FTE communiqué → pas de cross-check quantitatif possible. Si le client peut fournir une répartition FTE, on pourra valider que `MCO_déductive ≈ FTE × 20`.
 
@@ -65,7 +65,7 @@ Plateforme construite par Theodo : **Non**
 | ----------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------- | ------------------------------------- |
 | **Nom des envs**        | prod                                                                                                       | recette                                                                        | shared                                 | —                                     |
 | **Inventaire**          | 5 EC2, 2 RDS MySQL 8, 1 MySQL 5 self-hosted, 1 Opensearch, 1 Redis, 8 apps custom                          | 3 EC2, 1 RDS, 1 Opensearch, 1 Redis, 1 MySQL 5 self-hosted                     | 3 EC2 (bastion, packages, déploiement) | Organisation AWS, Terraform IaC       |
-| **Services**            | Gestion des incidents, demandes, problèmes, changements de version, continuité, surveillance et astreintes | Gestion des incidents, demandes, problèmes, changements de version, continuité | Gestion des incidents, continuité      | COPROD trimestriel, Audits ROSE/YAMAS |
+| **Services**            | Gestion des incidents, demandes, problèmes, changements de version, continuité, surveillance et astreintes | Gestion des incidents, demandes, problèmes, changements de version, continuité | Gestion des incidents, continuité      | COPROD trimestriel, Audits ROSE/YAMAS/LEAF |
 | **Niveaux de services** | Gold                                                                                                       | Bronze                                                                         | Bronze                                 | —                                     |
 | **Plages de service**   | Complète (24/7)                                                                                            | Standard                                                                       | Standard                               | —                                     |
 
@@ -73,11 +73,11 @@ Plateforme construite par Theodo : **Non**
 
 | Mode            | Périmètre                                                           | j/h/mois | Montant €HT/mois |
 | --------------- | ------------------------------------------------------------------- | -------- | ---------------- |
-| **Forfait**     | MCO + Gouvernance + Immobilisation                                  | 4.8      | 5 142€           |
+| **Forfait**     | MCO + Gouvernance + Immobilisation                                  | 4.9      | 5 229€           |
 | **Temps passé** | Évolutions (à la demande, TJM Ops 750€ / Lead Ops 1 200€ / DM 850€) | —        | Sur consommation |
-|                 | **Total forfait**                                                   | **4.8**  | **5 142€**       |
+|                 | **Total forfait**                                                   | **4.9**  | **5 229€**       |
 
-**Total annuel : 61 704€ HT**
+**Total annuel : 62 748€ HT**
 
 ---
 
@@ -85,24 +85,24 @@ Plateforme construite par Theodo : **Non**
 
 ### MCO bucket-by-bucket (avec scaling sublinéaire)
 
-`multiplier(N) = min(N, 3) + log10(max(N/3, 1))`
+`multiplier(N) = min(N, 3) + sqrt(max(N/3, 1)) - 1`
 
 | Bucket (item type, coeff) | N | base | mult(N) | coeff | MCO base | Distribution par env (prorata count) | MCO après SLA |
 |---|---|---|---|---|---|---|---|
-| Public managed VM, 0.8 | 11 (5 prod + 3 rec + 3 sh) | 0.1 | 3.564 | 0.8 | 0.285 | prod 0.130 / rec 0.078 / sh 0.078 | 0.143 + 0.078 + 0.078 = **0.298** |
+| Public managed VM, 0.8 | 11 (5 prod + 3 rec + 3 sh) | 0.1 | 3.915 | 0.8 | 0.313 | prod 0.142 / rec 0.085 / sh 0.085 | 0.157 + 0.085 + 0.085 = **0.327** |
 | Managed off-the-shelf, 1.0 | 3 (2 RDS prod + 1 OS prod) | 0.3 | 3.000 | 1.0 | 0.900 | prod 0.900 | 0.900 × 1.10 = **0.990** |
-| Managed off-the-shelf, 0.8 | 4 (1 Redis prod + 1 RDS rec + 1 OS rec + 1 Redis rec) | 0.3 | 3.125 | 0.8 | 0.750 | prod 0.188 / rec 0.563 | 0.206 + 0.563 = **0.769** |
+| Managed off-the-shelf, 0.8 | 4 (1 Redis prod + 1 RDS rec + 1 OS rec + 1 Redis rec) | 0.3 | 3.155 | 0.8 | 0.757 | prod 0.189 / rec 0.568 | 0.208 + 0.568 = **0.776** |
 | Self-hosted off-the-shelf, 1.0 | 1 (MySQL 5 prod) | 0.6 | 1.000 | 1.0 | 0.600 | prod 0.600 | 0.600 × 1.10 = **0.660** |
 | Self-hosted off-the-shelf, 0.8 | 1 (MySQL 5 recette) | 0.6 | 1.000 | 0.8 | 0.480 | rec 0.480 | 0.480 × 1.0 = **0.480** |
 | Custom application, 1.0 | 1 (MPA Legacy) | 0.25 | 1.000 | 1.0 | 0.250 | prod 0.250 | 0.250 × 1.10 = **0.275** |
-| Custom application, 0.8 | 5 (3 MPA CI + 2 SPA) | 0.25 | 3.222 | 0.8 | 0.644 | prod 0.644 | 0.644 × 1.10 = **0.708** |
+| Custom application, 0.8 | 5 (3 MPA CI + 2 SPA) | 0.25 | 3.291 | 0.8 | 0.658 | prod 0.658 | 0.658 × 1.10 = **0.724** |
 | Custom application, 0.5 | 2 (Jobqueues + SSO) | 0.25 | 2.000 | 0.5 | 0.250 | prod 0.250 | 0.250 × 1.10 = **0.275** |
 
 ### MCO summary
 
 | | j/h/mois |
 |---|---|
-| Sum buckets après SLA | 4.455 |
+| Sum buckets après SLA | 4.507 |
 | **Total MCO (arrondi tenth)** | **4.5** |
 
 ### Gouvernance
@@ -112,27 +112,28 @@ Plateforme construite par Theodo : **Non**
 | COPROD      | trimestriel | 0.5 j/h | 0.17              |
 | ROSE        | semestriel  | 0.5 j/h | 0.08              |
 | YAMAS (HDS) | semestriel  | 0.5 j/h | 0.08              |
-| **Total**   |             |         | **0.33 → 0.3**    |
+| LEAF (FinOps / Green IT) | semestriel | 0.5 j/h | 0.08   |
+| **Total**   |             |         | **0.42 → 0.4**    |
 
 ### Total quantité
 
 | Catégorie    | j/h/mois |
 |--------------|----------|
 | MCO          | 4.5      |
-| Gouvernance  | 0.3      |
+| Gouvernance  | 0.4      |
 | Évolutions   | 0        |
-| **Total**    | **4.8**  |
+| **Total**    | **4.9**  |
 
 ### Prix
 
 | Ligne                                 | j/h/mois | TJM    | Montant     |
 |---------------------------------------|----------|--------|-------------|
 | MCO                                   | 4.5      | 863€   | 3 884€      |
-| Gouvernance                           | 0.3      | 863€   | 259€        |
-| **Sous-total**                        | **4.8**  |        | **4 142€**  |
+| Gouvernance                           | 0.4      | 863€   | 345€        |
+| **Sous-total**                        | **4.9**  |        | **4 229€**  |
 | Immobilisation (Complète × Mutualisé) | —        |        | 1 000€      |
-| **Total mensuel**                     |          |        | **5 142€**  |
-| **Total annuel**                      |          |        | **61 704€** |
+| **Total mensuel**                     |          |        | **5 229€**  |
+| **Total annuel**                      |          |        | **62 748€** |
 
 ---
 

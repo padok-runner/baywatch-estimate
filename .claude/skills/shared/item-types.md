@@ -11,10 +11,14 @@ Les deux se cumulent. Une MySQL self-hosted sur EC2 = 1 ligne substrate (la VM) 
 
 ## Scaling sublinéaire
 
-Quand un client a N ressources du **même type** et **même coefficient taille/complexité** (ex. 11 EC2 Debian medium), l'effort ne scale pas linéairement — patching, monitoring, backup s'orchestrent. Formule :
+Quand un client a N ressources du **même type** et **même coefficient taille/complexité** (ex. 11 EC2 Debian medium), l'effort ne scale pas linéairement — patching, monitoring, backup s'orchestrent. Mais l'amortissement n'est pas non plus logarithmique : 1000 VMs génèrent plus d'incidents, de drift et de coordination que 10, même avec automation. Formule (racine carrée piecewise, dans l'esprit Erlang C / Universal Scalability Law) :
 
 ```
-multiplier(N) = min(N, 3) + log10(max(N/3, 1))
+multiplier(N) = min(N, 3) + sqrt(max(N/3, 1)) - 1
+
+Équivalent piecewise :
+  multiplier(N) = N                  pour N ≤ 3
+                = 2 + sqrt(N/3)      pour N > 3
 ```
 
 | N | multiplier | Lecture |
@@ -22,13 +26,13 @@ multiplier(N) = min(N, 3) + log10(max(N/3, 1))
 | 1 | 1.00 | full effort, ressource isolée |
 | 2 | 2.00 | quasi-linéaire, peu d'amortissement |
 | 3 | 3.00 | seuil d'orchestration (linéaire jusqu'ici) |
-| 5 | 3.22 | log kicks in |
-| 10 | 3.52 | |
-| 30 | 4.00 | chaque ×10 ajoute 1 unité |
-| 100 | 4.52 | |
-| 1000 | 5.52 | |
+| 5 | 3.29 | sqrt kicks in |
+| 10 | 3.83 | |
+| 30 | 5.16 | |
+| 100 | 7.77 | |
+| 1000 | 20.26 | l'orchestration amortit mais ne s'aplatit pas |
 
-Linéaire jusqu'à 3 ressources (chaque nouvelle compte plein, on n'a pas encore amorti l'orchestration), puis log10 au-delà.
+Linéaire jusqu'à 3 ressources (chaque nouvelle compte plein, on n'a pas encore amorti l'orchestration), puis racine carrée au-delà. La √(N/3) suit le pattern Erlang C : l'effort opérationnel scale moins que linéairement mais ne s'aplatit pas comme du log10 — un parc de 1000 VMs reste un parc qui génère des incidents, du drift, des fenêtres de maintenance.
 
 **Application :**
 ```
@@ -54,7 +58,7 @@ Le scaling se fait **globalement** (toutes envs confondues) au sein d'un même b
 ### Public cloud managed VM (EC2, GCE, Azure VM)
 - **Base :** 0.1 j/h/mois pour 1 VM
 - **Couvre :** patching OS mensuel (sécurité + minor) ; reboots planifiés ; monitoring système (CPU, mem, disk, réseau) ; surveillance certificats TLS ; vérif backup VM ; logs review hebdo.
-- **Scaling :** multiplier(N) au sein de (même OS, même coeff). Ex. 11 EC2 Debian coeff 0.8 = `0.1 × 3.56 × 0.8 = 0.285 j/h` (vs 0.88 linéaire).
+- **Scaling :** multiplier(N) au sein de (même OS, même coeff). Ex. 11 EC2 Debian coeff 0.8 = `0.1 × 3.92 × 0.8 = 0.313 j/h` (vs 0.88 linéaire).
 
 ### Private cloud managed VM (VMware, OpenStack)
 - **Base :** 0.1 j/h/mois pour 1 VM

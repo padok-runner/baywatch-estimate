@@ -47,7 +47,7 @@ For each ressource, verify the item type from `shared/item-types.md`:
 
 ### 4. Sublinear scaling — KEY CHECK
 
-The new methodology applies `multiplier(N) = min(N, 3) + log10(max(N/3, 1))` per `(item type, coefficient)` bucket.
+The new methodology applies `multiplier(N) = min(N, 3) + sqrt(max(N/3, 1)) - 1` per `(item type, coefficient)` bucket (racine carrée piecewise — Erlang C / USL style).
 
 **FAIL if:**
 - The estimate computes MCO as `N × base × coeff` (linear) for buckets where N > 3.
@@ -65,10 +65,11 @@ Verify the scaling values against the table:
 |---|---|
 | 1 | 1.00 |
 | 3 | 3.00 |
-| 5 | 3.22 |
-| 10 | 3.52 |
-| 30 | 4.00 |
-| 100 | 4.52 |
+| 5 | 3.29 |
+| 10 | 3.83 |
+| 30 | 5.16 |
+| 100 | 7.77 |
+| 1000 | 20.26 |
 
 ### 5. SLA application
 

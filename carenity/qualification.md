@@ -121,6 +121,7 @@ Carenity est une plateforme santé avec une stack LAMP (PHP CodeIgniter / PHP Sl
 ## Constraints & Notes
 
 - **HDS requis** — Audit YAMAS applicable. Le périmètre HDS exact est à discuter (MySQL5 + app legacy pourraient être exclus).
+- **Gouvernance** — Audits ROSE (Qualité), YAMAS (HDS) et LEAF (FinOps / Green IT) inclus par défaut (semestriels, 0.5 j/h chacun). COPROD trimestriel (dispositif Mutualisé).
 - **Engagement : 1 an** — Pas de remise multi-annuelle.
 - **Déploiements manuels** — Les déploiements de code sont déclenchés manuellement via une EC2 dédiée avec procédures automatisées. L'infra (Terraform) est déployée automatiquement via GitHub Actions.
 - **Méthodologie SCRUM** — L'équipe dev travaille en agile.

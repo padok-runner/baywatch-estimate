@@ -19,7 +19,7 @@ Combined with the sublinear scaling from `item-types.md` :
 ```
 MCO_for_N_resources_of_same_(type, coeff) = base_rate × multiplier(N) × coefficient
 
-where multiplier(N) = min(N, 3) + log10(max(N/3, 1))
+where multiplier(N) = min(N, 3) + sqrt(max(N/3, 1)) - 1
 ```
 
 Group ressources by **(item type, coefficient)** before applying the formula. The scaling captures the marginal cost of identical-profile ressources at scale.
@@ -41,6 +41,6 @@ Group ressources by **(item type, coefficient)** before applying the formula. Th
 - 11 EC2 Debian medium across 3 envs:
   - Item: Public cloud managed VM → base 0.1 j/h/mois
   - Coefficient: 0.8 (medium server <50 GB)
-  - Count: 11 → multiplier = min(11,3) + log10(11/3) = 3 + 0.564 = 3.564
-  - MCO base = 0.1 × 3.564 × 0.8 = **0.285 j/h/mois**
+  - Count: 11 → multiplier = min(11,3) + sqrt(11/3) - 1 = 3 + 1.915 - 1 = 3.915
+  - MCO base = 0.1 × 3.915 × 0.8 = **0.313 j/h/mois**
   - Then distributed prorata count per env, with SLA applied per env (Gold ×1.10 on prod portion, Bronze ×1.0 elsewhere).
