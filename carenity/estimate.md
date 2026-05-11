@@ -49,11 +49,11 @@ Plateforme construite par Theodo : **Non**
 > Monitoring et système d'agents IA sont **toujours** présents. Audit et remédiation prioritaire **n'apparaissent que si** la plateforme n'a pas été construite par Theodo.
 
 - **Audit** : 5 j/h Lead Ops — cartographie ressources, qualité, résilience, sécurité, observabilité.
-- **Remédiation prioritaire** (cible ROSE/YAMAS) : 5 j/h — docs, durcissement résilience, gaps qualité.
+- **Remédiation prioritaire** (cible ROSE/YAMAS) : 4 j/h — docs, durcissement résilience, gaps qualité.
 - **Mise en place du monitoring** : 1 j/h — métriques, alerting, dashboards, sondes, runbooks (réutilisation stack standard).
 - **Mise en place du système d'agents IA** : omise (hors périmètre Carenity, décision SA/client documentée).
 
-**Total initialisation : 11 j/h — 11 178€ HT (one-shot, payée une seule fois en début d'engagement)**
+**Total initialisation : 10 j/h — 10 315€ HT (one-shot, payée une seule fois en début d'engagement)**
 
 > Cette enveloppe est indépendante du prix mensuel récurrent ci-dessous.
 
@@ -157,10 +157,10 @@ Plateforme construite par Theodo : **Non**
 | Composante | Sizing | j/h | TJM | Montant €HT |
 |------------|--------|-----|-----|-------------|
 | Audit (Lead Ops) | Small (custom, ajusté à 5 j/h) | 5 | 1 200€ | 6 000€ |
-| Remédiation prioritaire | Light | 5 | 863€ | 4 315€ |
+| Remédiation prioritaire | Light (ajustée à 4 j/h) | 4 | 863€ | 3 452€ |
 | Mise en place du monitoring | Custom (sous-Simple, réutilisation stack standard) | 1 | 863€ | 863€ |
 | Mise en place système d'agents IA | Omis (hors périmètre) | 0 | — | 0€ |
-| **Total initialisation** | | **11** | | **11 178€** |
+| **Total initialisation** | | **10** | | **10 315€** |
 
 **Notes :**
 - Plateforme **non** construite par Theodo → audit et remédiation inclus.

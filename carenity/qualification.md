@@ -97,7 +97,7 @@ Carenity est une plateforme santé avec une stack LAMP (PHP CodeIgniter / PHP Sl
 | Composante | Sizing retenu | Effort retenu (j/h) |
 |------------|---------------|---------------------|
 | Audit | Small (custom, ajusté à 5 j/h) | 5 |
-| Remédiation prioritaire (cible ROSE/YAMAS) | Light | 5 |
+| Remédiation prioritaire (cible ROSE/YAMAS) | Light (ajustée à 4 j/h) | 4 |
 | Mise en place du monitoring | Custom (réutilisation stack standard, sous-Simple) | 1 |
 | Mise en place du système d'agents IA | Omis (hors périmètre Carenity) | 0 |
 
