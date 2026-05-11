@@ -41,8 +41,8 @@ Le périmètre alloué à chaque mode est un **choix de configuration**, pas une
 
 ### Configuration B — Forfait socle + carnet temps passé
 
-- **Forfait socle** : Gouvernance + Audits + Immobilisation + **MCO non-discrétionnaire** (patching cadencé, monitoring drift review, capacity planning) ~0.3 j/h/mois
-- **Temps passé** : MCO discrétionnaire (incidents, demandes, problèmes, changements non-récurrents) + Évolutions
+- **Forfait socle** : Gouvernance + Audits + Immobilisation. Couvre la cadence contractuelle (ceremonies, audits HDS/ROSE/LEAF) et la capacité réservée (24/7 si plage Étendue/Complète).
+- **Temps passé** : **MCO (toutes catégories : incidents, demandes, problèmes, changements, patching, monitoring)** + Évolutions. Le client paie ce qu'il consomme, plafonné par l'enveloppe MCO déductive de `/estimate`.
 - **Profil client** : infra stable, historique d'incidents faible, sensible au prix d'entrée. Permet un montant mensuel plancher significativement plus bas, avec montant réel proportionnel à la consommation.
 - **Réservée aux clients engagés ≥2 ans** (voir règles de protection ci-dessous).
 
@@ -56,15 +56,13 @@ Le périmètre alloué à chaque mode est un **choix de configuration**, pas une
 
 La facturation à la consommation expose à un risque de sous-revenu sur les mois calmes. Les protections suivantes sont **obligatoires** :
 
-1. **Plancher mensuel MCO en temps passé** : 0.5 j/h/mois minimum facturé, même si consommation réelle inférieure. Couvre la baseline opérationnelle (patching applicatif, revue logs/alertes, capacity check).
+1. **Plancher mensuel MCO en temps passé** : 0.5 j/h/mois minimum facturé, même si consommation réelle inférieure. Protège le revenu sur les mois calmes (la capacité reste réservée).
 
-2. **MCO non-discrétionnaire dans le socle** : le patching mensuel, le monitoring drift review et le capacity planning sont **non-négociables** et restent en forfait socle (~0.3 j/h/mois). Le client ne peut pas les "défer" pour économiser.
+2. **Engagement contractuel ≥2 ans** : indispensable. La remise multi-annuelle (-3% / -8%) s'applique normalement.
 
-3. **Engagement contractuel ≥2 ans** : indispensable. La remise multi-annuelle (-3% / -8%) s'applique normalement.
+3. **Plafond MCO temps passé** : limité à l'enveloppe déductive (`MCO total` calculée par `/estimate`). Au-delà, retour à un avenant Forfait pour le surplus — évite la dérive non-maîtrisée côté client et côté équipe.
 
-4. **Plafond MCO temps passé** : limité à l'enveloppe déductive (`MCO total` calculée par `/estimate`). Au-delà, retour à un avenant Forfait pour le surplus — évite la dérive non-maîtrisée côté client et côté équipe.
-
-5. **Enveloppe annuelle minimum** : 24 j/h/an de consommation MCO minimum (≈ 2 j/h/mois moyen). Sous-consommation = report M+3 maximum, pas de remboursement.
+4. **Enveloppe annuelle minimum** : 24 j/h/an de consommation MCO minimum (≈ 2 j/h/mois moyen). Sous-consommation = report M+3 maximum, pas de remboursement.
 
 > Configuration A par défaut. Proposer Configuration B explicitement si (a) infra stable historiquement (<2 incidents/trimestre), (b) client en compétition sur le prix d'entrée, (c) engagement ≥2 ans acceptable.
 

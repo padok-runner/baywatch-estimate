@@ -163,7 +163,7 @@ Two billing modes (`shared/pricing-rules.md`):
 The **scope allocation** between the two modes is a configuration choice — present the relevant configurations in the output:
 
 - **Configuration A — Forfait étendu** (par défaut) : Forfait = MCO + Gouv + Immo ; Temps passé = Évolutions. Maximum predictability.
-- **Configuration B — Forfait socle + carnet** : Forfait = Gouv + Audits + Immo + MCO non-discrétionnaire (~0.3 j/h, patching cadencé + monitoring drift + capacity planning) ; Temps passé = MCO discrétionnaire + Évolutions. Lower entry price, variable bill. **Requires 2-year minimum + protections** (cf. `shared/pricing-rules.md`).
+- **Configuration B — Forfait socle + carnet** : Forfait = Gouv + Audits + Immo ; Temps passé = **toute** MCO + Évolutions. Lower entry price, variable bill. **Requires 2-year minimum + protections** (cf. `shared/pricing-rules.md`).
 - **Configuration C — Temps passé pur** : rarely used, skip unless explicitly requested.
 
 For Forfait, add contingency to MCO + Governance only (not evolutions):
@@ -172,8 +172,8 @@ For Forfait, add contingency to MCO + Governance only (not evolutions):
 ```
 Configuration A price = (MCO + Governance) × (1 + contingency) + Evolutions + Immobilisation
 Configuration B price :
-  Forfait socle      = (Gouv + Audits + MCO_non_disc) × (1 + contingency) + Immobilisation
-  Temps passé MCO    = max(0.5 j/h × TJM, conso_réelle × TJM)  jusqu'à plafond enveloppe MCO_disc
+  Forfait socle      = Gouv × (1 + contingency) + Immobilisation
+  Temps passé MCO    = max(0.5 j/h × TJM, conso_réelle × TJM)  jusqu'à plafond enveloppe MCO total
   Total mensuel      = Forfait socle + Temps passé MCO + Évolutions consommées
 ```
 

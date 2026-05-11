@@ -109,10 +109,10 @@ Présenter la configuration retenue. Si le client est éligible et intéressé p
 
 | Mode | Périmètre | j/h/mois | Montant €HT/mois |
 |------|-----------|----------|-------------------|
-| **Forfait socle** | Gouvernance ({y}) + Audits + MCO non-disc. (~0.3 j/h, patching/monitoring/capacity) + Immobilisation | {socle} | {amount_socle}€ |
-| **Temps passé MCO** | MCO discrétionnaire (incidents/demandes/changements). Plancher 0.5 j/h, plafond {x - 0.3} j/h. | 0.5 – {x-0.3} | {amount_floor}€ – {amount_cap}€ |
+| **Forfait socle** | Gouvernance ({y}) + Audits + Immobilisation | {y} | {amount_socle}€ |
+| **Temps passé MCO** | MCO (toutes catégories : incidents, demandes, problèmes, changements, patching, monitoring). Plancher 0.5 j/h, plafond {x} j/h (enveloppe déductive). | 0.5 – {x} | {amount_floor}€ – {amount_cap}€ |
 | **Temps passé Évolutions** | À la demande | — | Sur consommation |
-| | **Plancher mensuel** | **{0.7 + 0.5}** | **{floor total}€** |
+| | **Plancher mensuel** | **{y + 0.5}** | **{floor total}€** |
 | | **Plafond mensuel (= Conf. A)** | **{x+y}** | **{cap total}€** |
 | | **Espérance ({avg conso} j/h MCO)** | — | **~{expected}€** |
 
