@@ -69,12 +69,12 @@ The file has four parts:
 
 Plateforme construite par Theodo : **{Oui / Non}**
 
-> Monitoring et système d'agents IA sont **toujours** présents. Audit et remédiation prioritaire **n'apparaissent que si** la plateforme n'a pas été construite par Theodo (sinon, omettre les deux lignes).
+> Monitoring est **toujours** présent (palier Minimal = 1 j/h possible pour petits périmètres). Système d'agents IA est **optionnel** (omettre la ligne si sizing = None / 0 j/h). Audit et remédiation prioritaire **n'apparaissent que si** la plateforme n'a pas été construite par Theodo (sinon, omettre les deux lignes).
 
 - {Si Non} **Audit** : {audit_jh} j/h Lead Ops — cartographie ressources, qualité, résilience, sécurité, observabilité.
 - {Si Non} **Remédiation prioritaire** (cible ROSE/YAMAS) : {remediation_jh} j/h — docs, durcissement résilience, gaps qualité.
 - **Mise en place du monitoring** : {monitoring_jh} j/h — métriques, alerting, dashboards, sondes, runbooks.
-- **Mise en place du système d'agents IA** : {ai_agent_jh} j/h — déploiement agent ChatOps, intégrations.
+- {Si ai_agent_jh > 0} **Mise en place du système d'agents IA** : {ai_agent_jh} j/h — déploiement agent ChatOps, intégrations.
 
 **Total initialisation : {total_init_jh} j/h — {total_init_price}€ HT (one-shot, payée une seule fois en début d'engagement)**
 
@@ -195,12 +195,13 @@ Configuration par défaut (engagement ≥2 ans). Voir `shared/pricing-rules.md` 
 |------------|--------|-----|-----|-------------|
 | {Si Non} Audit (Lead Ops) | {Small / Medium / Large} | {audit_jh} | {tjm_lead_ops}€ | {amount}€ |
 | {Si Non} Remédiation prioritaire | {Light / Medium / Heavy} | {remediation_jh} | {blended_tjm}€ | {amount}€ |
-| Mise en place du monitoring | {Simple / Medium / Complex} | {monitoring_jh} | {blended_tjm}€ | {amount}€ |
-| Mise en place système d'agents IA | {Simple / Medium / Complex} | {ai_agent_jh} | {blended_tjm}€ | {amount}€ |
+| Mise en place du monitoring | {Minimal / Simple / Medium / Complex} | {monitoring_jh} | {blended_tjm}€ | {amount}€ |
+| {Si ai_agent_jh > 0} Mise en place système d'agents IA | {Simple / Medium / Complex} | {ai_agent_jh} | {blended_tjm}€ | {amount}€ |
 | **Total initialisation** | | **{total_init_jh}** | | **{total_init_price}€** |
 
 **Notes :**
 - Audit et remédiation **omis** (lignes non affichées) si la plateforme a été construite par Theodo.
+- Système d'agents IA **omis** (ligne non affichée) si sizing = None (0 j/h).
 - Audit facturé au **TJM Lead Ops** (cf. `shared/daily-rates.md`).
 - Remédiation, monitoring et système d'agents IA facturés au **TJM blended (Ops + Lead Ops + DM)**.
 - Cette enveloppe est **payée une seule fois** en début d'engagement et n'entre pas dans le prix mensuel récurrent.

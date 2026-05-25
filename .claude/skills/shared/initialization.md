@@ -8,8 +8,8 @@ L'initialisation est une **enveloppe payée une seule fois** en début d'engagem
 |------------|-----------|-----------------|--------------|
 | **Audit** | Cartographie ressources, qualité code/IaC, résilience, sécurité, observabilité | **Uniquement si plateforme NON construite par Theodo** | Lead Ops (TJM Lead Ops) |
 | **Remédiation prioritaire** | Docs manquantes, durcissement résilience, gaps cibles ROSE/YAMAS | **Uniquement si plateforme NON construite par Theodo** | TJM blended (Ops + Lead Ops + DM) |
-| **Mise en place du monitoring** | Métriques, alerting, dashboards, sondes, runbooks | **Toujours** | TJM blended (Ops + Lead Ops + DM) |
-| **Mise en place du système d'agents IA** | Déploiement agent ChatOps, intégrations métier, MCP custom | **Toujours** | TJM blended (Ops + Lead Ops + DM) |
+| **Mise en place du monitoring** | Métriques, alerting, dashboards, sondes, runbooks | **Toujours** (palier Minimal possible pour petits périmètres) | TJM blended (Ops + Lead Ops + DM) |
+| **Mise en place du système d'agents IA** | Déploiement agent ChatOps, intégrations métier, MCP custom | **Optionnel** (peut être omis si non installé) | TJM blended (Ops + Lead Ops + DM) |
 
 > Le statut "construite par Theodo" est binaire (Oui / Non). Une plateforme partiellement construite par Theodo est traitée comme **Non**, et le périmètre partiel est documenté en hypothèses dans `qualification.md` pour permettre à `/estimate` de réduire manuellement l'audit/remédiation.
 
@@ -37,6 +37,7 @@ L'initialisation est une **enveloppe payée une seule fois** en début d'engagem
 
 | Sizing | Critère | Effort |
 |--------|---------|--------|
+| Minimal | Très petit périmètre, alerting minimal réutilisant l'existant | ~1 j/h |
 | Simple | Stack standard, alerting basique | ~2.5 j/h |
 | Medium | Multi-env, dashboards custom, intégrations | ~7–10 j/h |
 | Complex | Multi-cloud, SLO/SLI custom, observabilité avancée | ~15–20 j/h |
@@ -45,6 +46,7 @@ L'initialisation est une **enveloppe payée une seule fois** en début d'engagem
 
 | Sizing | Critère | Effort |
 |--------|---------|--------|
+| None | Pas d'installation d'agent IA sur ce périmètre | 0 j/h |
 | Simple | Agent ChatOps standard sur la plateforme | ~2.5 j/h |
 | Medium | Workflows custom, intégrations métier | ~7–10 j/h |
 | Complex | Multi-agents, MCP custom, intégration profonde | ~15–20 j/h |
@@ -67,4 +69,5 @@ TJM Lead Ops et TJM blended : voir `daily-rates.md`.
 
 - Bloc **"Phase d'initialisation (one-shot)"** placé **au-dessus** du tableau de synthèse mensuelle dans `estimate.md`.
 - Si la plateforme a été construite par Theodo : audit et remédiation **omis** dans **toutes** les sorties d'`estimate.md` — Synthèse **et** Annexe B (lignes non affichées, prix = 0). Convention unique pour éviter toute divergence entre vues client et vues internes.
+- Si le sizing du système d'agents IA est **None** (0 j/h) : la ligne est **omise** dans **toutes** les sorties d'`estimate.md` (Synthèse **et** Annexe B), même convention que pour audit/remédiation skippés.
 - Le total one-shot ne doit **jamais** être additionné au prix mensuel récurrent ni intégré dans la contingence forfait.

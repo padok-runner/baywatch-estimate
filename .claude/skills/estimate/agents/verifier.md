@@ -112,8 +112,9 @@ Verify the scaling values against the table:
 - "Plateforme construite par Theodo" stated as Oui/Non, consistent with qualification.md?
 - If platform NOT built by Theodo: audit AND remediation lines present and priced in BOTH Synthèse AND Annexe B?
 - If platform built by Theodo: audit AND remediation lines completely omitted in BOTH?
-- Monitoring AND AI agent lines always present (or omission documented as SA/client decision in qualification.md)?
-- j/h values consistent with `shared/initialization.md` paliers (or documented override)?
+- Monitoring line always present (even at Minimal = 1 j/h)?
+- AI agent line present if sized Simple/Medium/Complex; **omitted in BOTH Synthèse AND Annexe B** if sizing = None (0 j/h) — same convention as Theodo-skipped audit/remediation?
+- j/h values consistent with `shared/initialization.md` paliers (or documented override)? Monitoring ∈ {1, 2.5, [7,10], [15,20]}; AI agent ∈ {0, 2.5, [7,10], [15,20]}.
 - Audit at TJM Lead Ops, others at TJM blended?
 - Init total NOT added to monthly recurring price?
 
