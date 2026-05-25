@@ -34,6 +34,8 @@ Every great storyline has five components, in this order:
 
 Use `AskUserQuestion` for **every** question or confirmation. Ask **one** question at a time. After each answer, draft the relevant section out loud (in chat), then confirm with the user before moving on.
 
+The output document is in French (matching the project's sales context and `/qualify` convention). The model may ask questions to the user in French or English depending on what the user uses — mirror the user's language.
+
 ### Step 0 — Set the stage
 
 Ask the user:
@@ -146,73 +148,75 @@ Draft the **Resolution** section with three clearly labeled sub-parts. Confirm b
 
 Once all five sections are confirmed (or as many as the user is working on this session), generate `storyline.md` in the client's directory (`{client-name}/storyline.md`). Ask for the client name if not already known. If the file already exists, ask whether to overwrite or save as `storyline-v2.md`.
 
+**Mark partial work explicitly.** If the user only worked on some sections this session, the **Status** line must list which sections are complete and which are stubs — never write a file with placeholder text and a "Draft" status that hides what's missing. A reviewer should be able to see at a glance which sections are real and which are scaffolding.
+
 The file must follow this structure:
 
 ```markdown
 # Storyline — {Client Name}
 
 **Date:** {YYYY-MM-DD}
-**Opportunity:** {one-line opportunity description}
-**Status:** {Draft / Reviewed / Final}
-**Contributors:** {names if known — sales, tech, design, product}
+**Opportunité:** {description en une ligne}
+**Statut:** {Draft – complètes: [Tournant, Résolution] ; à faire: [Point essentiel, Contexte, Complication]  /  Reviewed  /  Final}
+**Contributeurs:** {noms — sales, tech, design, produit}
 
 ---
 
-## Essential point
+## Point essentiel
 
-{1–3 sentences. The single message the client should remember.}
+{1–3 phrases. Le message unique que le client doit retenir.}
 
 ---
 
-## Context
+## Contexte
 
-{Narrative paragraph(s) describing the client's world: goal, value at stake, stakeholders, timing.}
+{Paragraphe(s) narratifs décrivant le monde du client : objectif, valeur en jeu, parties prenantes, timing.}
 
-**Stakeholders:**
-- {Role} — {what they care about}
+**Parties prenantes :**
+- {Rôle} — {ce qui compte pour eux}
 
 ---
 
 ## Complication
 
-{What's blocking them. Their current paradigm. What they've tried. Cost of inaction.}
+{Ce qui les bloque. Leur paradigme actuel. Ce qu'ils ont déjà essayé. Coût de l'inaction.}
 
 ---
 
 ## Turning point
 
-**The reframe:** {new frame in one sentence}
+**Le reframe :** {nouveau cadre en une phrase}
 
-{Narrative explaining the gap between their current frame and the new one. Quantify the gap where possible. Include the evidence that makes the new frame credible.}
+{Narratif expliquant l'écart entre leur cadre actuel et le nouveau. Quantifier l'écart si possible. Inclure l'évidence qui rend le nouveau cadre crédible.}
 
 ---
 
 ## Resolution
 
-### The ingenious solution
-{One paragraph: how the new frame becomes real, technologically and in value delivered.}
+### La solution ingénieuse
+{Un paragraphe : comment le nouveau cadre devient réalité, technologiquement et en valeur livrée.}
 
-### Why us
-{Our secret sauce — track record, team, IP, methodology — specific to this deal.}
+### Notre secret sauce (pourquoi nous)
+{Track record, équipe, IP, méthodologie — spécifique à ce deal.}
 
-### An easy deal
-{Shape of the first commitment: scope, duration, success metrics, exit clauses.}
-
----
-
-## Discovery gaps
-
-{MANDATORY. List anything the user couldn't answer with confidence — these are the questions to bring to the next client call. If nothing is missing, write "Aucune — la storyline est complète."}
-
-| Gap | Why it matters | How to close it |
-|-----|----------------|-----------------|
-| {e.g. "Don't know economic buyer's top KPI"} | {e.g. "Resolution may not tie to a metric they're measured on"} | {e.g. "Ask sponsor in next call, or check their public earnings deck"} |
+### Un deal facile à accepter
+{Forme du premier engagement : périmètre, durée, métriques de succès, clauses de sortie.}
 
 ---
 
-## Next steps
+## Informations manquantes
 
-- {Concrete actions before the next client touchpoint, e.g. "Workshop turning point with tech lead", "Call sponsor to validate complication framing"}
+{OBLIGATOIRE. Lister tout ce que l'utilisateur n'a pas pu répondre avec certitude — ce sont les questions à apporter au prochain call client. Si rien ne manque, écrire "Aucune — la storyline est complète."}
+
+| Information manquante | Pourquoi ça compte | Comment l'obtenir |
+|-----------------------|--------------------|--------------------|
+| {ex. "KPI principal de l'economic buyer inconnu"} | {ex. "La Résolution risque de ne pas s'aligner sur une métrique sur laquelle il est mesuré"} | {ex. "Demander au sponsor au prochain call, ou regarder le dernier earnings deck"} |
+
+---
+
+## Prochaines étapes
+
+- {Actions concrètes avant le prochain contact client, ex. "Workshop du turning point avec le tech lead", "Appeler le sponsor pour valider le cadrage de la complication"}
 ```
 
 ---
@@ -223,4 +227,4 @@ The file must follow this structure:
 2. Suggest **one** concrete next step based on what was hardest in the session (e.g. "The turning point felt thin — want to spend 15 minutes brainstorming alternative frames?" or "You weren't sure about the economic buyer's KPI — want me to draft 3 discovery questions you can ask in the next call?").
 3. Remind them that the storyline is a living document — encourage them to share it with the tech/design/product teammates on the pursuit and bring it back to the client in the next discovery call to co-build.
 
-Do **not** offer to write the slide deck. The storyline is the artifact; the deck comes later, off this foundation.
+Default to **stopping at the storyline.** The deck is a separate exercise that builds on this foundation — don't proactively offer to write it. If the user explicitly asks for the deck next, that's fine; just don't volunteer.
