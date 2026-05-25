@@ -200,7 +200,7 @@ Total j/h/mois = MCO_final_jh + Gouvernance_final + Évolutions
 
 Determine the dispositif using thresholds in `shared/pricing-rules.md` (<10 mutualisé, 10–100 semi-dédié, >100 dédié).
 
-> **v3 dispositif cascade.** When v3 modifiers (capability floor, year-1 ramp, specializations) push the total above 100 j/h, the dispositif upgrades to **Dédié**. This in turn changes COPROD frequency (mensuel → weekly) and adds COPIL trimestriel — recompute `Gouvernance_base` once the dispositif has settled, then re-apply the stakeholder multiplier. Iterate until stable (typically one pass suffices).
+> **v3 dispositif cascade.** When v3 modifiers (capability floor, year-1 ramp, specializations) push the total above 100 j/h, the dispositif upgrades to **Dédié**. This in turn changes COPROD frequency (mensuel → weekly) and adds COPIL trimestriel. Procedure: (1) compute a provisional Total with the dispositif inferred from `MCO_marginal + Gouvernance_base + Évolutions`; (2) if Total > 100 j/h, upgrade dispositif to Dédié and **recompute `Gouvernance_base`** for the upgraded dispositif (replacing the previous `Gouvernance_base`, not adding to it); (3) apply the `stakeholder_complexity_multiplier` **exactly once** to the recomputed `Gouvernance_base` to obtain `Gouvernance_final`. Iterate until the dispositif is stable (typically one pass suffices).
 
 ### Step 6: Initialization (one-shot)
 

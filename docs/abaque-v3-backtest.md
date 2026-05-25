@@ -252,7 +252,7 @@ Recall m(x) = min(x,3) + sqrt(max(x/3, 1)) - 1.
 
 | Bucket | N | T | N/sqrt(T) | m(N/sqrt(T)) | m_T(N,T) | base × m_T × coeff |
 |---|---|---|---|---|---|---|
-| PublicVM 0.5 prod | 480 | 30 | 87.6 | 8.114 | 44.46 | 2.223 |
+| PublicVM 0.5 prod | 480 | 30 | 87.6 | 7.404 | 40.56 | 2.028 |
 | PublicVM 0.5 non-prod | 121 | 1 | 121 | 8.351 | 8.351 | 0.418 |
 | PublicVM 0.5 shared | 14 | 1 | 14 | 4.161 | 4.161 | 0.208 |
 | PublicVM 0.8 prod | 250 | 30 | 45.6 | 5.898 | 32.30 | 2.584 |
@@ -278,7 +278,7 @@ SLA: prod 1.10 (Gold), non-prod 1.00 (Bronze), shared 1.10 (Gold).
 
 | Bucket | Bucket base (j/h) | SLA coeff | After SLA |
 |---|---|---|---|
-| PublicVM 0.5 prod | 2.223 | 1.10 | 2.445 |
+| PublicVM 0.5 prod | 2.028 | 1.10 | 2.231 |
 | PublicVM 0.5 non-prod | 0.418 | 1.00 | 0.418 |
 | PublicVM 0.5 shared | 0.208 | 1.10 | 0.229 |
 | PublicVM 0.8 prod | 2.584 | 1.10 | 2.842 |
@@ -297,13 +297,13 @@ SLA: prod 1.10 (Gold), non-prod 1.00 (Bronze), shared 1.10 (Gold).
 | Managed off-shelf 1.0 shared | 0.600 | 1.10 | 0.660 |
 | Managed off-shelf 2.0 shared | 1.200 | 1.10 | 1.320 |
 | Managed off-shelf 5.0 (GCBDR) shared | 1.500 | 1.10 | 1.650 |
-| **MCO_marginal total** | | | **58.44** |
+| **MCO_marginal total** | | | **58.23** |
 
 #### Step 4: Capability floor
 
 capability_floor(plage=Complète, regulatory=HDS, T=30) = 50 (T≥20) + 10 (HDS) + 10 (Complète) = **70 j/h**.
 
-`MCO_after_floor = max(70, 58.44) = 70` j/h.
+`MCO_after_floor = max(70, 58.23) = 70` j/h.
 
 #### Step 5: Year-1 ramp
 
@@ -386,8 +386,8 @@ Sanity check vs realistic team:
 
 | Modifier | j/h delta (vs v2-clean MCO 27.7) | Comment |
 |---|---|---|
-| tenancy_penalty | 27.7 → 58.4 (+30.7) | Per-bucket sqrt(T) × m(N/sqrt(T)) on per-SELAS buckets |
-| capability_floor | 58.4 → 70 (+11.6) | Floor of 70 > marginal sum of 58.4 |
+| tenancy_penalty | 27.7 → 58.2 (+30.5) | Per-bucket sqrt(T) × m(N/sqrt(T)) on per-SELAS buckets |
+| capability_floor | 58.2 → 70 (+11.8) | Floor of 70 > marginal sum of 58.2 |
 | year_1_ramp ×1.50 | 70 → 105 (+35.0) | Heavy migration |
 | specializations | 105 → 120 j/h-equiv (+15) | 4 specialist roles at own TJMs |
 | stakeholder gov ×2.0 | 2.59 → 5.18 (+2.59) | Plus dispositif upgrade Semi-dédié → Dédié which already raised gov_base from 0.75 → 2.59 |

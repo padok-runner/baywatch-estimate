@@ -54,7 +54,7 @@ Interprétation : on imagine le bucket découpé en `sqrt(T)` sous-pools parall�
 | Exemple bucket | N | T | m(N) | m_T(N, T) | Ratio |
 |---|---|---|---|---|---|
 | 480 VMs très petites en 1 tenant | 480 | 1 | 14.65 | 14.65 | 1.00× |
-| 480 VMs très petites sur 30 SELAS | 480 | 30 | 14.65 | 5.48 × 8.11 = 44.46 | 3.03× |
+| 480 VMs très petites sur 30 SELAS | 480 | 30 | 14.65 | 5.48 × m(87.6) = 5.48 × 7.40 = 40.56 | 2.77× |
 | 30 stacks middleware (1 par SELAS) | 30 | 30 | 5.16 | 5.48 × 3.35 = 18.37 | 3.56× |
 | 12 ADs consolidés en landing zone | 12 | 1 | 4.00 | 4.00 | 1.00× |
 | 7 BDDs consolidées par SELAS-group | 7 | 7 | 3.53 | 2.65 × 2.65 = 7.00 | 1.98× |

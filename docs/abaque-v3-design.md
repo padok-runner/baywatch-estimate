@@ -293,10 +293,10 @@ See `docs/abaque-v3-backtest.md` for the full numerical recompute. Summary:
 | Client | v2 (sqrt) total j/h/mois | v3 total j/h/mois | Δ% | Comment |
 |---|---|---|---|---|
 | Carenity | 4.9 | 4.9 | 0% | T=1, no migration, low stakeholders → v3 == v2 |
-| ANS | ~14.5 (v2 recomputed) | ~14.5 | 0% | T=1, no migration, low stakeholders → v3 == v2 |
-| CISAC | ~28 (v2 recomputed) | ~28 | 0% | T=1, no migration, no K8s → v3 == v2 |
+| ANS | ~11.9 (v2 recomputed) | ~11.9 | 0% | T=1, no migration, low stakeholders → v3 == v2 |
+| CISAC | ~13.4 (v2 recomputed) | ~13.4 | 0% | T=1, no migration, no K8s → v3 == v2 |
 | RDG | 2.0 | 2.0 | 0% | T=1, no migration, low stakeholders → v3 == v2 |
-| Biogroup | 36.5 | **~130** | **+256%** | T=30 + HDS + Complète + heavy_migration + 4 specs + high stakeholders |
+| Biogroup | 36.5 | **~133** | **+265%** | T=30 + HDS + Complète + heavy_migration + 4 specs + high stakeholders |
 
 The four small clients are **identically priced** by v3 and v2 (constraint satisfied: small clients move <±15%; here they move 0%). Biogroup is corrected to its realistic team size.
 
