@@ -34,12 +34,51 @@ multiplier(N) = min(N, 3) + sqrt(max(N/3, 1)) - 1
 
 Linéaire jusqu'à 3 ressources (chaque nouvelle compte plein, on n'a pas encore amorti l'orchestration), puis racine carrée au-delà. La √(N/3) suit le pattern Erlang C : l'effort opérationnel scale moins que linéairement mais ne s'aplatit pas comme du log10 — un parc de 1000 VMs reste un parc qui génère des incidents, du drift, des fenêtres de maintenance.
 
-**Application :**
+### Pénalité de fragmentation multi-tenants (v3)
+
+L'amortissement de la formule sqrt suppose que les N ressources sont opérables ensemble (même fenêtre de maintenance, même script de patching, même comms). **Dès que les ressources sont réparties sur plusieurs tenants** (SELAS, BUs, comptes clients indépendants), l'amortissement se casse : T tickets de changement séparés, T fenêtres de maintenance, T validations.
+
+Pour chaque bucket, la qualification déclare `tenants_spanned T` (défaut 1) :
+
 ```
-MCO_pour_N_ressources_de_même_type_et_coeff = base_rate × multiplier(N) × coefficient
+m_T(N, T) = sqrt(T) × multiplier(N / sqrt(T))
+
+cas particuliers :
+  T = 1                  : m_T = multiplier(N)            (comportement v2 inchangé)
+  T = N (1 ressource/tenant) : m_T = sqrt(N) × m(sqrt(N)) (proche de m(N) mais ré-amorti)
+  T quelconque, N grand  : m_T ≈ sqrt(T) × sqrt(N/(3T))   (l'effort grossit en √(T) × √(N))
 ```
 
-Le scaling se fait **globalement** (toutes envs confondues) au sein d'un même bucket `(type, coeff)`. Le coût est ensuite distribué prorata du count par env, puis le SLA s'applique par env (cf. `service-levels.md`). Cela reflète le bénéfice automation/orchestration partagé entre envs.
+Interprétation : on imagine le bucket découpé en `sqrt(T)` sous-pools parallèles de taille `N/sqrt(T)` chacun. Chaque sous-pool amortit en interne ; la coordination entre sous-pools suit la même économie sqrt (l'équipe apprend une fois, applique plusieurs fois).
+
+| Exemple bucket | N | T | m(N) | m_T(N, T) | Ratio |
+|---|---|---|---|---|---|
+| 480 VMs très petites en 1 tenant | 480 | 1 | 14.65 | 14.65 | 1.00× |
+| 480 VMs très petites sur 30 SELAS | 480 | 30 | 14.65 | 5.48 × 8.11 = 44.46 | 3.03× |
+| 30 stacks middleware (1 par SELAS) | 30 | 30 | 5.16 | 5.48 × 3.35 = 18.37 | 3.56× |
+| 12 ADs consolidés en landing zone | 12 | 1 | 4.00 | 4.00 | 1.00× |
+| 7 BDDs consolidées par SELAS-group | 7 | 7 | 3.53 | 2.65 × 2.65 = 7.00 | 1.98× |
+
+**Application v3 :**
+```
+MCO_pour_bucket = base_rate × m_T(N, T) × coefficient
+```
+
+Le scaling se fait au sein d'un même bucket `(type, coeff, tenants_spanned)`. Si les ressources d'un même `(type, coeff)` ont des `tenants_spanned` différents selon l'env (ex. 480 VMs prod par-SELAS + 121 VMs non-prod consolidé), elles forment **deux buckets distincts**.
+
+Le coût est ensuite distribué prorata du count par env au sein de chaque bucket, puis le SLA s'applique par env (cf. `service-levels.md`).
+
+### Quand déclarer T > 1
+
+| Situation | T |
+|---|---|
+| Single-tenant (client mono-entité) | 1 (défaut) |
+| Multi-tenant explicite : N SELAS, N BUs, N filiales avec change-management indépendants | N |
+| Landing zone ou shared services consolidés en multi-tenant | 1 (consolidation = un seul tenant opérationnel) |
+| Plateforme unique (cluster K8s, lake) qui sert N tenants | 1 (la plateforme est un seul tenant opérationnel ; les tenants applicatifs au-dessus sont une autre dimension) |
+| Per-environnement (prod / non-prod / shared) | T compte les tenants au sein de l'env, pas les envs (la séparation par env est déjà gérée par la distribution prorata) |
+
+> **Important** — la pénalité multi-tenant adresse la fragmentation **interne au client** (un client avec 30 SELAS). Elle ne s'applique pas à la mutualisation côté équipe (le pool Mutualisé sert 20 clients, mais c'est une économie côté TJM, pas une pénalité côté client).
 
 ---
 

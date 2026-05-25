@@ -120,6 +120,71 @@ For each environment, ask:
 - Any specific constraints? (data residency, specific SLAs from client contracts, etc.)
 - Multi-year engagement preference? (1 year, 2 years, 3+ years)
 
+### Step 6 bis — v3 structural modifiers (opt-in)
+
+Ask the user **one question at a time** via `AskUserQuestion`. Each modifier is **opt-in** — if the user is unsure or the engagement is a typical small single-tenant, leave the defaults (which reproduce v2 behaviour numerically).
+
+See `skills/shared/pricing-rules.md` ("Modificateurs 1–5") and `skills/shared/daily-rates.md` ("Specialization roles") for the full semantics.
+
+#### 6.1 Tenancy count
+
+> Combien de **tenants distincts** ce client opère-t-il à l'intérieur du périmètre ?
+>
+> Un "tenant" = une frontière de change-management indépendante : SELAS, filiale, business unit, compte client cloisonné, comptes AWS / projets GCP cloisonnés avec validations séparées.
+>
+> Options : 1 (default, single-tenant), 2–4, 5–9, 10–19, 20+
+
+Si T ≥ 5, demander aussi :
+> Sur quels **buckets de ressources** la fragmentation multi-tenant s'applique-t-elle ? (Ex. "App VMs L&S prod : T=30 ; landing zone shared services : T=1".)
+
+Capturer per-bucket `tenants_spanned` dans la qualification (défaut 1).
+
+#### 6.2 Year-1 stabilization ramp
+
+> Cet engagement implique-t-il une **migration depuis on-premise** vers la plateforme cible managée ?
+>
+> Options :
+> - `none` (défaut) — greenfield ou régime établi
+> - `light_migration` (×1.20) — lift-and-shift avec IaC mature et reskilling mineur
+> - `migration` (×1.30) — migration-from-on-prem standard
+> - `heavy_migration` (×1.50) — plateforme greenfield + migration workloads + ramp simultanés (ex. Biogroup Move to Cloud)
+
+Si une rampe est déclarée, demander la **date de fin** (typiquement contract_start + 12 mois).
+
+#### 6.3 Specializations dédiées
+
+> Le profil de l'engagement justifie-t-il une **capacité spécialiste dédiée** au-delà du cœur Ops/Lead Ops/DM ?
+>
+> Options (multi-select) :
+> - SecOps Lead (5.0 j/h, TJM 1 400€) — HDS, données critiques, multi-tenant régulé
+> - FinOps Lead (2.5 j/h, TJM 1 200€) — multi-cloud, >20 VMs, cadence LEAF lourde
+> - K8s Specialist (5.0 j/h, TJM 1 100€) — K8s managé ≥10 nodes ou multi-cluster
+> - HDS Officer / Compliance Lead (2.5 j/h, TJM 1 400€) — HDS + cadence audit > semestriel ou multi-SELAS HDS
+> - None (défaut, clients Mutualisé où le SecOps est mutualisé au pool, et petits clients)
+
+Le sizing par défaut peut être surchargé (avec justification).
+
+#### 6.4 Stakeholder complexity
+
+> Combien d'**interlocuteurs distincts** (équipes, BUs, SELAS, comités) interagiront avec la gouvernance du run ?
+>
+> Options :
+> - `low` (défaut, ×1.0) — 1–5 interlocuteurs (mono-app, mono-équipe)
+> - `medium` (×1.5) — 6–15 interlocuteurs (multi-produits, multi-équipes)
+> - `high` (×2.0) — 16+ interlocuteurs (multi-SELAS, multi-BU, entité fédérée)
+
+#### 6.5 Regulatory profile (clarification explicite)
+
+> Le périmètre porte-t-il des contraintes réglementaires ?
+>
+> Options (multi-select) :
+> - `none` (défaut)
+> - `HDS` (Hébergement Données de Santé)
+> - `SecNumCloud` (ANSSI)
+> - Autre (préciser)
+
+Si la qualification déjà collectée mentionne HDS dans "Constraints & Notes", confirmer via `AskUserQuestion` plutôt que re-demander.
+
 ---
 
 ## Phase C — Initialization Scope
@@ -196,9 +261,11 @@ The file must follow this structure:
 **Plage horaire:** {Standard / Etendue / Complète}
 **SLA:** {Bronze / Silver / Gold / Platine}
 
-| Resource | Type | Cloud | Size | Complexity |
-|----------|------|-------|------|------------|
-| {name} | {item type} | {public/private} | {details} | {level} |
+| Resource | Type | Cloud | Size | Complexity | Tenants spanned (v3) |
+|----------|------|-------|------|------------|----------------------|
+| {name} | {item type} | {public/private} | {details} | {level} | {1 default ; N if multi-tenant} |
+
+> **Colonne "Tenants spanned"** : à remplir uniquement si `tenancy_count ≥ 5`. Sinon laisser à 1 ou omettre. Représente le nombre de tenants distincts (SELAS, BUs, comptes cloisonnés) que la ressource sert avec change-management indépendant. Les landing zones, shared services et plateformes uniques restent à 1.
 
 {Repeat for each environment}
 
@@ -207,6 +274,20 @@ The file must follow this structure:
 | Environment | Plage horaire | SLA | SLA Coeff |
 |------------|---------------|-----|-----------|
 | {env} | {plage} | {level} | {coeff} |
+
+## v3 Modificateurs structurels
+
+> Cette section est **obligatoire**. Pour un client single-tenant classique sans migration, tous les champs ci-dessous sont au défaut neutre — auquel cas v3 == v2 numériquement.
+
+| Modificateur | Valeur déclarée | Justification |
+|---|---|---|
+| `tenancy_count` (T) | {1 / 2-4 / 5-9 / 10-19 / 20+} | {ex. "30 SELAS avec change-management indépendant" ou "single-tenant"} |
+| `year_1_ramp` | {none / light_migration / migration / heavy_migration} | {contexte migration, date_fin si déclaré} |
+| `specializations[]` | {liste ou None} | {ex. "SecOps 5.0 (HDS+critique), K8s Spec 5.0 (66 worker GKE)"} |
+| `stakeholder_complexity` | {low / medium / high} | {ex. "high — 30 SELAS + central IT + comités HDS/RSE"} |
+| `regulatory_profile` | {none / HDS / SecNumCloud / autre} | {ex. "HDS sur KaliSil, RGPD général"} |
+
+Si `T ≥ 5`, déclarer aussi le **`tenants_spanned` par bucket** dans l'inventaire ci-dessous (colonne supplémentaire). Pour les ressources consolidées (landing zone, shared services, plateforme unique), `tenants_spanned = 1`.
 
 ## Phase d'initialisation (one-shot)
 
@@ -287,6 +368,17 @@ Check the following:
    - Is monitoring always sized (it always applies, even at Minimal = 1 j/h)?
    - Is the AI agent system sized (None / Simple / Medium / Complex)? If None, the row must show effort 0 j/h.
    - Are the picked j/h values consistent with the abaques in `shared/initialization.md`? Audit must map to one of {2.5, [7,10], [15,20]}; monitoring to one of {1, 2.5, [7,10], [15,20]}; AI agent to one of {0, 2.5, [7,10], [15,20]}; remediation to one of {≈5, ≈15, ≈30+}. Flag any value that falls between paliers (e.g. audit_jh=4) as inconsistent with the recorded sizing.
+
+5. **v3 structural modifiers:**
+   - Is the "v3 Modificateurs structurels" section present with all 5 fields?
+   - Is `tenancy_count` declared and consistent with the context (e.g., "30 SELAS" in client context → T=20+; mono-app client → T=1)?
+   - If `tenancy_count ≥ 5`: is the Resource Inventory's "Tenants spanned" column populated for the relevant buckets?
+   - Is `year_1_ramp` consistent with the client context? FAIL if the client is migrating from on-prem but ramp = none (without explicit justification). FAIL if ramp = heavy_migration without a 12-mo end date.
+   - If `specializations[]` includes HDS Officer or SecOps Lead: is `regulatory_profile` = HDS or similar? Otherwise FAIL (incoherent).
+   - If `specializations[]` includes K8s Specialist: does the inventory contain a Managed K8s cluster with multi-cluster or ≥10 nodes? Otherwise WARN.
+   - `stakeholder_complexity = high`: does the context mention 16+ distinct entities (SELAS, BUs)? Otherwise WARN.
+   - Is `regulatory_profile` consistent with "Compliance requirements" in Constraints & Notes?
+   - For Mutualisé-bound small clients (< 10 j/h MCO expected): WARN if specializations[] non-empty — that's typically a Dédié signal.
 
 Report your findings as:
 - PASS: {check} — {brief explanation}

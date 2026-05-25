@@ -112,22 +112,121 @@ Les frais d'immobilisation dépendent du dispositif et de la plage horaire. Voir
 
 - 1 FTE = 20 j/h/mois (base : ~20 jours ouvrés par mois)
 
-## Formule de prix finale
+## Formule de prix finale (v3)
+
+L'abaque v3 (2026-05) ajoute cinq modificateurs structurels au formule v2 (sublinéaire sqrt) pour les engagements à grande échelle, régulés ou multi-tenants. **Pour les petits clients single-tenant sans migration et sans spécialisations déclarées, v3 == v2 numériquement** (tous les modificateurs sont au défaut neutre).
+
+```
+Pour chaque bucket (item_type, coefficient, tenants_spanned T) :
+  m_T(N, T) = sqrt(T) × m(N / sqrt(T))               # cf. item-types.md
+  MCO_bucket = base × m_T(N, T) × coefficient
+
+MCO_marginal = Σ buckets ( MCO_bucket × distribution_SLA_par_env )
+
+MCO_after_floor = max( capability_floor(plage, régulation, T), MCO_marginal )
+
+MCO_after_ramp  = MCO_after_floor × year_1_ramp_multiplier
+
+MCO_final_jh    = MCO_after_ramp + Σ specialization_jh_per_role
+                   (les j/h spécialistes sont facturés à leur propre TJM, voir
+                    `daily-rates.md` — pas au TJM blended)
+
+Gouvernance_final = Gouvernance_base × stakeholder_complexity_multiplier
+
+Total j/h = MCO_final_jh + Gouvernance_final + Évolutions
+
+Prix mensuel =
+    MCO_after_ramp × TJM_blended
+  + Σ (specialization_jh × TJM_spécialiste)
+  + Gouvernance_final × TJM_blended
+  + Évolutions × TJM_blended
+  + Immobilisation
+  [+ contingence forfait sur Gouvernance uniquement, jamais sur Évolutions]
+  [× (1 − remise_multi_annuelle) sur services, hors immobilisation]
+```
+
+Chaque modificateur trace à un **champ déclaré** dans la qualification — pas de fudge factor, pas de détection magique sur l'inventaire.
+
+### Modificateur 1 — capability_floor (plancher capacitaire)
+
+Plancher en j/h/mois reflétant l'équipe minimum viable pour honorer la prestation. Ne se déclenche **que** sur les engagements genuinement multi-tenants (`T ≥ 5`). Les clients single-tenant (Mutualisé pool, single-tenant Semi-dédié) ne sont pas affectés (floor = 0).
+
+```
+capability_floor(plage P, régulation R, tenancy_count T) :
+  if T < 5 :
+    return 0
+
+  base = 10  si  5 ≤ T ≤ 9
+        25  si 10 ≤ T ≤ 19
+        50  si T ≥ 20
+
+  hds_bonus   = 10 si HDS dans R
+  secnum      =  5 si SecNumCloud dans R
+  plage_bonus =  5 si P = Étendue
+              = 10 si P = Complète
+              =  0 sinon
+
+  return base + hds_bonus + secnum + plage_bonus
+```
+
+Le floor n'agit que comme **majorant** : `MCO_after_floor = max(floor, MCO_marginal)`. Si la somme marginale dépasse déjà le floor, le floor est inactif.
+
+### Modificateur 2 — tenancy_penalty (fragmentation multi-tenants)
+
+Capturée **par bucket** via `tenants_spanned T`. Voir `item-types.md` pour la formule m_T(N, T) = sqrt(T) × m(N / sqrt(T)).
+
+Buckets dont les ressources sont consolidées dans un seul tenant (landing zone, services partagés, plateforme unique) gardent T=1 et m_T = m (comportement v2).
+
+### Modificateur 3 — year_1_ramp (rampe stabilisation année 1)
+
+Les clients en migration depuis on-prem portent un surplus structurel de MCO pendant les 12 premiers mois (automation à construire, training, runbooks à écrire from scratch, queue legacy à absorber). Time-bounded.
+
+| Valeur déclarée | Multiplicateur | Quand utiliser |
+|---|---|---|
+| `none` (défaut) | 1.00 | Greenfield ou régime établi |
+| `light_migration` | 1.20 | Lift-and-shift avec IaC mature et reskilling mineur |
+| `migration` | 1.30 | Migration-from-on-prem standard |
+| `heavy_migration` | 1.50 | Plateforme greenfield + migration workloads + ramp simultanés (ex. Biogroup Move to Cloud) |
+
+Le multiplicateur s'applique à `MCO_after_floor`, **pas** à gouvernance ni évolutions. La qualification doit déclarer la **date de fin** du ramp ; le contrat reprice à end-of-ramp.
+
+### Modificateur 4 — specialization_premium (rôles spécialistes)
+
+L'équipe standard (cf. `daily-rates.md`) est Ops : Lead Ops : DM = 1.00 : 0.34 : 0.16. Elle couvre le run de base mais n'inclut pas SecOps, FinOps, K8s spécialistes, HDS officer — des rôles que certains engagements exigent structurellement.
+
+La qualification déclare une liste `specializations[]`. Chaque rôle ajoute une baseline en j/h/mois facturée **à son propre TJM** (voir `daily-rates.md`) :
+
+| Rôle | j/h/mois défaut | Quand déclarer |
+|---|---|---|
+| SecOps Lead | 5.0 | Périmètre HDS, données critiques, multi-tenant régulé |
+| FinOps Lead | 2.5 | Multi-cloud, >20 VMs, cadence LEAF lourde |
+| K8s Specialist | 5.0 | K8s managé en scope avec ≥10 nodes ou multi-cluster |
+| HDS Officer / Compliance Lead | 2.5 | HDS + cadence audit > semestriel ou multi-SELAS HDS |
+
+Les spécialistes sont **ajoutés** à `MCO_after_ramp` ; ils ne sont **pas** affectés par tenancy_penalty ni year_1_ramp (déjà dimensionnés pour le profil de l'engagement). Le sizing par défaut peut être surchargé en qualification avec justification.
+
+> **Important — clients Mutualisé.** Les spécialisations qui sont mutualisées au niveau de l'équipe (SecOps partagé entre 20 clients) **ne sont pas déclarées** par client — leur coût est déjà absorbé dans le TJM blended. v3 ne déclare des spécialisations que pour les engagements où le profil client justifie une **capacité dédiée**.
+
+### Modificateur 5 — stakeholder_complexity (gouvernance étendue)
+
+L'abaque de gouvernance compte la cérémonie (COPROD, COPIL, audits) mais pas la prep, follow-up, CAB, ITSM triage, postmortems, HDS comité, reporting mensuel. Pour les grandes structures, ces activités multiplient la charge gouvernance réelle.
+
+| Valeur déclarée | Multiplicateur | Quand déclarer |
+|---|---|---|
+| `low` (défaut) | 1.0 | 1–5 interlocuteurs (client mono-application, mono-équipe) |
+| `medium` | 1.5 | 6–15 interlocuteurs (multi-produits, multi-équipes, multi-apps) |
+| `high` | 2.0 | 16+ interlocuteurs (multi-SELAS, multi-BU, entité fédérée) |
+
+Le multiplicateur s'applique à **Gouvernance_base** (somme abaque incluant COPROD, COPIL si dédié, audits, allégements). Il ne compose pas avec la cadence COPROD dispositif (qui est déjà un axe de différenciation distinct).
+
+---
+
+## Formule de prix (legacy v2, conservée pour référence single-tenant)
+
+Pour rappel, la formule v2 (sans modificateurs v3) reste identique au cas particulier `T=1, ramp=none, specializations=[], stakeholder_complexity=low` :
 
 ```
 Prix mensuel = (Total j/h MCO × coeff SLA × TJM) + Gouvernance + Evolutions + Immobilisation
-
-Où :
-- Total j/h MCO = somme de (item_rate × coeff_size_complexity) pour chaque ressource par env
-- Gouvernance = selon abaques ci-dessus (COPIL + COPROD + audits), dépend du dispositif
-- Evolutions = estimées comme du build
-- coeff SLA = voir `service-levels.md` — par environnement
-- TJM = taux journalier moyen (selon grille Theodo)
-- Immobilisation = selon dispositif × plage horaire
-
-Si forfait :
-  Prix forfait = (MCO + Gouvernance) × (1 + contingence%) — hors évolutions
-
-Si multi-annuel :
-  Prix final = Prix × (1 - remise%)
 ```
+
+avec les conventions de calcul de l'item-types.md.

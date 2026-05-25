@@ -7,7 +7,9 @@ The file has four parts:
 1. **Hypothèses de travail** — assumptions for missing info from the qualification
 2. **Cross-check empirique** — sanity comparison vs FTE / ticket signals (no adjustment, just flag)
 3. **Synthèse** — client-facing summary (init block + monthly grid + price table)
-4. **Annexes** — calculation detail (A: monthly with bucket-by-bucket scaling, B: initialization)
+4. **Annexes** — calculation detail (A: monthly with bucket-by-bucket scaling and v3 modifiers, B: initialization)
+
+**v3 (2026-05) note.** The output template includes a "v3 modifiers applied" subsection inside Annexe A. For clients where all v3 modifiers are at the default neutral value (T=1, ramp=none, specializations=[], stakeholder=low, no floor), this subsection lists each modifier as "default — no impact" but **must still be present** to make the v2 vs v3 equivalence explicit and auditable.
 
 ## Template
 
@@ -135,18 +137,33 @@ Configuration par défaut (engagement ≥2 ans). Voir `shared/pricing-rules.md` 
 
 {Repeat for each environment.}
 
-#### MCO bucket-by-bucket (avec scaling)
+#### MCO bucket-by-bucket (avec scaling + v3 tenancy)
 
-| Bucket (item type, coeff) | N | base | mult(N) | coeff | MCO base bucket | Distribution par env (prorata count) | MCO après SLA |
-|---|---|---|---|---|---|---|---|
-| {ex. Public managed VM, 0.8} | {N} | {base} | {mult} | {coeff} | {base × mult × coeff} | {prod: x, recette: y, shared: z} | {x×SLA_prod + y×SLA_rec + z×SLA_sh} |
+> **v3 colonne T (tenants_spanned).** Si T=1 (défaut), le multiplicateur tenancy-aware `m_T(N, T) = sqrt(T) × m(N/sqrt(T))` se réduit à `m(N)`. Si T>1, deux buckets distincts peuvent exister pour un même (item, coeff) — un avec T=1 (consolidé) et un avec T>1 (fragmenté).
 
-#### MCO total
+| Bucket (item type, coeff, T) | N | base | T | m_T(N,T) | coeff | MCO base bucket | Distribution par env (prorata count) | MCO après SLA |
+|---|---|---|---|---|---|---|---|---|
+| {ex. Public managed VM, 0.8, T=1} | {N} | {base} | {T} | {m_T} | {coeff} | {base × m_T × coeff} | {prod: x, recette: y, shared: z} | {x×SLA_prod + y×SLA_rec + z×SLA_sh} |
+
+#### MCO marginal (avant modificateurs v3)
 
 | | j/h/mois |
 |---|---|
-| Sum buckets après SLA par env | {total} |
-| **Total MCO** | **{total}** |
+| Sum buckets après SLA par env | {MCO_marginal} |
+
+#### Application des modificateurs v3
+
+| Étape | Valeur | Impact j/h |
+|---|---|---|
+| MCO_marginal | — | {MCO_marginal} |
+| capability_floor(plage, regulatory, T) | {valeur, ou "0 — T<5"} | {max(floor, MCO_marginal) - MCO_marginal} |
+| MCO_after_floor | — | {MCO_after_floor} |
+| year_1_ramp ({none / light / migration / heavy}) | {×1.00 / ×1.20 / ×1.30 / ×1.50} | {delta} |
+| MCO_after_ramp | — | {MCO_after_ramp} |
+| Specialization premium ({roles}) | {Σ j/h} | +{spec_jh} |
+| **MCO_final_jh** | | **{MCO_final_jh}** |
+
+> Si aucun modificateur n'est déclaré (T=1, ramp=none, specializations=[]), cette table affiche l'égalité v2==v3 explicitement (chaque ligne montre delta 0).
 
 ### Gouvernance
 
@@ -157,7 +174,12 @@ Configuration par défaut (engagement ≥2 ans). Voir `shared/pricing-rules.md` 
 | ROSE     | semestriel | 0.5 j/h       | {calc}   |
 | YAMAS    | semestriel | 0.5 j/h       | {calc}   |
 | LEAF     | semestriel | 0.5 j/h       | {calc}   |
-| **Total Gouvernance** | | | **{y} j/h/mois** |
+| **Gouvernance_base** | | | **{y_base} j/h/mois** |
+
+| Modificateur v3 | Valeur | j/h |
+|---|---|---|
+| stakeholder_complexity_multiplier | {×1.0 / ×1.5 / ×2.0} | {y_base × mult} |
+| **Gouvernance_final** | | **{y_final} j/h/mois** |
 
 ### Évolutions
 
@@ -168,24 +190,30 @@ Configuration par défaut (engagement ≥2 ans). Voir `shared/pricing-rules.md` 
 
 | Catégorie         | j/h/mois    |
 | ----------------- | ----------- |
-| MCO finale        | {x}         |
-| Gouvernance       | {y}         |
+| MCO core (after_ramp) | {x_core}  |
+| Specialization premium ({roles}, j/h-équiv) | {spec_jh} |
+| MCO_final_jh (core + spec) | {x_core + spec_jh} |
+| Gouvernance_final | {y}         |
 | Évolutions        | {z}         |
 | **Total**         | **{total}** |
 
 ### Prix
 
-| Ligne             | j/h/mois | TJM    | Montant       |
-| ----------------- | -------- | ------ | ------------- |
-| MCO finale        | {x}      | {tjm}€ | {amount}€     |
-| Gouvernance       | {y}      | {tjm}€ | {amount}€     |
-| Évolutions        | {z}      | {tjm}€ | {amount}€     |
-| **Sous-total**    |          |        | **{amount}€** |
-| Immobilisation    | {plage} × {dispositif} | | {amount}€ |
-{If forfait:} | Contingence | {level} (+{x}%) sur MCO+Gouv | | +{amount}€ |
-{If multi-year:} | Remise multi-annuelle | {x} ans | | −{amount}€ |
-| **Total mensuel** |          |        | **{total}€**  |
-| **Total annuel**  |          |        | **{total × 12}€** |
+| Ligne | j/h/mois | TJM | Montant |
+| --- | --- | --- | --- |
+| MCO core (after_ramp) | {x_core} | 863€ blended | {x_core × 863} € |
+{For each declared specialization role:} | {role} | {role.jh} | {role.tjm}€ | {role.jh × role.tjm} € |
+| **Specialization subtotal** | {spec_jh} | (mix) | **{spec_amount} €** |
+| Gouvernance_final | {y} | 863€ blended | {y × 863} € |
+| Évolutions | {z} | 863€ blended | {z × 863} € |
+| **Sous-total services** | | | **{services_amount} €** |
+| Immobilisation | {plage} × {dispositif} | | {immo_amount} € |
+{If forfait:} | Contingence | {level} (+{x}%) sur Gouv | | +{cont_amount} € |
+{If multi-year:} | Remise multi-annuelle | {x} ans | | −{discount_amount} € |
+| **Total mensuel** | | | **{total} €** |
+| **Total annuel** | | | **{total × 12} €** |
+
+> **v3 — specialist TJMs.** Les rôles spécialisés (SecOps, FinOps, K8s Spec, HDS Officer) sont facturés à leur **propre TJM** (cf. `shared/daily-rates.md`), pas au blended. Si `specializations[]` est vide, omettre les lignes correspondantes et la ligne "Specialization subtotal".
 
 ---
 
