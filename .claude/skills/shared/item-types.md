@@ -44,9 +44,10 @@ Pour chaque bucket, la qualification déclare `tenants_spanned T` (défaut 1) :
 m_T(N, T) = sqrt(T) × multiplier(N / sqrt(T))
 
 cas particuliers :
-  T = 1                  : m_T = multiplier(N)            (comportement v2 inchangé)
-  T = N (1 ressource/tenant) : m_T = sqrt(N) × m(sqrt(N)) (proche de m(N) mais ré-amorti)
-  T quelconque, N grand  : m_T ≈ sqrt(T) × sqrt(N/(3T))   (l'effort grossit en √(T) × √(N))
+  T = 1                          : m_T = multiplier(N)             (comportement v2 inchangé)
+  N ≤ 3·sqrt(T) (régime linéaire) : m_T = sqrt(T) × N/sqrt(T) = N  (≈ 1 effort par ressource)
+  N >> 3·sqrt(T) (régime sqrt)    : m_T ≈ sqrt(N · sqrt(T) / 3)
+                                        = sqrt(N/3) × T^(1/4)      (sqrt v2 majoré du facteur T^¼)
 ```
 
 Interprétation : on imagine le bucket découpé en `sqrt(T)` sous-pools parallèles de taille `N/sqrt(T)` chacun. Chaque sous-pool amortit en interne ; la coordination entre sous-pools suit la même économie sqrt (l'équipe apprend une fois, applique plusieurs fois).

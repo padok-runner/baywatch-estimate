@@ -74,7 +74,7 @@ Verify the scaling values against the table:
 | 480 | 14.65 | 28.79 | 40.55 |
 | 1000 | 20.26 | 38.77 | 53.70 |
 
-Lecture : à `N < 3T` (peu de ressources par tenant), le facteur tenant prédomine et `m_T ≈ T × (N/T) = N`. À `N >> 3T`, l'amortissement intra-tenant kick in et `m_T → sqrt(T) × sqrt(N/(3T)) = sqrt(N/3)` ×  √T — plus grand que `sqrt(N/3)` du v2 d'un facteur sqrt(T).
+Lecture : à `N ≤ 3·sqrt(T)` (peu de ressources par sous-pool), `m(N/sqrt(T)) = N/sqrt(T)` donc `m_T = sqrt(T) × N/sqrt(T) = N` (régime linéaire — pas d'amortissement). À `N >> 3·sqrt(T)`, l'amortissement intra-sous-pool kicke in et `m_T → sqrt(N · sqrt(T) / 3) = sqrt(N/3) × T^(1/4)` — plus grand que `sqrt(N/3)` du v2 d'un facteur `T^(1/4)` (≈ 2.34× pour T=30, ≈ 3.16× pour T=100).
 
 ### 5. SLA application
 
