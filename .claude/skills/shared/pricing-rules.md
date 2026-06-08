@@ -114,22 +114,22 @@ Les frais d'immobilisation dépendent du dispositif et de la plage horaire. Voir
 
 ## Formule de prix finale (v3)
 
-L'abaque v3 (2026-05) ajoute cinq modificateurs structurels au formule v2 (sublinéaire sqrt) pour les engagements à grande échelle, régulés ou multi-tenants. **Pour les petits clients single-tenant sans migration et sans spécialisations déclarées, v3 == v2 numériquement** (tous les modificateurs sont au défaut neutre).
+L'abaque v3 (2026-06) remplace le cœur sublinéaire piecewise-sqrt par une **loi de puissance unique** `scale(N, T) = T^(1−k) × N^k` (k ≈ 0.8, cf. `item-types.md`) : l'économie d'échelle sur le parc **et** la pénalité de fragmentation multi-tenants tombent du même exposant. Trois modificateurs structurels restent appliqués par-dessus, chacun opt-in via un champ de qualification.
+
+> **Pas de compatibilité v2.** La loi de puissance re-tarife tous les volumes par rapport au piecewise-sqrt v2 (volontairement — v2 sous-tarifait les grands parcs). Les petits buckets (N=2–3) deviennent légèrement moins chers, N≥5 plus chers. Ce n'est pas un sur-ensemble neutre de v2.
 
 ```
 Pour chaque bucket (item_type, coefficient, tenants_spanned T) :
-  m_T(N, T) = sqrt(T) × m(N / sqrt(T))               # cf. item-types.md
-  MCO_bucket = base × m_T(N, T) × coefficient
+  scale(N, T) = Σ_tenant N_t^k = T^(1−k) × N^k         # k ≈ 0.8 ; T=1 par défaut
+  MCO_bucket = base × scale(N, T) × coefficient
 
-MCO_marginal = Σ buckets ( MCO_bucket × distribution_SLA_par_env )
+MCO = Σ buckets ( MCO_bucket × distribution_SLA_par_env )
 
-MCO_after_floor = max( capability_floor(plage, régulation, T), MCO_marginal )
+MCO_after_ramp = MCO × year_1_ramp_multiplier
 
-MCO_after_ramp  = MCO_after_floor × year_1_ramp_multiplier
-
-MCO_final_jh    = MCO_after_ramp + Σ specialization_jh_per_role
-                   (les j/h spécialistes sont facturés à leur propre TJM, voir
-                    `daily-rates.md` — pas au TJM blended)
+MCO_final_jh   = MCO_after_ramp + Σ specialization_jh_per_role
+                  (les j/h spécialistes sont facturés à leur propre TJM, voir
+                   `daily-rates.md` — pas au TJM blended)
 
 Gouvernance_final = Gouvernance_base × stakeholder_complexity_multiplier
 
@@ -145,39 +145,9 @@ Prix mensuel =
   [× (1 − remise_multi_annuelle) sur services, hors immobilisation]
 ```
 
-Chaque modificateur trace à un **champ déclaré** dans la qualification — pas de fudge factor, pas de détection magique sur l'inventaire.
+Chaque modificateur trace à un **champ déclaré** dans la qualification — pas de fudge factor, pas de détection magique sur l'inventaire. La fragmentation multi-tenants n'est **pas** un modificateur séparé : elle est dans le cœur (`scale`), via `tenants_spanned` par bucket (cf. `item-types.md`).
 
-### Modificateur 1 — capability_floor (plancher capacitaire)
-
-Plancher en j/h/mois reflétant l'équipe minimum viable pour honorer la prestation. Ne se déclenche **que** sur les engagements genuinement multi-tenants (`T ≥ 5`). Les clients single-tenant (Mutualisé pool, single-tenant Semi-dédié) ne sont pas affectés (floor = 0).
-
-```
-capability_floor(plage P, régulation R, tenancy_count T) :
-  if T < 5 :
-    return 0
-
-  base = 10  si  5 ≤ T ≤ 9
-        25  si 10 ≤ T ≤ 19
-        50  si T ≥ 20
-
-  hds_bonus   = 10 si HDS dans R
-  secnum      =  5 si SecNumCloud dans R
-  plage_bonus =  5 si P = Étendue
-              = 10 si P = Complète
-              =  0 sinon
-
-  return base + hds_bonus + secnum + plage_bonus
-```
-
-Le floor n'agit que comme **majorant** : `MCO_after_floor = max(floor, MCO_marginal)`. Si la somme marginale dépasse déjà le floor, le floor est inactif.
-
-### Modificateur 2 — tenancy_penalty (fragmentation multi-tenants)
-
-Capturée **par bucket** via `tenants_spanned T`. Voir `item-types.md` pour la formule m_T(N, T) = sqrt(T) × m(N / sqrt(T)).
-
-Buckets dont les ressources sont consolidées dans un seul tenant (landing zone, services partagés, plateforme unique) gardent T=1 et m_T = m (comportement v2).
-
-### Modificateur 3 — year_1_ramp (rampe stabilisation année 1)
+### Modificateur 1 — year_1_ramp (rampe stabilisation année 1)
 
 Les clients en migration depuis on-prem portent un surplus structurel de MCO pendant les 12 premiers mois (automation à construire, training, runbooks à écrire from scratch, queue legacy à absorber). Time-bounded.
 
@@ -188,9 +158,11 @@ Les clients en migration depuis on-prem portent un surplus structurel de MCO pen
 | `migration` | 1.30 | Migration-from-on-prem standard |
 | `heavy_migration` | 1.50 | Plateforme greenfield + migration workloads + ramp simultanés (ex. Biogroup Move to Cloud) |
 
-Le multiplicateur s'applique à `MCO_after_floor`, **pas** à gouvernance ni évolutions. La qualification doit déclarer la **date de fin** du ramp ; le contrat reprice à end-of-ramp.
+> Échelle ordinale de sévérité (pourcentages ronds +20 % / +30 % / +50 %, choisis pour la lisibilité client) — pas une fonction dérivée. Le seul exposant dérivé du modèle est `k` (loi de puissance du cœur).
 
-### Modificateur 4 — specialization_premium (rôles spécialistes)
+Le multiplicateur s'applique à `MCO` (somme des buckets après SLA), **pas** à gouvernance ni évolutions. La qualification doit déclarer la **date de fin** du ramp ; le contrat reprice à end-of-ramp.
+
+### Modificateur 2 — specialization_premium (rôles spécialistes)
 
 L'équipe standard (cf. `daily-rates.md`) est Ops : Lead Ops : DM = 1.00 : 0.34 : 0.16. Elle couvre le run de base mais n'inclut pas SecOps, FinOps, K8s spécialistes, HDS officer — des rôles que certains engagements exigent structurellement.
 
@@ -203,11 +175,11 @@ La qualification déclare une liste `specializations[]`. Chaque rôle ajoute une
 | K8s Specialist | 5.0 | K8s managé en scope avec ≥10 nodes ou multi-cluster |
 | HDS Officer / Compliance Lead | 2.5 | HDS + cadence audit > semestriel ou multi-SELAS HDS |
 
-Les spécialistes sont **ajoutés** à `MCO_after_ramp` ; ils ne sont **pas** affectés par tenancy_penalty ni year_1_ramp (déjà dimensionnés pour le profil de l'engagement). Le sizing par défaut peut être surchargé en qualification avec justification.
+Les spécialistes sont **ajoutés** à `MCO_after_ramp` ; ils ne sont **pas** affectés par le scaling du cœur ni par year_1_ramp (déjà dimensionnés pour le profil de l'engagement). Le sizing par défaut peut être surchargé en qualification avec justification.
 
 > **Important — clients Mutualisé.** Les spécialisations qui sont mutualisées au niveau de l'équipe (SecOps partagé entre 20 clients) **ne sont pas déclarées** par client — leur coût est déjà absorbé dans le TJM blended. v3 ne déclare des spécialisations que pour les engagements où le profil client justifie une **capacité dédiée**.
 
-### Modificateur 5 — stakeholder_complexity (gouvernance étendue)
+### Modificateur 3 — stakeholder_complexity (gouvernance étendue)
 
 L'abaque de gouvernance compte la cérémonie (COPROD, COPIL, audits) mais pas la prep, follow-up, CAB, ITSM triage, postmortems, HDS comité, reporting mensuel. Pour les grandes structures, ces activités multiplient la charge gouvernance réelle.
 
@@ -217,16 +189,19 @@ L'abaque de gouvernance compte la cérémonie (COPROD, COPIL, audits) mais pas l
 | `medium` | 1.5 | 6–15 interlocuteurs (multi-produits, multi-équipes, multi-apps) |
 | `high` | 2.0 | 16+ interlocuteurs (multi-SELAS, multi-BU, entité fédérée) |
 
+> Échelle linéaire régulière (`1 + 0.5k`, k∈{0,1,2}) — échelle ordinale, pas une fonction dérivée.
+
 Le multiplicateur s'applique à **Gouvernance_base** (somme abaque incluant COPROD, COPIL si dédié, audits, allégements). Il ne compose pas avec la cadence COPROD dispositif (qui est déjà un axe de différenciation distinct).
 
 ---
 
-## Formule de prix (legacy v2, conservée pour référence single-tenant)
+## Formule de prix (legacy v2, dépréciée)
 
-Pour rappel, la formule v2 (sans modificateurs v3) reste identique au cas particulier `T=1, ramp=none, specializations=[], stakeholder_complexity=low` :
+La formule v2 (cœur piecewise-sqrt `multiplier(N)`, sans loi de puissance ni fragmentation intégrée) est **dépréciée** depuis v3. Conservée pour mémoire uniquement :
 
 ```
+multiplier(N) = min(N, 3) + sqrt(max(N/3, 1)) - 1
 Prix mensuel = (Total j/h MCO × coeff SLA × TJM) + Gouvernance + Evolutions + Immobilisation
 ```
 
-avec les conventions de calcul de l'item-types.md.
+Ne plus utiliser pour de nouveaux estimates — v3 (loi de puissance, cf. ci-dessus) est la référence.

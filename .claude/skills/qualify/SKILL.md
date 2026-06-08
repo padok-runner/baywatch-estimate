@@ -122,9 +122,9 @@ For each environment, ask:
 
 ### Step 6 bis — v3 structural modifiers (opt-in)
 
-Ask the user **one question at a time** via `AskUserQuestion`. Each modifier is **opt-in** — if the user is unsure or the engagement is a typical small single-tenant, leave the defaults (which reproduce v2 behaviour numerically).
+Ask the user **one question at a time** via `AskUserQuestion`. Each modifier is **opt-in** — if the user is unsure or the engagement is a typical small single-tenant, leave the defaults (neutral: no ramp, no specializations, stakeholder=low, T=1). The power-law core (`scale = N^0.8`) still applies regardless of the modifiers.
 
-See `skills/shared/pricing-rules.md` ("Modificateurs 1–5") and `skills/shared/daily-rates.md` ("Specialization roles") for the full semantics.
+See `skills/shared/pricing-rules.md` ("Modificateurs 1–3") and `skills/shared/daily-rates.md` ("Specialization roles") for the full semantics.
 
 #### 6.1 Tenancy count
 
@@ -134,7 +134,7 @@ See `skills/shared/pricing-rules.md` ("Modificateurs 1–5") and `skills/shared/
 >
 > Options : 1 (default, single-tenant), 2–4, 5–9, 10–19, 20+
 
-Si T ≥ 5, demander aussi :
+Si T ≥ 2, demander aussi :
 > Sur quels **buckets de ressources** la fragmentation multi-tenant s'applique-t-elle ? (Ex. "App VMs L&S prod : T=30 ; landing zone shared services : T=1".)
 
 Capturer per-bucket `tenants_spanned` dans la qualification (défaut 1).
@@ -265,7 +265,7 @@ The file must follow this structure:
 |----------|------|-------|------|------------|----------------------|
 | {name} | {item type} | {public/private} | {details} | {level} | {1 default ; N if multi-tenant} |
 
-> **Colonne "Tenants spanned"** : à remplir uniquement si `tenancy_count ≥ 5`. Sinon laisser à 1 ou omettre. Représente le nombre de tenants distincts (SELAS, BUs, comptes cloisonnés) que la ressource sert avec change-management indépendant. Les landing zones, shared services et plateformes uniques restent à 1.
+> **Colonne "Tenants spanned"** : à remplir dès que `tenancy_count ≥ 2`. Sinon laisser à 1 ou omettre. Représente le nombre de tenants distincts (SELAS, BUs, comptes cloisonnés) que la ressource sert avec change-management indépendant. Les landing zones, shared services et plateformes uniques restent à 1.
 
 {Repeat for each environment}
 
@@ -277,7 +277,7 @@ The file must follow this structure:
 
 ## v3 Modificateurs structurels
 
-> Cette section est **obligatoire**. Pour un client single-tenant classique sans migration, tous les champs ci-dessous sont au défaut neutre — auquel cas v3 == v2 numériquement.
+> Cette section est **obligatoire** (nouvelles qualifications). Pour un client single-tenant classique sans migration, tous les champs ci-dessous sont au défaut neutre. Le cœur loi-de-puissance (`scale = N^0.8`) s'applique néanmoins — v3 n'est **pas** numériquement égal à v2.
 
 | Modificateur | Valeur déclarée | Justification |
 |---|---|---|
@@ -287,7 +287,7 @@ The file must follow this structure:
 | `stakeholder_complexity` | {low / medium / high} | {ex. "high — 30 SELAS + central IT + comités HDS/RSE"} |
 | `regulatory_profile` | {none / HDS / SecNumCloud / autre} | {ex. "HDS sur KaliSil, RGPD général"} |
 
-Si `T ≥ 5`, déclarer aussi le **`tenants_spanned` par bucket** dans l'inventaire ci-dessous (colonne supplémentaire). Pour les ressources consolidées (landing zone, shared services, plateforme unique), `tenants_spanned = 1`.
+Si `T ≥ 2`, déclarer aussi le **`tenants_spanned` par bucket** dans l'inventaire ci-dessous (colonne supplémentaire). Pour les ressources consolidées (landing zone, shared services, plateforme unique), `tenants_spanned = 1`.
 
 ## Phase d'initialisation (one-shot)
 
@@ -372,7 +372,7 @@ Check the following:
 5. **v3 structural modifiers:**
    - Is the "v3 Modificateurs structurels" section present with all 5 fields?
    - Is `tenancy_count` declared and consistent with the context (e.g., "30 SELAS" in client context → T=20+; mono-app client → T=1)?
-   - If `tenancy_count ≥ 5`: is the Resource Inventory's "Tenants spanned" column populated for the relevant buckets?
+   - If `tenancy_count ≥ 2`: is the Resource Inventory's "Tenants spanned" column populated for the relevant buckets?
    - Is `year_1_ramp` consistent with the client context? FAIL if the client is migrating from on-prem but ramp = none (without explicit justification). FAIL if ramp = heavy_migration without a 12-mo end date.
    - If `specializations[]` includes HDS Officer or SecOps Lead: is `regulatory_profile` = HDS or similar? Otherwise FAIL (incoherent).
    - If `specializations[]` includes K8s Specialist: does the inventory contain a Managed K8s cluster with multi-cluster or ≥10 nodes? Otherwise WARN.

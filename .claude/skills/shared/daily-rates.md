@@ -21,7 +21,7 @@ Pour les engagements où le profil client justifie une capacité spécialiste **
 | K8s Specialist | 1 100€ | 5.0 | K8s managé avec ≥10 nodes ou multi-cluster |
 | HDS Officer / Compliance Lead | 1 400€ | 2.5 | HDS + cadence audit > semestriel, multi-SELAS HDS |
 
-Le sizing par défaut peut être surchargé en qualification avec justification. Le j/h spécialiste est **additionnel** au MCO core ; il n'est pas affecté par `tenancy_penalty` ni `year_1_ramp` (déjà dimensionné pour le profil).
+Le sizing par défaut peut être surchargé en qualification avec justification. Le j/h spécialiste est **additionnel** au MCO core ; il n'est pas affecté par le scaling du cœur (loi de puissance) ni par `year_1_ramp` (déjà dimensionné pour le profil).
 
 > **Note clients Mutualisé.** Les spécialisations mutualisées au niveau du pool d'équipe (SecOps partagé entre 20 clients) **ne sont pas** déclarées par client — elles sont absorbées dans le TJM blended du pool. Les `specializations[]` v3 ne sont déclarées que pour les engagements qui justifient une capacité dédiée.
 

@@ -40,9 +40,3 @@
 | Application interne avec impact modéré si indisponible      | Silver         |
 | Application client-facing avec impact business significatif | Gold           |
 | Application critique (infrastructure vitale)                | Platine        |
-
-## Capability floor (v3)
-
-Pour les engagements multi-tenants (`tenancy_count ≥ 5`), un plancher capacitaire en j/h/mois s'applique au-dessus de la somme marginale des buckets MCO. Le floor dépend de **plage horaire × régulation × tenancy_count** et reflète l'équipe minimum viable pour honorer la prestation.
-
-Voir `pricing-rules.md` → "Modificateur 1 — capability_floor" pour la table complète. Les clients single-tenant (`T = 1` ou `T < 5`) ne sont pas affectés (floor = 0).

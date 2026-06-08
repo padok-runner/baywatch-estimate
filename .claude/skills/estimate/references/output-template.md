@@ -9,7 +9,7 @@ The file has four parts:
 3. **Synthèse** — client-facing summary (init block + monthly grid + price table)
 4. **Annexes** — calculation detail (A: monthly with bucket-by-bucket scaling and v3 modifiers, B: initialization)
 
-**v3 (2026-05) note.** The output template includes a "v3 modifiers applied" subsection inside Annexe A. For clients where all v3 modifiers are at the default neutral value (T=1, ramp=none, specializations=[], stakeholder=low, no floor), this subsection lists each modifier as "default — no impact" but **must still be present** to make the v2 vs v3 equivalence explicit and auditable.
+**v3 (2026-06) note.** Annexe A includes a "v3 modifiers applied" subsection. For clients where all modifiers are at the default neutral value (ramp=none, specializations=[], stakeholder=low), it lists each as "default — no impact" but **must still be present** for auditability. Note: the v3 power-law core (`scale = N^0.8`) is **not** numerically equal to v2 — even at default modifiers the MCO differs from a v2 estimate. Multi-tenant fragmentation lives in the bucket `scale(N,T)` column, not in the modifiers subsection.
 
 ## Template
 
@@ -61,7 +61,7 @@ The file has four parts:
 - Déductive > FTE par >20% : ⚠ client peut-être sous-staffé aujourd'hui ; ou inventaire inclut du non-MCO. À investiguer, pas à compenser.
 - FTE > Déductive par >20% : ⚠ inventaire incomplet ou complexité cachée. À investiguer, pas à compenser.
 
-> Le scaling sublinéaire de l'abaque (`multiplier(N) = min(N,3) + sqrt(max(N/3,1)) - 1`) intègre déjà le bénéfice automation/orchestration sur les ressources identiques, sans aplatir abusivement comme le ferait du log10. Aucun discount n'est appliqué après coup.
+> Le scaling de l'abaque (loi de puissance `scale(N, T) = T^(1−k) × N^k`, k≈0.8) intègre déjà le bénéfice automation/orchestration sur les ressources identiques **et** la pénalité de fragmentation multi-tenants. Aucun discount n'est appliqué après coup.
 
 ---
 
@@ -137,33 +137,31 @@ Configuration par défaut (engagement ≥2 ans). Voir `shared/pricing-rules.md` 
 
 {Repeat for each environment.}
 
-#### MCO bucket-by-bucket (avec scaling + v3 tenancy)
+#### MCO bucket-by-bucket (loi de puissance + tenancy)
 
-> **v3 colonne T (tenants_spanned).** Si T=1 (défaut), le multiplicateur tenancy-aware `m_T(N, T) = sqrt(T) × m(N/sqrt(T))` se réduit à `m(N)`. Si T>1, deux buckets distincts peuvent exister pour un même (item, coeff) — un avec T=1 (consolidé) et un avec T>1 (fragmenté).
+> **Colonne T (tenants_spanned).** Si T=1 (défaut), `scale(N, T) = N^0.8`. Si T>1, `scale = T^0.2 × N^0.8` (ou la somme exacte `Σ N_t^0.8` si les tenants sont inégaux). Deux buckets distincts peuvent exister pour un même (item, coeff) — un consolidé (T=1) et un fragmenté (T>1).
 
-| Bucket (item type, coeff, T) | N | base | T | m_T(N,T) | coeff | MCO base bucket | Distribution par env (prorata count) | MCO après SLA |
+| Bucket (item type, coeff, T) | N | base | T | scale(N,T) | coeff | MCO base bucket | Distribution par env (prorata count) | MCO après SLA |
 |---|---|---|---|---|---|---|---|---|
-| {ex. Public managed VM, 0.8, T=1} | {N} | {base} | {T} | {m_T} | {coeff} | {base × m_T × coeff} | {prod: x, recette: y, shared: z} | {x×SLA_prod + y×SLA_rec + z×SLA_sh} |
+| {ex. Public managed VM, 0.8, T=1} | {N} | {base} | {T} | {scale} | {coeff} | {base × scale × coeff} | {prod: x, recette: y, shared: z} | {x×SLA_prod + y×SLA_rec + z×SLA_sh} |
 
-#### MCO marginal (avant modificateurs v3)
+#### MCO (somme des buckets après SLA)
 
 | | j/h/mois |
 |---|---|
-| Sum buckets après SLA par env | {MCO_marginal} |
+| Sum buckets après SLA par env | {MCO} |
 
 #### Application des modificateurs v3
 
 | Étape | Valeur | Impact j/h |
 |---|---|---|
-| MCO_marginal | — | {MCO_marginal} |
-| capability_floor(plage, regulatory, T) | {valeur, ou "0 — T<5"} | {max(floor, MCO_marginal) - MCO_marginal} |
-| MCO_after_floor | — | {MCO_after_floor} |
+| MCO (après SLA) | — | {MCO} |
 | year_1_ramp ({none / light / migration / heavy}) | {×1.00 / ×1.20 / ×1.30 / ×1.50} | {delta} |
 | MCO_after_ramp | — | {MCO_after_ramp} |
 | Specialization premium ({roles}) | {Σ j/h} | +{spec_jh} |
 | **MCO_final_jh** | | **{MCO_final_jh}** |
 
-> Si aucun modificateur n'est déclaré (T=1, ramp=none, specializations=[]), cette table affiche l'égalité v2==v3 explicitement (chaque ligne montre delta 0).
+> Si aucun modificateur n'est déclaré (ramp=none, specializations=[]), les lignes ramp/spec montrent delta 0 et `MCO_final_jh = MCO`. La fragmentation multi-tenants n'apparaît **pas** ici — elle est déjà dans la colonne `scale(N,T)` du tableau bucket-by-bucket ci-dessus.
 
 ### Gouvernance
 

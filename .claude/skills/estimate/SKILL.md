@@ -28,27 +28,25 @@ For the output structure, read `references/output-template.md`.
 
 Tous les j/h/mois sont exprimés au **dixième de jour** près (ex. 0.4, 1.2, 2.1). N'arrondissez jamais au demi-jour ou au jour entier.
 
-- Calculs intermédiaires : 2 décimales (ex. `multiplier(11) = 3.915`).
+- Calculs intermédiaires : 2 décimales (ex. `scale(11) = 11^0.8 = 6.81`).
 - Tableaux de synthèse : 1 décimale.
 - Total final : somme précise des composantes, arrondie une seule fois au dixième.
 
 ## Methodology
 
-The price is built from one rigorous calculation. There is no parallel heuristic, no discount knob. **v3** (2026-05) adds five structural modifiers on top of the v2 sqrt formula — each opt-in via qualification fields, each tracing to an explicit value. For a small single-tenant client with no migration and no specializations, v3 == v2 numerically.
+The price is built from one rigorous calculation. There is no parallel heuristic, no discount knob. **v3** (2026-06) replaces the v2 piecewise-sqrt core with a single **power-law** curve `scale(N, T) = T^(1−k) × N^k` (k ≈ 0.8), summed per tenant so fleet economy-of-scale and multi-tenant fragmentation come from the same exponent. Three opt-in modifiers (year-1 ramp, specializations, stakeholder governance) apply on top, each tracing to a declared qualification field. This re-prices every fleet size vs v2 (deliberately — v2 under-priced large fleets); it is **not** v2-compatible.
 
 ```
 For each (item type, coefficient, tenants_spanned T) bucket :
-  m_T(N, T) = sqrt(T) × multiplier(N / sqrt(T))         # v3, T=1 by default
-  MCO_bucket = base_rate × m_T(N, T) × coefficient
-  where multiplier(x) = min(x, 3) + sqrt(max(x/3, 1)) - 1
+  scale(N, T) = Σ_tenant N_t^k = T^(1−k) × N^k         # k ≈ 0.8, T=1 by default
+  MCO_bucket = base_rate × scale(N, T) × coefficient
 
 Distribute MCO_bucket across envs prorata of count, apply SLA per env.
-Sum across all buckets and envs → MCO_marginal.
+Sum across all buckets and envs → MCO.
 
-MCO_after_floor = max( capability_floor(plage, regulatory, T), MCO_marginal )
-MCO_after_ramp  = MCO_after_floor × year_1_ramp_multiplier
-MCO_final_jh    = MCO_after_ramp + Σ specialization_jh_per_role
-                   (specialists billed at own TJM, not blended)
+MCO_after_ramp = MCO × year_1_ramp_multiplier
+MCO_final_jh   = MCO_after_ramp + Σ specialization_jh_per_role
+                  (specialists billed at own TJM, not blended)
 
 Gouvernance_final = Gouvernance_base × stakeholder_complexity_multiplier
 
@@ -64,9 +62,9 @@ Price =
   [× (1 − multi_year_discount) on services, excluding immobilisation]
 ```
 
-See `shared/pricing-rules.md` ("Modificateurs 1–5") and `shared/item-types.md` ("Pénalité de fragmentation multi-tenants") for the formal definitions of each modifier.
+See `shared/pricing-rules.md` ("Modificateurs 1–3") and `shared/item-types.md` ("Scaling sublinéaire (loi de puissance)") for the formal definitions.
 
-The sublinear scaling and tenancy penalty are **inside the abaque**, not applied afterward as discounts. Identical-profile ressources at scale (e.g., 11 EC2 Debian) cost less to operate per unit than isolated ressources because automation amortizes — captured by `multiplier(N)`. When those ressources are fragmented across tenants, amortization breaks — captured by `m_T(N, T) = sqrt(T) × m(N/sqrt(T))`. No separate "calibration" or "discount" is permitted.
+The power-law scaling and the per-tenant fragmentation are **inside the abaque**, not applied afterward as discounts. Identical-profile ressources at scale (e.g., 11 EC2 Debian) cost less to operate per unit than isolated ressources because automation amortizes — captured by `N^k`. When those ressources are fragmented across tenants, amortization partially breaks — captured by summing `N_t^k` per tenant (a `× T^(1−k)` factor). No separate "calibration" or "discount" is permitted.
 
 Governance, SLA coefficients, and immobilisation are calculated independently and cumulated into the total.
 
@@ -95,44 +93,31 @@ Read the resource inventory from `qualification.md`. For each ressource, identif
 
 Group ressources globally (across all envs) by `(item type, coefficient, tenants_spanned)`.
 
-For each group, compute the **tenancy-aware multiplier** and the MCO base:
+For each group, compute the **power-law scale** and the MCO base:
 
 ```
-m_T(N, T) = sqrt(T) × multiplier(N / sqrt(T))
-MCO_bucket = base_rate × m_T(N, T) × coefficient
+scale(N, T) = T^(1−k) × N^k          # k ≈ 0.8 ; exact form Σ_tenant N_t^k if tenants are uneven
+MCO_bucket = base_rate × scale(N, T) × coefficient
 ```
 
-This is the **MCO base** for that bucket, before SLA. For single-tenant buckets (`T=1`), `m_T = multiplier(N)` — identical to v2.
+This is the **MCO base** for that bucket, before SLA. For single-tenant buckets (`T=1`), `scale = N^k`.
 
-### Step 2: Distribute per env and apply SLA → MCO_marginal
+### Step 2: Distribute per env and apply SLA → MCO
 
 For each bucket, distribute the MCO base across environments **prorata of ressource count**. Apply the SLA coefficient per environment (Bronze 1.00, Silver 1.05, Gold 1.10, Platine 1.20).
 
 ```
-MCO_marginal = Σ buckets ( Σ envs ( MCO_bucket × (count_env / count_total_bucket) × SLA_coeff_env ) )
+MCO = Σ buckets ( Σ envs ( MCO_bucket × (count_env / count_total_bucket) × SLA_coeff_env ) )
 ```
 
-The total `MCO_marginal` is the sum of these env-and-SLA-adjusted contributions across all buckets.
+The total `MCO` is the sum of these env-and-SLA-adjusted contributions across all buckets.
 
-### Step 2b: Apply capability floor (v3)
-
-Read `tenancy_count`, `regulatory_profile`, and the max `plage horaire` from qualification's "v3 Modificateurs structurels" section. Compute the capability floor per `shared/pricing-rules.md` ("Modificateur 1") :
-
-```
-floor = capability_floor(plage, regulatory, tenancy_count)
-MCO_after_floor = max(floor, MCO_marginal)
-```
-
-For single-tenant (`T<5`), floor = 0 and `MCO_after_floor = MCO_marginal` (no effect).
-
-If the floor activates (i.e., `floor > MCO_marginal`), the estimate must call this out explicitly in the breakdown — show both values and the resulting `MCO_after_floor`.
-
-### Step 2c: Apply year-1 ramp (v3)
+### Step 2b: Apply year-1 ramp (v3)
 
 Read `year_1_ramp` from qualification.
 
 ```
-MCO_after_ramp = MCO_after_floor × year_1_ramp_multiplier
+MCO_after_ramp = MCO × year_1_ramp_multiplier
 ```
 
 | Value | Multiplier |
@@ -144,7 +129,7 @@ MCO_after_ramp = MCO_after_floor × year_1_ramp_multiplier
 
 Record the **end date** of the ramp in the estimate notes. The contract should re-price at end-of-ramp.
 
-### Step 2d: Add specialization premium (v3)
+### Step 2c: Add specialization premium (v3)
 
 Read `specializations[]` from qualification. For each declared role, compute the j/h premium:
 
@@ -153,7 +138,7 @@ specialization_jh_total = Σ over declared roles (role.jh_per_month)
 MCO_final_jh = MCO_after_ramp + specialization_jh_total
 ```
 
-Specialist j/h are billed at **their own TJM** (see `shared/daily-rates.md` → Specialization roles), **not** at the blended TJM. They are added to `MCO_after_ramp`; they do **not** receive the tenancy penalty nor the year-1 ramp multiplier (already sized for the engagement profile).
+Specialist j/h are billed at **their own TJM** (see `shared/daily-rates.md` → Specialization roles), **not** at the blended TJM. They are added to `MCO_after_ramp`; they do **not** receive the core scaling nor the year-1 ramp multiplier (already sized for the engagement profile).
 
 Empty `specializations[]` → no premium added.
 
@@ -200,7 +185,7 @@ Total j/h/mois = MCO_final_jh + Gouvernance_final + Évolutions
 
 Determine the dispositif using thresholds in `shared/pricing-rules.md` (<10 mutualisé, 10–100 semi-dédié, >100 dédié).
 
-> **v3 dispositif cascade.** When v3 modifiers (capability floor, year-1 ramp, specializations) push the total above 100 j/h, the dispositif upgrades to **Dédié**. This in turn changes COPROD frequency (mensuel → weekly) and adds COPIL trimestriel. Procedure: (1) compute a provisional Total with the dispositif inferred from `MCO_marginal + Gouvernance_base + Évolutions`; (2) if Total > 100 j/h, upgrade dispositif to Dédié and **recompute `Gouvernance_base`** for the upgraded dispositif (replacing the previous `Gouvernance_base`, not adding to it); (3) apply the `stakeholder_complexity_multiplier` **exactly once** to the recomputed `Gouvernance_base` to obtain `Gouvernance_final`. Iterate until the dispositif is stable (typically one pass suffices).
+> **v3 dispositif cascade.** The dispositif threshold is tested against the **post-modifier** Total `MCO_final_jh + Gouvernance_final + Évolutions` — i.e. after ramp and specializations, not on the raw bucket sum. When these push the Total above 100 j/h, the dispositif upgrades to **Dédié**, which changes COPROD frequency (mensuel → weekly) and adds COPIL trimestriel. Because `Gouvernance_base` itself depends on the dispositif, resolve the circularity by iterating: (1) compute the Total with the dispositif inferred from the current `Gouvernance_base`; (2) if Total > 100 j/h, set dispositif = Dédié and **recompute `Gouvernance_base`** for Dédié (replacing it, not adding); (3) re-apply `stakeholder_complexity_multiplier` **exactly once** to obtain `Gouvernance_final`, and recompute the Total. Iterate until the dispositif is stable (one pass usually suffices).
 
 ### Step 6: Initialization (one-shot)
 
