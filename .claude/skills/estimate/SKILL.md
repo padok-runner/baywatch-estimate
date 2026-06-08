@@ -99,9 +99,11 @@ The total MCO j/h/mois is the sum of these env-and-SLA-adjusted contributions ac
 
 **Évolutions:** estimate from the evolution backlog in `qualification.md`. If unclear, ask the user.
 
-### Step 4: Empirical cross-check (sanity, no adjustment)
+### Step 4: Cross-checks (confirmation, no adjustment)
 
-If `qualification.md` provides FTE breakdown, compute :
+These are **confirmations**, never adjustments. The deductive total stands as-is; cross-checks only flag anomalies to investigate. Run both when the data is available.
+
+**4a — Empirical (FTE) cross-check.** If `qualification.md` provides FTE breakdown, compute :
 ```
 Empirical estimate = (MCO_FTE + governance_FTE + evolutions_FTE) × 20 j/h/mois
 ```
@@ -113,6 +115,18 @@ Compare with the deductive total. **No adjustment** — just a sanity check :
 - FTE > Deductive by >20% : flag in the report. Either inventory is incomplete, or the client has hidden complexity. Investigate.
 
 If qualification has no FTE data, also compare deductive against simple stability signals (ticket volume, incident count). Flag — don't adjust the number.
+
+**4b — Market calibration via cloud spend.** If `qualification.md` provides the cloud bill, compute the deductive RUN cost as a share of annual cloud spend :
+```
+indicative RUN annuel = (Total j/h/mois × TJM × 12) + (Immobilisation × 12)
+ratio = indicative RUN annuel / facture cloud annuelle HT
+```
+Compare `ratio` against the **Calibration marché** band in `shared/pricing-rules.md`. **No adjustment** — confirmation only :
+
+- In-band → the deductive is confirmed by the market. Document it (cite the sources from `pricing-rules.md` — never invent a band).
+- Out-of-band → flag and interpret per the table in `pricing-rules.md` (above-band = exigent perimeter or over-scoped inventory ; below-band = strong platform leverage or under-scoped). Investigate, don't remise mechanically.
+
+> This ratio is meaningful only at scale. Below ~50 ressources the fixed-effort floor dominates and inflates the %, so treat it as a **weak** signal and say so rather than over-reading it. If no cloud bill was provided, skip 4b and note in the report that the market cross-check wasn't possible.
 
 ### Step 5: Final total & dispositif
 
@@ -193,7 +207,7 @@ Write `estimate.md` in the client's directory. Follow the structure in `referenc
 
 The file has four parts:
 1. **Hypothèses de travail** — assumptions for missing info
-2. **Cross-check empirique** — flag discrepancies if any (Step 4)
+2. **Cross-check empirique** — flag discrepancies if any: FTE (4a) + calibration marché ratio cloud spend (4b)
 3. **Synthèse** — client-facing summary (init block + monthly grid + price table)
 4. **Annexes** — calculation detail (A: monthly with bucket-by-bucket breakdown, B: initialization)
 

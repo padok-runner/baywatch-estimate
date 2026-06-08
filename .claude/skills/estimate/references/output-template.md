@@ -5,7 +5,7 @@ This is the exact structure to follow when generating `{client-name}/estimate.md
 The file has four parts:
 
 1. **Hypothèses de travail** — assumptions for missing info from the qualification
-2. **Cross-check empirique** — sanity comparison vs FTE / ticket signals (no adjustment, just flag)
+2. **Cross-check empirique** — sanity comparison vs FTE / ticket signals + calibration marché (ratio coût RUN / cloud spend) (no adjustment, just flag)
 3. **Synthèse** — client-facing summary (init block + monthly grid + price table)
 4. **Annexes** — calculation detail (A: monthly with bucket-by-bucket scaling, B: initialization)
 
@@ -58,6 +58,22 @@ The file has four parts:
 - Delta < ±20% : ✅ déductive confirmée par l'empirique. Pas de flag.
 - Déductive > FTE par >20% : ⚠ client peut-être sous-staffé aujourd'hui ; ou inventaire inclut du non-MCO. À investiguer, pas à compenser.
 - FTE > Déductive par >20% : ⚠ inventaire incomplet ou complexité cachée. À investiguer, pas à compenser.
+
+**Calibration marché — ratio coût RUN / cloud spend (si facture cloud fournie) :**
+
+> Confirmation externe uniquement, pas un ajustement. Voir `shared/pricing-rules.md` (Calibration marché) pour la plage de référence et **les sources à citer** (ne jamais inventer de benchmark).
+
+| | Valeur |
+|---|---|
+| Facture cloud annuelle HT | {amount}€ |
+| RUN annuel indicatif (déductif) | {Total j/h × TJM × 12 + Immo × 12}€ |
+| **Ratio RUN / cloud spend** | **{%}** |
+| Plage de référence (enterprise) | ~10–25 % |
+
+- Dans la plage : ✅ déductive confirmée par le marché. Citer les sources.
+- Hors plage : ⚠ interpréter (voir `pricing-rules.md`) — au-dessus = périmètre exigeant ou inventaire sur-évalué ; en-dessous = leverage plateforme ou sous-évalué. Investiguer, pas remiser.
+- {Si périmètre < ~50 ressources} ⚠ Signal **faible** : plancher d'effort fixe dominant, le % est mécaniquement gonflé. Mentionné pour information, non décisif.
+- {Si pas de facture cloud} Calibration marché non réalisable — facture cloud absente de la qualification.
 
 > Le scaling de l'abaque est **linéaire** (`MCO = base × N × coefficient`). Les `base_rate` sont calibrés pour un parc déjà industrialisé (IaC, automation, monitoring centralisé) — l'amortissement orchestration est intégré dans la base, pas dans une formule de discount supplémentaire.
 

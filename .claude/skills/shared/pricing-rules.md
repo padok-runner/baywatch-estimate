@@ -112,6 +112,30 @@ Les frais d'immobilisation dépendent du dispositif et de la plage horaire. Voir
 
 - 1 FTE = 20 j/h/mois (base : ~20 jours ouvrés par mois)
 
+## Calibration marché — ratio coût RUN / cloud spend
+
+Cross-check externe **de confirmation uniquement** (jamais un ajustement, jamais un plafond). Le coût annuel des services managés (RUN) rapporté à la facture cloud annuelle tombe, pour des périmètres à l'échelle, dans une plage de référence issue de benchmarks MSP publiés.
+
+| Périmètre | Ratio RUN / cloud spend annuel (référence) |
+| --------- | ------------------------------------------ |
+| Enterprise (multi-comptes, 24/7, HDS/critique) | ~10–25 % |
+
+```
+ratio = prix RUN annuel (déductif) / facture cloud annuelle HT
+```
+
+**Sources** (à **citer**, jamais inventer — cf. règle anti-benchmarks fabriqués) :
+- [CloudBolt — MSP Pricing Models](https://www.cloudbolt.io/msp-best-practices/msp-pricing-models/)
+- [Opsio — AWS Managed Services Pricing](https://opsiocloud.com/knowledge-base/aws-managed-services-cost-pricing/)
+- [Opsio — Azure Managed Services Pricing](https://opsiocloud.com/knowledge-base/azure-managed-services-pricing-2026/)
+
+**Interprétation :**
+- **Dans la plage** → la déductive est confirmée par le marché. Documenter l'alignement.
+- **Au-dessus de la plage** → soit le périmètre est plus exigeant que la moyenne (HDS, 24/7, forte densité d'incidents), soit l'inventaire surévalue la charge. Investiguer — ne pas remiser mécaniquement.
+- **En-dessous de la plage** → soit fort leverage plateforme (IaC livré clean, outillage cloud-natif, SOC mutualisé côté client), soit charge sous-estimée. Investiguer.
+
+> **Limite de validité** : le ratio n'a de sens qu'à l'échelle. Sous ~50 ressources, le plancher d'effort fixe (gouvernance, astreinte, cadence contractuelle) domine et fait mécaniquement gonfler le %. Pour les petits périmètres mutualisés, traiter ce signal comme **faible** — le mentionner sans le sur-interpréter.
+
 ## Formule de prix finale
 
 ```

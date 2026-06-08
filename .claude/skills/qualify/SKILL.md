@@ -50,6 +50,7 @@ Collect the following:
    - Which environment(s) it belongs to
 2. **Dev team size** — How many developers work on the platform?
 3. **Evolution backlog** — What evolutions are anticipated over the next 6 months?
+4. **Cloud bill (facture cloud)** — Annual (or monthly) cloud-provider spend HT (the actual GCP/AWS/Azure invoice, or the hosting budget). If no precise figure, ask for an order of magnitude. This feeds `/estimate`'s **market-calibration cross-check** — the RUN managed-services cost lands at a known % of cloud spend, so the bill confirms (never sets) the deductive price. If the client can't provide it, log it in "Informations manquantes" and note that the market cross-check won't be possible.
 
 ### Step 3: Collect empirical data (only if infra live +6 months)
 
@@ -171,6 +172,7 @@ The file must follow this structure:
 ### Deductive Data (always present)
 - **Dev team size:** {number}
 - **Evolution backlog:** {summary}
+- **Cloud bill (facture cloud):** {amount €/an HT — or "non fourni"} {if provided, note monthly vs annual and provider}
 
 ### Empirical Data (if applicable)
 - **IaC access:** {yes/no, details}
@@ -258,6 +260,7 @@ Check the following:
    - Does every resource have: type, cloud, size, complexity, coefficient?
    - Is the evolution backlog mentioned?
    - Is dev team size captured?
+   - Is the cloud bill (facture cloud) captured — or, if unavailable, explicitly logged in "Informations manquantes" (so /estimate knows the market cross-check can't run)?
    - If empirical: is ticket history present with breakdown by type?
    - If empirical: are FTEs broken down by activity (MCO/evolutions/governance)?
    - If empirical: is the derived empirical estimate (j/h/mois) present?
