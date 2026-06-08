@@ -36,7 +36,7 @@ The file has four parts:
 
 ## Cross-check empirique
 
-> **Note :** ce bloc est un **sanity check**, pas un ajustement. La méthode déductive (abaque + scaling sublinéaire de `shared/item-types.md`) produit le chiffre final tel quel. Les signaux empiriques permettent de **flagger des anomalies** mais ne modifient pas le total.
+> **Note :** ce bloc est un **sanity check**, pas un ajustement. La méthode déductive (abaque + scaling linéaire de `shared/item-types.md`) produit le chiffre final tel quel. Les signaux empiriques permettent de **flagger des anomalies** mais ne modifient pas le total.
 
 **Signaux empiriques observés (depuis qualification.md) :**
 

@@ -91,9 +91,9 @@ Sources : [CloudBolt](https://www.cloudbolt.io/msp-best-practices/msp-pricing-mo
 + Gouvernance dédié (COPROD hebdo + COPIL trim. + audits ROSE/YAMAS/LEAF) = **2,6 j/h/mois**
 + Immobilisation Complète dédié = 60 k€/an
 
-**Total abaque sans leverage : 140,8 j/h/mois × 863 €/j × 12 + 60 k€ = ~1 519 k€/an**
+**Total abaque (linéaire, parc générique) : 140,8 j/h/mois × 863 €/j × 12 + 60 k€ = ~1 519 k€/an** — plafond conservateur. L'abaque chiffre un parc standard ; il n'a **pas** connaissance du contexte spécifique de la mission.
 
-**Avec leverage Theodo -20 %** (plateforme IaC livrée clean, outillage cloud-natif GCP, SOC mutualisé Biogroup — H1/H3/H6) : ~**1 220 k€/an**, convergent avec le total **steady-state Y3** xlsx.
+**Contexte deal Biogroup** (plateforme IaC livrée clean par Theodo, outillage cloud-natif GCP, SOC mutualisé côté Biogroup — H1/H3/H6) : ce contexte est déjà intégré dans la méthode de référence **M1 bottom-up** (6,2 ETP steady-state → ~**1 220 k€/an**, cf. xlsx). L'écart abaque↔M1 (~20 %, soit ~8 ETP génériques vs 6,2 ETP contextualisés) **mesure** l'industrialisation Theodo sur ce périmètre — ce n'est pas un discount appliqué après coup sur l'abaque (ce que le verifier interdit), mais l'écart attendu entre un chiffrage générique (abaque, cross-check) et un chiffrage contextualisé (M1, référence).
 
 ### 3.3 Synthèse — convergence des sources
 
@@ -101,7 +101,7 @@ Sources : [CloudBolt](https://www.cloudbolt.io/msp-best-practices/msp-pricing-mo
 |---|---:|---:|---|
 | **M1 Bottom-up Theodo** | cf. xlsx *Estimations Services Managés* → *Synthèse Prix* | – | **référence centrale** |
 | Calibration marché MSP Enterprise HDS | 1,0 – 1,4 M€ | 940 – 1 320 | bench externe |
-| Abaque /estimate (leverage Theodo -20 %) | ~1,22 M€ | ~1 150 | convergence avec M1 |
+| Abaque /estimate (contexte Theodo industrialisé, ancré M1) | ~1,22 M€ | ~1 150 | convergence avec M1 |
 | Abaque /estimate (sans leverage) | ~1,52 M€ | ~1 430 | plafond conservateur |
 
 Prix/VM sur base 1 062 VMs (incluant 66 GKE workers) au steady-state. Les trois sources cadrent dans **1,0 – 1,5 M€/an**. **Trajectoire pluri-annuelle** (ramp Y1-Y2 calé sur la migration hosting → steady Y3 → dégressif -5 %/an Y4-Y6 → plancher Y7+) : cf. xlsx onglet *Estimations Services Managés* (sections *Synthèse Prix* + *Trajectoire pluri-annuelle*).
