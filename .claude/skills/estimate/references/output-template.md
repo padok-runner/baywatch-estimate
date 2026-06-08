@@ -36,7 +36,7 @@ The file has four parts:
 
 ## Cross-check empirique
 
-> **Note :** ce bloc est un **sanity check**, pas un ajustement. La méthode déductive (abaque + scaling sublinéaire de `shared/item-types.md`) produit le chiffre final tel quel. Les signaux empiriques permettent de **flagger des anomalies** mais ne modifient pas le total.
+> **Note :** ce bloc est un **sanity check**, pas un ajustement. La méthode déductive (abaque + scaling linéaire de `shared/item-types.md`) produit le chiffre final tel quel. Les signaux empiriques permettent de **flagger des anomalies** mais ne modifient pas le total.
 
 **Signaux empiriques observés (depuis qualification.md) :**
 
@@ -59,7 +59,7 @@ The file has four parts:
 - Déductive > FTE par >20% : ⚠ client peut-être sous-staffé aujourd'hui ; ou inventaire inclut du non-MCO. À investiguer, pas à compenser.
 - FTE > Déductive par >20% : ⚠ inventaire incomplet ou complexité cachée. À investiguer, pas à compenser.
 
-> Le scaling sublinéaire de l'abaque (`multiplier(N) = min(N,3) + sqrt(max(N/3,1)) - 1`) intègre déjà le bénéfice automation/orchestration sur les ressources identiques, sans aplatir abusivement comme le ferait du log10. Aucun discount n'est appliqué après coup.
+> Le scaling de l'abaque est **linéaire** (`MCO = base × N × coefficient`). Les `base_rate` sont calibrés pour un parc déjà industrialisé (IaC, automation, monitoring centralisé) — l'amortissement orchestration est intégré dans la base, pas dans une formule de discount supplémentaire.
 
 ---
 

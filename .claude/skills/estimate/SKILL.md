@@ -14,7 +14,7 @@ Locate and read `qualification.md`. If it doesn't exist, tell the user to run `/
 
 Read these references (each is short and load-bearing):
 
-- `skills/shared/item-types.md` — substrate vs application item types, base rates per type, and the **sublinear scaling formula** for N ressources of the same type/coeff
+- `skills/shared/item-types.md` — substrate vs application item types, base rates per type, and the **linear scaling** for N ressources of the same type/coeff
 - `skills/shared/coefficients.md` — size/complexity coefficients
 - `skills/shared/service-levels.md` — plage horaire, SLA coefficients, immobilisation
 - `skills/shared/pricing-rules.md` — engagement modes, multi-year discounts, governance abaques
@@ -28,7 +28,7 @@ For the output structure, read `references/output-template.md`.
 
 Tous les j/h/mois sont exprimés au **dixième de jour** près (ex. 0.4, 1.2, 2.1). N'arrondissez jamais au demi-jour ou au jour entier.
 
-- Calculs intermédiaires : 2 décimales (ex. `multiplier(11) = 3.915`).
+- Calculs intermédiaires : 2 décimales.
 - Tableaux de synthèse : 1 décimale.
 - Total final : somme précise des composantes, arrondie une seule fois au dixième.
 
@@ -38,8 +38,7 @@ The price is built from one rigorous calculation. There is no parallel heuristic
 
 ```
 For each (item type, coefficient) bucket :
-  MCO_bucket = base_rate × multiplier(N) × coefficient
-  where multiplier(N) = min(N, 3) + sqrt(max(N/3, 1)) - 1
+  MCO_bucket = base_rate × N × coefficient
 
 Distribute MCO_bucket across envs prorata of count, apply SLA per env.
 Sum across all buckets and envs.
@@ -48,7 +47,7 @@ Total monthly j/h = MCO + Governance + Evolutions
 Price = Total × TJM + Immobilisation [+ Forfait contingency]
 ```
 
-The sublinear scaling is **inside the abaque**, not applied afterward as a discount. Identical-profile ressources at scale (e.g., 11 EC2 Debian) cost less to operate per unit than isolated ressources because automation amortizes — this is captured by `multiplier(N)`, not by a separate adjustment.
+Scaling is linéaire — l'amortissement orchestration est déjà capturé dans le `base_rate` calibré par type (cf. `item-types.md`). Pas de discount sublinéaire appliqué après coup.
 
 Governance, SLA coefficients, and immobilisation are calculated independently and cumulated into the total.
 
@@ -79,7 +78,7 @@ Group ressources globally (across all envs) by `(item type, coefficient)`.
 For each group, compute :
 
 ```
-MCO_bucket = base_rate × multiplier(N) × coefficient
+MCO_bucket = base_rate × N × coefficient
 ```
 
 This is the **MCO base** for that bucket, before SLA.

@@ -45,31 +45,18 @@ For each ressource, verify the item type from `shared/item-types.md`:
 - When server size and application complexity differ, is the **higher** of the two used?
 - Are non-prod environments using Bronze (1.00) unless qualification.md explicitly says otherwise?
 
-### 4. Sublinear scaling — KEY CHECK
+### 4. Linear scaling — KEY CHECK
 
-The new methodology applies `multiplier(N) = min(N, 3) + sqrt(max(N/3, 1)) - 1` per `(item type, coefficient)` bucket (racine carrée piecewise — Erlang C / USL style).
+The methodology applies linear scaling : `MCO_bucket = base_rate × N × coefficient` per `(item type, coefficient)` bucket. L'amortissement orchestration est capturé dans le `base_rate` calibré, pas dans une formule sublinéaire.
 
 **FAIL if:**
-- The estimate computes MCO as `N × base × coeff` (linear) for buckets where N > 3.
-- The estimate applies a "discount" or "calibration" factor on top of the deductive total (this was the deprecated approach — scaling is now in the abaque).
+- The estimate applies a sublinear scaling (sqrt, log) on top of the linear formula.
+- The estimate applies a "discount" or "calibration" factor on top of the deductive total.
 - The estimate uses the deprecated `réactif × multiplicateur` heuristic (3× LAMP / 5× K8s).
 - The estimate uses a flat `Buffer SLA` line in j/h (deprecated).
 
 **WARN if:**
-- A bucket has N > 5 with no explicit scaling shown in the breakdown.
-- Two ressources of the same type and coeff appear as separate lines instead of grouped (loses the scaling benefit).
-
-Verify the scaling values against the table:
-
-| N | multiplier |
-|---|---|
-| 1 | 1.00 |
-| 3 | 3.00 |
-| 5 | 3.29 |
-| 10 | 3.83 |
-| 30 | 5.16 |
-| 100 | 7.77 |
-| 1000 | 20.26 |
+- Two ressources of the same type and coeff appear as separate lines instead of grouped (compromet la lisibilité du calcul, mais le total reste correct en linéaire).
 
 ### 5. SLA application
 
