@@ -105,7 +105,7 @@ Plateforme construite par Theodo : **{Oui / Non}**
 | **Nom des envs**        | {env names}                                                                                                                                                                                            | {env names}                                                          | {env names}      | —                                                                                                                   |
 | **Inventaire**          | **Servers :**{newline}{list servers with count, type, size}{newline}**Applications :**{newline}{list apps with count, type, complexity}                                                                | **Servers :**{newline}{...}{newline}**Applications :**{newline}{...} | {same format}    | {cross-cutting resources: organization, audit trail, IAM, CI/CD, etc.}                                              |
 | **Services au Forfait socle** *(engagés mensuellement)* | {if plage != Standard: Capacité réservée 24/7 — astreinte (immobilisation)}{else: —}                                                                                                          | —                                                                    | —                | Gouvernance : COPIL/COPROD, audits ROSE/YAMAS/LEAF                                                                  |
-| **Services au Temps passé** *(facturés à la consommation)* | MCO : Gestion des incidents, demandes, problèmes, changements de version, continuité{if plage != Standard: , surveillance, interventions d'astreinte}, patching, monitoring drift             | {same, adapted per env}                                              | {same}           | Évolutions : Gestion des Changements mineurs                                                                        |
+| **Services au Temps passé** *(facturés à la consommation)* | MCO : Gestion des incidents, demandes, problèmes, changements de version, continuité{if plage != Standard: , surveillance, interventions d'astreinte}, patching, monitoring drift             | {same, adapted per env}                                              | {same}           | Changements : Gestion des Changements mineurs                                                                        |
 | **Niveaux de services** | {Bronze / Silver / Gold / Platine}                                                                                                                                                                     | {level}                                                              | {level}          | —                                                                                                                   |
 | **Plages de service**   | {Standard / Étendue / Complète}                                                                                                                                                                        | {plage}                                                              | {plage}          | —                                                                                                                   |
 | **Dispositif**          | Ops : {X} j/mois, Lead Ops : {Y} j/mois, Delivery Manager : {Z} j/mois                                                                                                                                |                                                                      |                  |                                                                                                                     |
@@ -118,7 +118,7 @@ Configuration par défaut (engagement ≥2 ans). Voir `shared/pricing-rules.md` 
 |------|-----------|----------|-------------------|
 | **Forfait socle** | Gouvernance ({y}) + Audits + Immobilisation | {y} | {amount_socle}€ |
 | **Temps passé MCO** | MCO (toutes catégories : incidents, demandes, problèmes, changements, patching, monitoring). Facturé à la consommation réelle. | sur conso | Sur consommation |
-| **Temps passé Évolutions** | À la demande | — | Sur consommation |
+| **Temps passé Changements** | À la demande | — | Sur consommation |
 | | **Mensuel socle seul** (0 j/h MCO consommé) | **{y}** | **{amount_socle}€** |
 | | **Mensuel espéré** ({avg conso} j/h MCO) | **{y + avg}** | **~{expected}€** |
 | | **Référence enveloppe déductive (Forfait classique équivalent)** | **{x+y}** | **{cap total}€** |
@@ -129,9 +129,9 @@ Configuration par défaut (engagement ≥2 ans). Voir `shared/pricing-rules.md` 
 
 - **Init block placed above the synthesis grid.** Audit and remédiation lines are **omitted** if the platform was built by Theodo. The init price is **never** added to the monthly recurring price.
 - **Inventaire**: human-readable. Group by "Servers" (K8s clusters, VMs, hypervisors, managed DBs, networking) and "Applications" (off-the-shelf and custom). Include count, name, size.
-- **Services**: split en deux lignes pour expliciter le mode de facturation. **Forfait socle** : capacité réservée 24/7 (immobilisation, uniquement si plage ≠ Standard) + gouvernance/audits dans Transverse. **Temps passé** : tout le MCO opérationnel par env + évolutions dans Transverse. Cette distinction est cruciale — le client doit voir d'un coup d'œil ce qu'il paie chaque mois (socle) vs ce qu'il consomme (carnet).
-- **Transverse column**: cross-cutting resources (org, IAM, audit trail) in inventory; governance dans la ligne Forfait socle, évolutions dans la ligne Temps passé. No SLA/plage.
-- **Prix mensuel**: separate table below the grid. Three rows in the default model — Forfait socle (engagé) / Temps passé MCO (consommation) / Temps passé Évolutions (à la demande) — to make committed vs consumed clear.
+- **Services**: split en deux lignes pour expliciter le mode de facturation. **Forfait socle** : capacité réservée 24/7 (immobilisation, uniquement si plage ≠ Standard) + gouvernance/audits dans Transverse. **Temps passé** : tout le MCO opérationnel par env + changements dans Transverse. Cette distinction est cruciale — le client doit voir d'un coup d'œil ce qu'il paie chaque mois (socle) vs ce qu'il consomme (carnet).
+- **Transverse column**: cross-cutting resources (org, IAM, audit trail) in inventory; governance dans la ligne Forfait socle, changements dans la ligne Temps passé. No SLA/plage.
+- **Prix mensuel**: separate table below the grid. Three rows in the default model — Forfait socle (engagé) / Temps passé MCO (consommation) / Temps passé Changements (à la demande) — to make committed vs consumed clear.
 
 ---
 
@@ -175,7 +175,7 @@ Configuration par défaut (engagement ≥2 ans). Voir `shared/pricing-rules.md` 
 | LEAF     | semestriel | 0.5 j/h       | {calc}   |
 | **Total Gouvernance** | | | **{y} j/h/mois** |
 
-### Évolutions
+### Changements
 
 - Estimées : **{x} j/h/mois**
 - Base : {explanation}
@@ -186,7 +186,7 @@ Configuration par défaut (engagement ≥2 ans). Voir `shared/pricing-rules.md` 
 | ----------------- | ----------- |
 | MCO finale        | {x}         |
 | Gouvernance       | {y}         |
-| Évolutions        | {z}         |
+| Changements        | {z}         |
 | **Total**         | **{total}** |
 
 ### Prix
@@ -195,7 +195,7 @@ Configuration par défaut (engagement ≥2 ans). Voir `shared/pricing-rules.md` 
 | ----------------- | -------- | ------ | ------------- |
 | MCO finale        | {x}      | {tjm}€ | {amount}€     |
 | Gouvernance       | {y}      | {tjm}€ | {amount}€     |
-| Évolutions        | {z}      | {tjm}€ | {amount}€     |
+| Changements        | {z}      | {tjm}€ | {amount}€     |
 | **Sous-total**    |          |        | **{amount}€** |
 | Immobilisation    | {plage} × {dispositif} | | {amount}€ |
 {If forfait:} | Contingence | {level} (+{x}%) sur MCO+Gouv | | +{amount}€ |
@@ -232,7 +232,7 @@ Configuration par défaut (engagement ≥2 ans). Voir `shared/pricing-rules.md` 
 | ---------- | -------------------- | ---------------------- | --------- | ------- |
 | MCO        | {x}                  | {a}                    | {x-a}     | {%}     |
 | Gouvernance | {y}                 | {b}                    | {y-b}     | {%}     |
-| Évolutions | {z}                  | {c}                    | {z-c}     | {%}     |
+| Changements | {z}                  | {c}                    | {z-c}     | {%}     |
 | **Total**  | **{X}**              | **{A}**                | **{X-A}** | **{%}** |
 
 **Analyse :** {Explanation. Flag if deductive > FTE by >20% (calibration justifies discount per Step 3 table) ; flag if FTE > deductive by >20% (inventory gap or hidden complexity — investigate).}

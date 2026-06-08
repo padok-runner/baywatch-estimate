@@ -49,7 +49,7 @@ Collect the following:
    - Complexity (very low / low / medium / high / very high)
    - Which environment(s) it belongs to
 2. **Dev team size** — How many developers work on the platform?
-3. **Evolution backlog** — What evolutions are anticipated over the next 6 months?
+3. **Change backlog** — What changes are anticipated over the next 6 months?
 4. **Cloud bill (facture cloud)** — Annual (or monthly) cloud-provider spend HT (the actual GCP/AWS/Azure invoice, or the hosting budget). If no precise figure, ask for an order of magnitude. This feeds `/estimate`'s **market-calibration cross-check** — the RUN managed-services cost lands at a known % of cloud spend, so the bill confirms (never sets) the deductive price. If the client can't provide it, log it in "Informations manquantes" and note that the market cross-check won't be possible.
 
 ### Step 3: Collect empirical data (only if infra live +6 months)
@@ -64,11 +64,11 @@ If the approach is empirical, collect this **in addition** to the resource inven
    - Any recurring patterns or high-effort items
 3. **Current FTEs** — How many full-time equivalents currently maintain the platform? Break down by:
    - MCO / run activities (incidents, monitoring, patching)
-   - Evolution / build activities
+   - Change / build activities
    - Governance (meetings, audits, reporting)
 4. **Empirical estimate** — Based on the ticket history and FTE data, derive:
    - Current monthly effort in j/h/mois (use conversion factor from `shared/pricing-rules.md`)
-   - Split between MCO, governance, and evolutions
+   - Split between MCO, governance, and changes
    - Any known inefficiencies or gaps in current staffing
 
 Use the reference tables to help classify resources:
@@ -86,7 +86,7 @@ Read the file at `skills/shared/service-levels.md` relative to the `.claude/skil
 </reference>
 
 <reference>
-Read the file at `skills/shared/services.md` relative to the `.claude/skills` directory for the service catalogue (MCO, évolutions, gouvernance).
+Read the file at `skills/shared/services.md` relative to the `.claude/skills` directory for the service catalogue (MCO, changements, gouvernance).
 </reference>
 
 ---
@@ -171,7 +171,7 @@ The file must follow this structure:
 
 ### Deductive Data (always present)
 - **Dev team size:** {number}
-- **Evolution backlog:** {summary}
+- **Change backlog:** {summary}
 - **Cloud bill (facture cloud):** {amount €/an HT — or "non fourni"} {if provided, note monthly vs annual and provider}
 
 ### Empirical Data (if applicable)
@@ -183,12 +183,12 @@ The file must follow this structure:
   - Recurring patterns: {description}
 - **Current FTEs:** {number total}
   - MCO/run: {x} FTE
-  - Evolutions/build: {y} FTE
+  - Changes/build: {y} FTE
   - Governance: {z} FTE
 - **Empirical estimate (derived from FTEs):**
   - MCO: {a} j/h/mois
   - Governance: {b} j/h/mois
-  - Evolutions: {c} j/h/mois
+  - Changes: {c} j/h/mois
   - **Total empirical: {a+b+c} j/h/mois**
 - **Known inefficiencies/gaps:** {description}
 
@@ -258,11 +258,11 @@ Check the following:
    - Is the resource inventory present? (required for ALL approaches)
    - Are ALL environments listed with their plage horaire and SLA?
    - Does every resource have: type, cloud, size, complexity, coefficient?
-   - Is the evolution backlog mentioned?
+   - Is the change backlog mentioned?
    - Is dev team size captured?
    - Is the cloud bill (facture cloud) captured — or, if unavailable, explicitly logged in "Informations manquantes" (so /estimate knows the market cross-check can't run)?
    - If empirical: is ticket history present with breakdown by type?
-   - If empirical: are FTEs broken down by activity (MCO/evolutions/governance)?
+   - If empirical: are FTEs broken down by activity (MCO/changes/governance)?
    - If empirical: is the derived empirical estimate (j/h/mois) present?
 
 2. **Coherence:**

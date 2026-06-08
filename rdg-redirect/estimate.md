@@ -6,7 +6,7 @@
 **TJM Lead Ops (audit):** 1 200€
 **Dispositif:** Mutualisé (total < 10 j/h/mois)
 **Engagement:** Forfait sur MCO + Gouvernance, contingence **0%**, durée **1 an** (pas de remise multi-annuelle)
-**Évolutions:** **Hors périmètre** — décision SA (les modifications de routage sont des éditions du JSON S3 par RDG)
+**Changements:** **Hors périmètre** — décision SA (les modifications de routage sont des éditions du JSON S3 par RDG)
 
 ---
 
@@ -18,7 +18,7 @@
 | ~~H2~~ | ~~Trafic spiky / steep ramp-up géré sans dégradation~~ | **RÉSOLU 2026-05-07** | Pas de buffer MCO supplémentaire | Auto-scale test (`Proxy Auto Scale Test.pdf`) : 1 367 RPS sustained, 0 erreurs, P95 336ms, scale-out 2→4 tâches validé. Headroom ~60% au-dessus du pic prod attendu. | — (résolu) |
 | **H7** | **SA override du coefficient size prod : 2 → 1 (2026-05-08)** | Décision SA suite aux données de robustesse opérationnelle | **Coeff 1** appliqué à prod (vs coeff 2 strict du framework pour <1000 RPS) | Cluster physique très petit (<1 vCPU consommé au pic), auto-scaling validé sans erreur, très basse complexité, headroom ~60%. Le SA juge que l'empreinte opérationnelle réelle est en dessous du tier <1000 RPS standard. | Si l'override est contesté : retour à coeff 2 → +0.72 j/h MCO/mois → +621€/mois. **Documenté comme déviation explicite pour le verifier.** |
 | H3 | TJM blended Theodo = 863€ | Le repère SA est en £ (~£2 000/mois) avec un TJM inconnu | Grille standard `shared/daily-rates.md` | Convention interne | Aucun (taux interne) ; la comparaison à l'ancrage £2k reste sensible au taux de change |
-| H4 | Aucune évolution mensuelle | Confirmation explicite SA | 0 j/h/mois | Décision client : modifications de routage gérées par RDG en autonomie | Si évolutions apparaissent → ligne Temps passé ajoutée au contrat |
+| H4 | Aucun changement mensuel | Confirmation explicite SA | 0 j/h/mois | Décision client : modifications de routage gérées par RDG en autonomie | Si changements apparaissent → ligne Temps passé ajoutée au contrat |
 | H5 | Composantes init AI agents et Remédiation hors scope | Décision explicite de qualification | 0 j/h, omises de l'init | AI agents déjà fournis par le contrat RDG existant ; documentation du proxy déjà très fournie | Si re-scoping : +2.5 j/h AI agents (≈2 158€) +5 j/h remédiation (≈4 315€) = +6 473€ one-shot |
 | **H6** | **Pas de rate limiting devant le proxy** (nouveau risque, 2026-05-06) | Décision architecturale RDG | MCO réactif standard ; pas de buffer dédié | Sol a flaggé le risque ; Omar confirme que les backends sont rate-limités mais pas le proxy lui-même | Si un caller déraisonnable inonde le proxy → incidents répétés, +1–2 j/h MCO/mois (+863–1 726€/mois). À adresser avec RDG avant go-live. |
 
@@ -37,7 +37,7 @@
 |--------|--------|--------|
 | Tickets/incidents mensuels | Inconnu (service pas encore en prod) | — |
 | Taille équipe dev cliente | Aucune dédiée post-handover | qualification.md |
-| Évolution backlog | Modifications config routage S3 (non facturées en MCO) | qualification.md |
+| Changement backlog | Modifications config routage S3 (non facturées en MCO) | qualification.md |
 | Stabilité infra documentée | Très bonne — runbooks, load tests, plans rollback en place | PDF du call |
 | Charge actuelle prod (V1) | <50% CPU, <800 TPS, 3 workers absorbent le pic | Omar 2026-05-06 |
 | Capacité validée (auto-scale test) | **1 367 RPS sustained, 0 erreurs, P95 336ms, scale-out 2→4 tasks OK** | Omar 2026-05-07 (`Proxy Auto Scale Test.pdf`) |
@@ -108,7 +108,7 @@ Plateforme construite par Theodo : **Non**
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | **Nom des envs**        | prod                                                                                                                                                    | preprod (acc), dev                                                                              | —                                                                                                |
 | **Inventaire**          | **Servers :**<br>1 cluster Fargate (Public Cloud Managed Container, 3 workers, <1 vCPU au pic, ~300–800 RPS)<br>**Applications :**<br>1 app NGINX/OpenResty (medium size *override SA*, low cx) | **Servers :**<br>2 clusters Fargate (Public Cloud Managed Container, small, <10 RPS)<br>**Applications :**<br>2 apps NGINX/OpenResty (low) | Bucket S3 config, Lambda admin, NLB, dashboard CloudWatch, topics SNS, Route53 — bundlés dans les apps |
-| **Services**            | Maintien : Gestion des demandes, incidents, problèmes, changements de version, continuité, surveillance, **astreintes 24/7**                            | Maintien : Gestion des demandes, incidents, problèmes, changements de version, continuité      | Gouvernance : COPROD trimestriel, Audit ROSE semestriel, Audit LEAF semestriel<br>Évolutions : **hors périmètre** |
+| **Services**            | Maintien : Gestion des demandes, incidents, problèmes, changements de version, continuité, surveillance, **astreintes 24/7**                            | Maintien : Gestion des demandes, incidents, problèmes, changements de version, continuité      | Gouvernance : COPROD trimestriel, Audit ROSE semestriel, Audit LEAF semestriel<br>Changements : **hors périmètre** |
 | **Niveaux de services** | Platine                                                                                                                                                 | Bronze                                                                                          | —                                                                                                |
 | **Plages de service**   | Complète (7j/7, 24h/24)                                                                                                                                 | Standard (Lun-Ven 9h30–18h30)                                                                   | —                                                                                                |
 | **Dispositif**          | Ops : 1.3 j/mois · Lead Ops : 0.5 j/mois · Delivery Manager : 0.2 j/mois (total ≈ 2.0 j/h/mois, **Mutualisé**)                                                                                                                                                                                                                                                                  |
@@ -118,7 +118,7 @@ Plateforme construite par Theodo : **Non**
 | Mode | Périmètre | j/h/mois | Montant €HT/mois |
 |------|-----------|----------|-------------------|
 | **Forfait** | MCO (1.68 j/h) + Gouvernance (0.33 j/h) + Contingence 0% + Immobilisation | 2.01 | **2 737€** |
-| **Temps passé** | Évolutions | — (hors périmètre) | — |
+| **Temps passé** | Changements | — (hors périmètre) | — |
 | | **Total mensuel** | **2.01** | **2 737€** |
 
 **Total annuel : 32 844€ HT** (engagement 1 an, sans remise multi-annuelle).
@@ -170,9 +170,9 @@ Plateforme construite par Theodo : **Non**
 | Audit LEAF (FinOps / Green IT) | 1 / semestre | 0.5 j/h | 0.083 |
 | **Total Gouvernance** | | | **0.333** |
 
-### Évolutions
+### Changements
 
-- **Hors périmètre** sur ce contrat. Décision explicite : les ajustements du JSON de routage sont effectués par RDG en autonomie ; aucun forfait évolutions n'est budgété.
+- **Hors périmètre** sur ce contrat. Décision explicite : les ajustements du JSON de routage sont effectués par RDG en autonomie ; aucun forfait changements n'est budgété.
 - Si des changements mineurs (Lua, NGINX) deviennent nécessaires, ils seront contractualisés en Temps passé via avenant.
 
 ### Total quantité
@@ -181,7 +181,7 @@ Plateforme construite par Theodo : **Non**
 |-----------|----------|
 | MCO (ajusté SLA, avec SA override coeff prod 2→1, item Container 0.1) | 1.680 |
 | Gouvernance | 0.333 |
-| Évolutions | 0.000 |
+| Changements | 0.000 |
 | **Total** | **2.013** |
 
 → Dispositif : **Mutualisé** (< 10 j/h/mois) ✓
@@ -192,7 +192,7 @@ Plateforme construite par Theodo : **Non**
 |-------|----------|-----|---------|
 | MCO (ajusté SLA, override coeff prod 2→1 + item Container 0.1) | 1.680 | 863€ | 1 450€ |
 | Gouvernance | 0.333 | 863€ | 287€ |
-| Évolutions | 0.000 | 863€ | 0€ |
+| Changements | 0.000 | 863€ | 0€ |
 | **Sous-total services** | 2.013 | | **1 737€** |
 | Immobilisation (Mutualisé × Complète, plus haute plage) | | | 1 000€ |
 | Contingence forfait (0%) | | | 0€ |

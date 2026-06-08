@@ -10,7 +10,7 @@ Carenity est une plateforme santé avec une stack LAMP (PHP CodeIgniter / PHP Sl
 
 ### Deductive Data
 - **Dev team size:** 4 (2 développeurs seniors, 1 PO, 1 CTO)
-- **Evolution backlog (non validé — roadmap interne en attente):**
+- **Change backlog (non validé — roadmap interne en attente):**
   - Migration RDS MySQL 8.0 → 8.4 (recette et prod)
   - Migration Elasticache Redis 6.2 → 8.4 (recette et prod)
   - Migration OS Debian 11 → 13 (instances EC2 recette et prod)
@@ -21,7 +21,7 @@ Carenity est une plateforme santé avec une stack LAMP (PHP CodeIgniter / PHP Sl
   - Total tickets: ~5 (volume très faible)
   - Incidents: 1 (indisponibilité PHP-FPM suite à pic de charge)
   - Service requests: 0
-  - Changes/évolutions: quelques tickets (migration Opensearch, changement profil IAM pour Terraform)
+  - Changements: quelques tickets (migration Opensearch, changement profil IAM pour Terraform)
   - Problèmes récurrents: 0
   - Average resolution time: non communiqué
   - Recurring patterns: aucun pattern récurrent identifié
@@ -116,7 +116,7 @@ Carenity est une plateforme santé avec une stack LAMP (PHP CodeIgniter / PHP Sl
 | Volume de données Opensearch | Complexité classée medium par défaut — pourrait être higher si gros volumes | Demander les métriques au client |
 | Temps moyen de résolution des incidents | Pas de baseline pour évaluer l'efficacité de la réponse actuelle | Demander au client ou accéder à leur outil de ticketing |
 | Accès IaC (Terraform) | Impossible de vérifier la configuration exacte et d'évaluer la dette technique infra | Demander l'accès au repo GitHub |
-| Roadmap évolutions 2026 non validée | Les 3 migrations (MySQL, Redis, Debian) ne sont pas confirmées — impact significatif sur le volume d'évolutions | Attendre la validation de la roadmap interne du client |
+| Roadmap changements 2026 non validée | Les 3 migrations (MySQL, Redis, Debian) ne sont pas confirmées — impact significatif sur le volume de changements | Attendre la validation de la roadmap interne du client |
 
 ## Constraints & Notes
 

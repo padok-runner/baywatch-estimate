@@ -9,7 +9,7 @@
 | Gestion de la surveillance                     | MCO         |
 | Astreinte (plages Etendue/Complète uniquement) | MCO         |
 | Gestion des Changements de version             | MCO         |
-| Gestion des Changements mineurs (< 5 j ouvrés) | Évolutions  |
+| Gestion des Changements mineurs (< 5 j ouvrés) | Changements  |
 | COPIL                                          | Gouvernance |
 | COPROD                                         | Gouvernance |
 | Audit ROSE (Qualité)                           | Gouvernance |

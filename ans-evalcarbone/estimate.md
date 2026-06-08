@@ -5,7 +5,7 @@
 **TJM blended :** 863€ HT (Ops 750€ + Lead Ops 1 200€ + DM 850€, ratio 1 : 0.34 : 0.16)
 **TJM Lead Ops (audit) :** 1 200€ HT
 **Dispositif :** **Semi-dédié** (équipe dédiée ANS — mutualisée sur les prestations PFC + EvalCarbone SIH + futures)
-**Mode d'engagement :** Forfait MCO + Gouvernance (sans contingence — scope bien connu) + Évolutions au temps passé
+**Mode d'engagement :** Forfait MCO + Gouvernance (sans contingence — scope bien connu) + Changements au temps passé
 **Durée :** 3 mois renouvelable
 
 ---
@@ -17,7 +17,7 @@
 | H1 | Accès au repo Helm + ArgoCD disponible dès la signature | Accès direct au repo de déploiement non confirmé | Audit Small (2.5 j/h) tient | L'utilisateur a confirmé une structure simple (Helm + Application ArgoCD) | Faible (~0.5–1 j/h en plus si l'accès est tardif → +500–1 000€ sur l'init) |
 | H2 | Volumétrie post-bascule reste comparable au pré-bascule | Historique post-bascule limité (2 mois mars→mai 2026) | 1–2 incidents / 6 mois post-bascule | La bascule a été un événement ponctuel, pas un changement de pattern d'usage | Moyen (±1 j/h/mois MCO si la PFC introduit de nouveaux modes de défaillance) |
 | H3 | Coefficient Kafka "very high" (×5) sur-estime la charge réelle | Sizing exact Kafka non fourni | Calibration empirique retenue plutôt que déductive pure | Kafka ici tourne en config par défaut, faible volumétrie ; le palier ×5 du tableau cible les déploiements production-grade haute charge | Élevé sur la sensibilité prix (cf. ⚠ ci-dessous) |
-| H4 | Aucune évolution applicative cliente sur 3 mois | Backlog "Aucune", dev en sommeil | 0 j/h/mois Évolutions au temps passé | Cohérent avec qualification (0 dev actif côté ANS) | Faible (chaque évolution serait facturée hors forfait au temps passé) |
+| H4 | Aucun changement applicatif client sur 3 mois | Backlog "Aucun", dev en sommeil | 0 j/h/mois Changements au temps passé | Cohérent avec qualification (0 dev actif côté ANS) | Faible (chaque changement serait facturé hors forfait au temps passé) |
 | H5 | Mises à jour NumEcoEval (1 majeure/an + ~3 mineures sélectives) intégrées au MCO | Cadence exacte d'intégration des mineures non figée | ~2 montées de version intégrées sur 12 mois → ~0.3 j/h/mois | Cadence empirique observée par le MTE sur le projet open source | Faible |
 | H6 | Remédiation post-audit à 0 j/h (opt-out client) | Magnitude inconnue | 0 j/h, à reproposer en amendement si l'audit Small remonte des gaps significatifs | Choix client documenté (engagement 3 mois, scope volontairement allégé) | Élevé si l'audit révèle des risques (saturation disque non monitorée, pas de backup automatisé) → ré-évaluation au renouvellement |
 | H7 | Cadence gouvernance EdB (COPROD mensuel, COPIL trimestriel) maintenue, sessions allégées | Abaque Semi-dédié prévoit COPROD mensuel, pas de COPIL | Cadence client honorée mais sessions courtes — total **0.55 j/h/mois** (réduit de 50% vs estimation initiale 1.1) | SA confirme "peu de travail réel" sur la gouvernance vu la stabilité de la plateforme et le scope restreint | Faible — si les sessions demandent plus de prep, ajustement possible au temps passé |
@@ -89,9 +89,9 @@ Plateforme construite par Theodo : **Non**
 
 |                         | Production                                                                                                                                                                                                                       | Préproduction / dev                                                                                                                          | Transverse                                                                                                                                |
 | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| **Nom des envs**        | prod                                                                                                                                                                                                                             | preprod                                                                                                                                      | gouvernance & évolutions                                                                                                                  |
+| **Nom des envs**        | prod                                                                                                                                                                                                                             | preprod                                                                                                                                      | gouvernance & changements                                                                                                                  |
 | **Inventaire**          | **Servers :** N/A (cluster K8s PFC ANS hors scope, autre prestation Theodo)<br>**Applications :** 9 conteneurs Docker — 1 NextJS (custom, S), 1 NGINX (S), 1 PostgreSQL (M, 23 tables), 1 Kafka (M), 1 Zookeeper (S), 4 microservices Java NumEcoEval (S) | **Servers :** N/A<br>**Applications :** 9 conteneurs Docker (mêmes images que prod, dimensionnement allégé)                                  | RACI (interactions PFC ANS, ATIH/Plage), comitologie, suivi qualité ROSE, FinOps/Green IT (LEAF) |
-| **Services**            | Maintien : Gestion des demandes de service, des incidents, des problèmes, des changements de version (mises à jour NumEcoEval), de la continuité, de la surveillance native PFC                                                  | Maintien : idem prod, en best-effort sur plage Standard sans astreinte                                                                       | Gouvernance : COPIL trimestriel (1h30), COPROD mensuel (30 min), audit ROSE semestriel, audit LEAF (FinOps/Green IT) semestriel, COSEC à la demande<br>Évolutions : Gestion des Changements mineurs (< 5 j ouvrés) au temps passé |
+| **Services**            | Maintien : Gestion des demandes de service, des incidents, des problèmes, des changements de version (mises à jour NumEcoEval), de la continuité, de la surveillance native PFC                                                  | Maintien : idem prod, en best-effort sur plage Standard sans astreinte                                                                       | Gouvernance : COPIL trimestriel (1h30), COPROD mensuel (30 min), audit ROSE semestriel, audit LEAF (FinOps/Green IT) semestriel, COSEC à la demande<br>Changements : Gestion des Changements mineurs (< 5 j ouvrés) au temps passé |
 | **Niveaux de services** | Bronze                                                                                                                                                                                                                           | Bronze                                                                                                                                       | —                                                                                                                                         |
 | **Plages de service**   | Standard (Lundi-Vendredi 09h30-18h30, conforme JO/HO EdB)                                                                                                                                                                        | Standard                                                                                                                                     | —                                                                                                                                         |
 | **Dispositif**          | Ops : 2.4 j/mois, Lead Ops : 0.8 j/mois, Delivery Manager : 0.4 j/mois (équipe **dédiée ANS**, mutualisée sur les prestations Theodo pour ANS)                                                                                                       |                                                                                                                                              |                                                                                                                                           |
@@ -101,7 +101,7 @@ Plateforme construite par Theodo : **Non**
 | Mode | Périmètre | j/h/mois | Montant €HT/mois |
 |------|-----------|----------|------------------|
 | **Forfait** | MCO (3.0 j/h Bronze × 2 envs) + Gouvernance (0.55 j/h, sessions allégées) — sans contingence, sans immobilisation | 3.55 | **3 064€** |
-| **Temps passé** | Évolutions (changements mineurs <5j), facturé à la consommation | 0 prévu | 0€ |
+| **Temps passé** | Changements (changements mineurs <5j), facturé à la consommation | 0 prévu | 0€ |
 | | **Total mensuel** | **3.55** | **3 064€** |
 
 **Total annualisé indicatif :** 36 768€ HT/an
@@ -161,10 +161,10 @@ Inventaire identique à la prod → sous-total déductif = **5.95 j/h/mois** (av
 
 > Réduction 50% appliquée sur la base de l'estimation initiale (1.10 j/h/mois). Justification : SA confirme une charge réelle faible vu la stabilité de la plateforme et le scope restreint. La cadence client EdB (mensuel/trimestriel) est préservée.
 
-### Évolutions
+### Changements
 
 - Estimées : **0 j/h/mois** prévues
-- Justification : dev en sommeil côté ANS, aucun backlog d'évolution sur les 6 prochains mois (qualification §Backlog 6 mois). Les changements mineurs (<5 j ouvrés) restent disponibles en temps passé à la consommation.
+- Justification : dev en sommeil côté ANS, aucun backlog de changement sur les 6 prochains mois (qualification §Backlog 6 mois). Les changements mineurs (<5 j ouvrés) restent disponibles en temps passé à la consommation.
 
 ### Total quantité (retenu)
 
@@ -172,7 +172,7 @@ Inventaire identique à la prod → sous-total déductif = **5.95 j/h/mois** (av
 |-----------|----------|
 | MCO (calibré, ajusté SLA Bronze ×1.00) | 3.00 |
 | Gouvernance (sessions allégées) | 0.55 |
-| Évolutions | 0.00 |
+| Changements | 0.00 |
 | **Total** | **3.55** |
 
 ### Détail prix
@@ -181,7 +181,7 @@ Inventaire identique à la prod → sous-total déductif = **5.95 j/h/mois** (av
 |-------|----------|-----|------------|
 | MCO (3.0 × 1.00 SLA × 863€) | 3.00 | 863€ | 2 589€ |
 | Gouvernance (0.55 × 863€) | 0.55 | 863€ | 475€ |
-| Évolutions (au temps passé, 0 prévu) | 0.00 | 863€ | 0€ |
+| Changements (au temps passé, 0 prévu) | 0.00 | 863€ | 0€ |
 | **Sous-total** | 3.55 | | **3 064€** |
 | Contingence forfait | Retirée — H8 | | 0€ |
 | Immobilisation | Retirée — H9 (Semi-dédié × Standard = 0€) | | 0€ |
@@ -218,7 +218,7 @@ Inventaire identique à la prod → sous-total déductif = **5.95 j/h/mois** (av
 |-----------|----------------------|----------------------|------------------------------|------------------------|
 | MCO | 11.90 | ~0 (FTE = 0) | 3.00 | −75% |
 | Gouvernance | 1.10 (cadence pleine) | ~0 | 0.55 (sessions allégées) | −50% |
-| Évolutions | 0 | 0 | 0 | — |
+| Changements | 0 | 0 | 0 | — |
 | **Total** | **13.00** | **~0** | **3.55** | **−73%** |
 
 **Analyse :**

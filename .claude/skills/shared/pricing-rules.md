@@ -27,12 +27,12 @@ Deux modes de facturation, à combiner selon la configuration de périmètre cho
   - Incertitude faible : +10%
   - Incertitude moyenne : +20%
   - Incertitude haute : +30 à 40%
-- **Le forfait n'est jamais appliqué aux évolutions** (par construction, hors-périmètre contingence).
+- **Le forfait n'est jamais appliqué aux changements** (par construction, hors-périmètre contingence).
 
 ## Configuration par défaut : Forfait socle + carnet temps passé
 
 - **Forfait socle** : Gouvernance + Audits + Immobilisation. Couvre la cadence contractuelle (ceremonies, audits HDS/ROSE/LEAF) et la capacité réservée (24/7 si plage Étendue/Complète).
-- **Temps passé** : **MCO (toutes catégories : incidents, demandes, problèmes, changements, patching, monitoring)** + Évolutions. Le client paie ce qu'il consomme.
+- **Temps passé** : **MCO (toutes catégories : incidents, demandes, problèmes, changements, patching, monitoring)** + Changements. Le client paie ce qu'il consomme.
 - **Profil client visé** : tout client avec engagement ≥2 ans. Particulièrement avantageux pour les infras stables ou compétitives sur le prix d'entrée.
 - **Réservée aux clients engagés ≥2 ans** (voir règles de protection ci-dessous).
 
@@ -44,16 +44,16 @@ Le modèle repose sur la consommation pure côté MCO. La protection principale 
 
 2. **Immobilisation comme protection capacitaire** : l'immobilisation mensuelle couvre la capacité réservée (24/7 si plage Étendue/Complète, slot équipe en mutualisé). C'est elle qui protège le revenu sur les mois calmes — pas un plancher artificiel sur le MCO.
 
-3. **TJM facturé à la consommation** : MCO temps passé facturé au TJM blended (cf. `daily-rates.md`) ou au TJM par rôle pour les évolutions, selon ce qui est convenu contractuellement.
+3. **TJM facturé à la consommation** : MCO temps passé facturé au TJM blended (cf. `daily-rates.md`) ou au TJM par rôle pour les changements, selon ce qui est convenu contractuellement.
 
-> Pas de plancher mensuel ni de plafond contractuel sur la consommation MCO. Si le client consomme zéro un mois, il paie le socle. Si la consommation explose, elle est facturée intégralement — ce qui doit déclencher une revue avec le client (peut-être faut-il passer en avenant Forfait, ou élargir l'enveloppe d'évolutions).
+> Pas de plancher mensuel ni de plafond contractuel sur la consommation MCO. Si le client consomme zéro un mois, il paie le socle. Si la consommation explose, elle est facturée intégralement — ce qui doit déclencher une revue avec le client (peut-être faut-il passer en avenant Forfait, ou élargir l'enveloppe de changements).
 
 ## Cas particulier : Forfait classique (engagement <2 ans)
 
 Si le client refuse l'engagement ≥2 ans ou exige une prédictibilité absolue du budget mensuel, repli sur un **Forfait classique** :
 
 - **Forfait** : MCO + Gouvernance + Immobilisation (= enveloppe déductive complète calculée par `/estimate`)
-- **Temps passé** : Évolutions uniquement
+- **Temps passé** : Changements uniquement
 - À traiter comme une exception ; la valeur compétitive du modèle se trouve dans la Configuration par défaut.
 
 ## Cas particulier : Temps passé pur (rare)
@@ -61,7 +61,7 @@ Si le client refuse l'engagement ≥2 ans ou exige une prédictibilité absolue 
 Pour des contextes très spécifiques (PoC, audit-only) où même la gouvernance ne peut être engagée :
 
 - **Forfait** : Immobilisation uniquement
-- **Temps passé** : tout le reste (MCO + Gouvernance + Évolutions)
+- **Temps passé** : tout le reste (MCO + Gouvernance + Changements)
 - Rare en pratique — la gouvernance et les audits HDS ont une cadence contractuelle qui s'accommode mal d'une facturation pure consommation.
 
 ## Remises multi-annuelles
@@ -139,18 +139,18 @@ ratio = prix RUN annuel (déductif) / facture cloud annuelle HT
 ## Formule de prix finale
 
 ```
-Prix mensuel = (Total j/h MCO × coeff SLA × TJM) + Gouvernance + Evolutions + Immobilisation
+Prix mensuel = (Total j/h MCO × coeff SLA × TJM) + Gouvernance + Changements + Immobilisation
 
 Où :
 - Total j/h MCO = somme de (item_rate × coeff_size_complexity) pour chaque ressource par env
 - Gouvernance = selon abaques ci-dessus (COPIL + COPROD + audits), dépend du dispositif
-- Evolutions = estimées comme du build
+- Changements = estimés comme du build
 - coeff SLA = voir `service-levels.md` — par environnement
 - TJM = taux journalier moyen (selon grille Theodo)
 - Immobilisation = selon dispositif × plage horaire
 
 Si forfait :
-  Prix forfait = (MCO + Gouvernance) × (1 + contingence%) — hors évolutions
+  Prix forfait = (MCO + Gouvernance) × (1 + contingence%) — hors changements
 
 Si multi-annuel :
   Prix final = Prix × (1 - remise%)

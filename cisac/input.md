@@ -99,7 +99,7 @@ Note : les environnements peuvent être activés/désactivés à la demande pour
     
     > **→ NON DISPONIBLE dans le TAD.** Stakeholders identifiés : Client, Developer, Infra Delivery Manager, IT Ops Director (noms non renseignés). **A demander au client.**
     > 
-- [ ]  **Quel est le backlog d’évolutions anticipé sur les 6 prochains mois ?**
+- [ ]  **Quel est le backlog de changements anticipé sur les 6 prochains mois ?**
     
     > **→ NON DISPONIBLE dans le TAD. A demander au client.**
     > 
@@ -110,7 +110,7 @@ Note : les environnements peuvent être activés/désactivés à la demande pour
     
     > **→ NON DISPONIBLE dans le TAD. A demander au client.** Le document a été préparé par Castelis (Hunik Group / PMP Strategy).
     > 
-- [ ]  **Quel est le backlog d’évolutions anticipé sur les 6 prochains mois ?**
+- [ ]  **Quel est le backlog de changements anticipé sur les 6 prochains mois ?**
     
     > **→ NON DISPONIBLE dans le TAD.** De nombreuses sections sont marquées “TBD” dans le TAD (Monitoring, DR, Security, Backup details), ce qui suggère un backlog technique significatif restant.
     > 
@@ -271,7 +271,7 @@ Oui, mais pas de pression de temps réel.
 3. **SLA et criticité** : Quelle classification de criticité pour CN2 ? Quel SLA cible (disponibilité %) pour la production ? Quel RTO/RPO attendu ?
 4. **Plages horaires** : Les sociétés membres accèdent-elles 24/7 ou sur des créneaux définis ? Y a-t-il des batchs ETL planifiés la nuit ou le week-end ?
 5. **Taille des équipes** : Combien de développeurs travaillent sur CN2 ? Combien d’ETP infra/ops actuellement chez Castelis ?
-6. **Backlog technique** : Quelles sont les évolutions prévues sur les 6-12 prochains mois ? (migration Terraform, implémentation du DR, monitoring, sécurité — toutes les sections “TBD” du TAD)
+6. **Backlog technique** : Quels sont les changements prévus sur les 6-12 prochains mois ? (migration Terraform, implémentation du DR, monitoring, sécurité — toutes les sections “TBD” du TAD)
 
 ### Priorité moyenne (nécessaires pour affiner la proposition)
 

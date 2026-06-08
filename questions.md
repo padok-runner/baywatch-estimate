@@ -28,12 +28,12 @@
 12. Combien de tickets de support/ops avez-vous traités sur les 6 à 12 derniers mois (incidents, demandes, changements, problèmes) ?
 13. Quel est le temps moyen de résolution d'un incident ?
 14. Y a-t-il des sujets récurrents ou particulièrement chronophages ?
-15. Combien de personnes maintiennent la plateforme aujourd'hui, et comment se répartit leur temps entre le run (incidents, monitoring, patching), le build (évolutions) et la gouvernance (réunions, audits) ?
+15. Combien de personnes maintiennent la plateforme aujourd'hui, et comment se répartit leur temps entre le run (incidents, monitoring, patching), le build (changements) et la gouvernance (réunions, audits) ?
 16. Utilisez-vous un outil d'IaC (Terraform, Pulumi, CloudFormation...) et pouvons-nous y avoir accès ?
 
-## 6. Évolutions prévues
+## 6. Changements prévus
 
-17. Quelles évolutions d'infrastructure sont prévues dans les 6 prochains mois (migrations, changements d'architecture, nouveaux services...) ?
+17. Quels changements d'infrastructure sont prévus dans les 6 prochains mois (migrations, changements d'architecture, nouveaux services...) ?
 18. Cette roadmap est-elle validée ou encore prévisionnelle ?
 
 ## 7. Contraintes complémentaires

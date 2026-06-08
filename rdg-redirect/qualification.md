@@ -12,8 +12,8 @@ RDG (Rail Delivery Group), via The Bountiful Cow, is adding a new **V1→V2 redi
 The service was built by The Bountiful Cow's team (Omar) using AWS CDK. It is **not yet in production** — go-live planned within ~2 weeks of the qualification date. Architecture is described as "architecturally simple": two ECS Fargate tasks running NGINX extended with OpenResty (Lua) for response-header manipulation, with routing decisions driven by a JSON file in an S3 configuration bucket. A Lambda function handles config reloads when the S3 file changes (admin path only — not in the request path). Documentation is reportedly very in-depth (load tests, runbooks, go-live plans, rollback procedures).
 
 ### Deductive Data (always present)
-- **Dev team size (post-handover):** No active dev team — evolutions are essentially routing-config changes (S3 JSON edits) by RDG ops; rare Lua/NGINX tweaks if needed.
-- **Evolution backlog (next 6 months):** Mostly routing-config changes as retailers cut over from V1 to V2; occasional minor tweaks. No major refactor anticipated.
+- **Dev team size (post-handover):** No active dev team — changes are essentially routing-config changes (S3 JSON edits) by RDG ops; rare Lua/NGINX tweaks if needed.
+- **Change backlog (next 6 months):** Mostly routing-config changes as retailers cut over from V1 to V2; occasional minor tweaks. No major refactor anticipated.
 
 ### Empirical Data
 Not applicable — service not yet live. **Reference anchor (provided by SA):** similar add-on contracts for RDG have priced at ~£2 000/month with ~2 days of initialization. Deductive estimate should be sanity-checked against this anchor; significant divergence warrants discussion.

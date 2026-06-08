@@ -14,7 +14,7 @@
 | --- | ------------------------------ | ------------------------------------ | ------------------------------- | -------------------------------------- | --------------------------------------------------------------------------------- |
 | H1  | Taille des EC2 prod            | Sizing exact non fourni              | Coefficient 0.8 (medium)        | Profil standard pour Web LAMP          | ±100€/mois si réel = 0.5 (petit) ou 1.0 (gros)                                    |
 | H2  | Volume Opensearch              | Métriques de volume non fournies     | Coefficient 1 (medium, <100 Go) | Hypothèse conservative LAMP+search     | +250€/mois si réel >100 Go (passage coefficient 2)                                |
-| H3  | Roadmap évolutions 2026        | Non validée par le client            | 0 j/h dans le forfait           | Migrations non confirmées              | 20-30 j/h en temps passé si confirmées (~17 000-26 000€ one-shot sur 2026)        |
+| H3  | Roadmap changements 2026        | Non validée par le client            | 0 j/h dans le forfait           | Migrations non confirmées              | 20-30 j/h en temps passé si confirmées (~17 000-26 000€ one-shot sur 2026)        |
 
 > **⚠ Sensibilité** : H2 est l'hypothèse la plus sensible. À confirmer avant contractualisation.
 
@@ -66,7 +66,7 @@ Plateforme construite par Theodo : **Non**
 | **Nom des envs**                                           | prod                                                                                                                                                    | recette                                                                                       | shared                                      | —                                                           |
 | **Inventaire**                                             | 5 EC2, 2 RDS MySQL 8, 1 MySQL 5 self-hosted, 1 Opensearch, 1 Redis, 8 apps custom                                                                       | 3 EC2, 1 RDS, 1 Opensearch, 1 Redis, 1 MySQL 5 self-hosted                                    | 3 EC2 (bastion, packages, déploiement)      | Organisation AWS, Terraform IaC                             |
 | **Services au Forfait socle** *(engagés mensuellement)*    | Capacité réservée 24/7 — astreinte (immobilisation)                                                                                                     | —                                                                                             | —                                           | Gouvernance : COPROD trimestriel + Audits ROSE/YAMAS/LEAF   |
-| **Services au Temps passé** *(facturés à la consommation)* | MCO : Gestion des incidents, demandes, problèmes, changements de version, continuité, surveillance, interventions d'astreinte, patching, monitoring drift | MCO : Gestion des incidents, demandes, problèmes, changements de version, continuité          | MCO : Gestion des incidents, continuité    | Évolutions : Gestion des changements mineurs                |
+| **Services au Temps passé** *(facturés à la consommation)* | MCO : Gestion des incidents, demandes, problèmes, changements de version, continuité, surveillance, interventions d'astreinte, patching, monitoring drift | MCO : Gestion des incidents, demandes, problèmes, changements de version, continuité          | MCO : Gestion des incidents, continuité    | Changements : Gestion des changements mineurs                |
 | **Niveaux de services**                                    | Gold                                                                                                                                                    | Bronze                                                                                        | Bronze                                      | —                                                           |
 | **Plages de service**                                      | Complète (24/7)                                                                                                                                         | Standard                                                                                      | Standard                                    | —                                                           |
 
@@ -78,7 +78,7 @@ Plateforme construite par Theodo : **Non**
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------- | ---------------- |
 | **Forfait socle**          | Gouvernance (0.4 — COPROD + ROSE + YAMAS + LEAF) + Immobilisation (Complète × Mutualisé)                                  | 0.4       | 1 345€           |
 | **Temps passé MCO**        | MCO (toutes catégories : incidents, demandes, problèmes, changements, patching, monitoring). Facturé à la consommation réelle (TJM blended 863€). | sur conso | Sur consommation |
-| **Temps passé Évolutions** | À la demande (TJM Ops 750€ / Lead Ops 1 200€ / DM 850€)                                                                   | —         | Sur consommation |
+| **Temps passé Changements** | À la demande (TJM Ops 750€ / Lead Ops 1 200€ / DM 850€)                                                                   | —         | Sur consommation |
 |                            | **Mensuel socle seul** (0 j/h MCO consommé)                                                                               | **0.4**   | **1 345€**       |
 |                            | **Mensuel espéré** (1.5 j/h MCO/mois — historique 5 tickets/12 mois)                                                      | **1.9**   | **~2 640€**      |
 
@@ -132,7 +132,7 @@ Plateforme construite par Theodo : **Non**
 |--------------|----------|
 | MCO          | 4.5      |
 | Gouvernance  | 0.4      |
-| Évolutions   | 0        |
+| Changements   | 0        |
 | **Total**    | **4.9**  |
 
 ### Prix — Forfait socle + carnet temps passé
@@ -177,7 +177,7 @@ Plateforme construite par Theodo : **Non**
 
 - **HDS applicable** — Audit YAMAS inclus dans le socle. Périmètre HDS exact à confirmer.
 - **Engagement requis** — Le modèle proposé exige un engagement contractuel **≥2 ans** (remise -3%) ou **≥3 ans** (-8%). Sans engagement multi-annuel, repli sur un Forfait classique à 5 229€/mois (cf. `shared/pricing-rules.md`).
-- **Évolutions** — Les 3 migrations potentielles 2026 (MySQL 8.4, Redis 8.4, Debian 13) non incluses. Si confirmées : ~20-30 j/h en temps passé (863€/jour).
+- **Changements** — Les 3 migrations potentielles 2026 (MySQL 8.4, Redis 8.4, Debian 13) non incluses. Si confirmées : ~20-30 j/h en temps passé (863€/jour).
 - **Pourquoi ce modèle pour Carenity** — Historique ultra-stable (5 tickets/12 mois, 1 incident/12 mois) ne justifie pas de payer une enveloppe MCO de 4.5 j/h chaque mois. La consommation réelle attendue est ~1.5 j/h/mois → ~31 700€/an au lieu de 62 748€/an. Si l'infra se déstabilise, la facturation suit la consommation réelle (la référence déductive 4.5 j/h/mois sert de jalon de comparaison ; au-delà d'une dérive structurelle, revue contractuelle conjointe).
 - **Méthodologie** — Le prix repose sur l'abaque déductive (`item × multiplier(N) × coeff × SLA`) avec scaling sublinéaire intégré pour les ressources identiques. Pas de discount empirique appliqué — le scaling capture déjà l'amortissement automation.
 - **Self-hosted vs managed** — Les MySQL 5 (self-hosted) sont valorisés à 0.6 j/h base (vs 0.3 pour le managed RDS), reflétant l'overhead de patching DB manuel et tuning. Le cumul VM substrate + app self-hosted est intentionnel (la VM couvre l'OS, l'app couvre le moteur DB).

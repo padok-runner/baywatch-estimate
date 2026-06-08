@@ -15,11 +15,11 @@
 | H3  | Historique tickets / incidents | Infra pas encore en prod — aucune donnée empirique          | Calibration basée sur le profil d'infra (Azure PaaS, 6 envs, 16 microservices) | Approche standard pour les nouvelles plateformes sans historique                                               | ±2 000€/mois — l'estimation calibrée pourrait varier de ±30% selon le volume réel d'incidents post-lancement |
 | H4  | FTEs actuels Castelis          | Nombre d'ETPs non communiqué                                | Pas de cross-check empirique possible                                          | Infra gérée par un prestataire externe — donnée non accessible                                                 | Pas d'impact direct sur le prix, mais empêche la validation croisée                                          |
 | H5  | Inventaire envs légers         | DEV, INTEG, TEST, TRAINING non détaillés                    | ~25% de PROD par env (Container Apps + DBs réduites + services Azure minimaux) | Environnements activables/désactivables à la demande, pas de VMs dédiées                                       | ±1 500€/mois — 4 envs × incertitude sur l'inventaire                                                         |
-| H6  | RTO/RPO                        | Non défini — DRP/BCP marqués TBD dans le TAD                | Pas d'engagement DR spécifique inclus dans le MCO de base                      | Sections TBD → le DR sera traité comme une évolution quand défini                                              | Impact potentiel sur le périmètre si le client attend du DR opérationnel dès le démarrage                    |
+| H6  | RTO/RPO                        | Non défini — DRP/BCP marqués TBD dans le TAD                | Pas d'engagement DR spécifique inclus dans le MCO de base                      | Sections TBD → le DR sera traité comme un changement quand défini                                              | Impact potentiel sur le périmètre si le client attend du DR opérationnel dès le démarrage                    |
 | H7  | Volume ETL / SFTP              | Volume de fichiers EDI/XML et nombre de sociétés non connus | Coefficients ETL et SFTP maintenus tels quels (high 2 et low 0.8)              | Profil standard pour une plateforme B2B d'échange de données musicales                                         | ±200€/mois si le volume réel est significativement différent                                                 |
-| H8  | Évolutions mensuelles          | Backlog d'évolutions non chiffré en j/h                     | 5 j/h/mois                                                                     | Backlog principalement technique (monitoring, IaC, DR, sécurité) — équivalent à ~1 chantier technique par mois | ±2 000€/mois — directement proportionnel au volume réel d'évolutions                                         |
+| H8  | Changements mensuels           | Backlog de changements non chiffré en j/h                     | 5 j/h/mois                                                                     | Backlog principalement technique (monitoring, IaC, DR, sécurité) — équivalent à ~1 chantier technique par mois | ±2 000€/mois — directement proportionnel au volume réel de changements                                         |
 
-> **⚠ Sensibilité** : Les hypothèses H3 (calibration MCO) et H8 (évolutions) représentent ensemble ±4 000€/mois, soit ±25% du prix final. Il est recommandé de revalider le MCO après 3 mois d'exploitation et de préciser le backlog d'évolutions avant contractualisation.
+> **⚠ Sensibilité** : Les hypothèses H3 (calibration MCO) et H8 (changements) représentent ensemble ±4 000€/mois, soit ±25% du prix final. Il est recommandé de revalider le MCO après 3 mois d'exploitation et de préciser le backlog de changements avant contractualisation.
 
 ---
 
@@ -68,7 +68,7 @@
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | **Nom des envs**        | prod                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | preprod, dev, integ, test, training                                                                                                                                                                                               | —                                                                                                             |
 | **Inventaire**          | **Servers :**<br>1 VM Standard B4ls v2 (4 vCPU, 8GB)<br>**Bases de données :**<br>1 PostgreSQL 16.10 (Azure DB, B2s)<br>1 MongoDB 8.0 (Cosmos DB, M40)<br>**Applications off-the-shelf :**<br>Azure Container Apps (16 µservices)<br>Azure API Manager<br>Azure Service Bus, Azure Search, Redis<br>Azure Key Vault, App Configuration<br>Container Registry, NSG<br>**Applications custom :**<br>CN2 Web Platform (9 NestJS)<br>CN2 ETL Pipeline (5 Java SpringBoot)<br>CN2 dsearch (Python)<br>SFTP Server | **Servers :**<br>1 VM B4ls v2 (preprod uniquement)<br>**Bases de données :**<br>PostgreSQL + MongoDB par env (sizing réduit)<br>**Applications :**<br>Container Apps + services Azure (légers)<br>CN2 Apps (déploiement dev/test) | Azure Blob Storage (partagé)<br>Azure Monitoring<br>GitLab CI<br>SonarQube / ESLint                           |
-| **Services**            | Maintien : Gestion des demandes de service, des incidents, des problèmes, des changements de version, de la continuité, de la surveillance et astreintes                                                                                                                                                                                                                                                                                                                                                     | Maintien : Gestion des demandes de service, des incidents, des problèmes, des changements de version, de la continuité                                                                                                            | Gouvernance : COPROD mensuel, Audits semestriels ROSE et LEAF<br>Evolutions : Gestion des Changements mineurs |
+| **Services**            | Maintien : Gestion des demandes de service, des incidents, des problèmes, des changements de version, de la continuité, de la surveillance et astreintes                                                                                                                                                                                                                                                                                                                                                     | Maintien : Gestion des demandes de service, des incidents, des problèmes, des changements de version, de la continuité                                                                                                            | Gouvernance : COPROD mensuel, Audits semestriels ROSE et LEAF<br>Changements : Gestion des Changements mineurs |
 | **Niveaux de services** | Gold                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Bronze                                                                                                                                                                                                                            | -                                                                                                             |
 | **Plages de service**   | _3 scénarios ci-dessous_                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Standard                                                                                                                                                                                                                          | -                                                                                                             |
 | **Dispositif**          | Ops : 12.8 j/mois, Lead Ops : 4.3 j/mois, Delivery Manager : 2.0 j/mois                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                                                                                   |                                                                                                               |
@@ -80,7 +80,7 @@
 | Mode            | Périmètre                               | j/h/mois  | Montant €HT/mois |
 | --------------- | --------------------------------------- | --------- | ---------------- |
 | **Temps passé** | MCO (13.5 j/h) + Gouvernance (0.67 j/h) | 14.17     | 12 580€          |
-| **Temps passé** | Évolutions                              | 5.00      | 4 315€           |
+| **Temps passé** | Changements                              | 5.00      | 4 315€           |
 |                 | Immobilisation (Standard × Semi-dédié)  | —         | 0€               |
 |                 | **Total**                               | **19.17** | **16 895€**      |
 
@@ -91,7 +91,7 @@
 | Mode            | Périmètre                               | j/h/mois  | Montant €HT/mois |
 | --------------- | --------------------------------------- | --------- | ---------------- |
 | **Temps passé** | MCO (13.5 j/h) + Gouvernance (0.67 j/h) | 14.17     | 12 580€          |
-| **Temps passé** | Évolutions                              | 5.00      | 4 315€           |
+| **Temps passé** | Changements                              | 5.00      | 4 315€           |
 |                 | Immobilisation (Étendue × Semi-dédié)   | —         | 1 000€           |
 |                 | **Total**                               | **19.17** | **17 895€**      |
 
@@ -104,7 +104,7 @@ _Tarif HNO (heures non ouvrées) : TJM × 1.5 = 1 295€/jour — facturé en su
 | Mode            | Périmètre                               | j/h/mois  | Montant €HT/mois |
 | --------------- | --------------------------------------- | --------- | ---------------- |
 | **Temps passé** | MCO (13.5 j/h) + Gouvernance (0.67 j/h) | 14.17     | 12 580€          |
-| **Temps passé** | Évolutions                              | 5.00      | 4 315€           |
+| **Temps passé** | Changements                              | 5.00      | 4 315€           |
 |                 | Immobilisation (Complète × Semi-dédié)  | —         | 2 500€           |
 |                 | **Total**                               | **19.17** | **19 395€**      |
 
@@ -229,7 +229,7 @@ _Répartition calibrée proportionnelle aux poids déductifs par environnement._
 | LEAF                  | 1 / semestre           | 0.5 j/h        | 0.08              |
 | **Total Gouvernance** |                        |                | **0.67 j/h/mois** |
 
-### Evolutions
+### Changements
 
 - Estimated: **5.0 j/h/mois**
 - Basis: Backlog principalement technique issu des sections TBD du TAD :
@@ -247,7 +247,7 @@ _Répartition calibrée proportionnelle aux poids déductifs par environnement._
 | MCO (calibré)              | 13.50     |
 | MCO ajusté SLA (prix)      | 13.91     |
 | Governance                 | 0.67      |
-| Evolutions                 | 5.00      |
+| Changements                 | 5.00      |
 | **Total (j/h travaillés)** | **19.17** |
 
 ### Price Breakdown (Scénario Étendue — recommandé)
@@ -256,7 +256,7 @@ _Répartition calibrée proportionnelle aux poids déductifs par environnement._
 | ---------------- | -------- | ---- | ----------- |
 | MCO (ajusté SLA) | 13.91    | 863€ | 12 002€     |
 | Governance       | 0.67     | 863€ | 578€        |
-| Evolutions       | 5.00     | 863€ | 4 315€      |
+| Changements       | 5.00     | 863€ | 4 315€      |
 | **Subtotal**     |          |      | **16 895€** |
 
 | Immobilisation | Étendue × Semi-dédié | 1 000€ |

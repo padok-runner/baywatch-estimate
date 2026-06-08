@@ -44,8 +44,8 @@ Quel profil de charge (en rps) et volume de donnés dans les bases (en go) ?
 - L'ensemble de nos bases de données de prod sur RDS font 60 Go et la plus grosse base de données parmi elles fait 27 Go. L'ensemble de nos bases de données de recette ne font pas plus de 15 Go
 Combien d'incidents sur l’année dernière ET de tickets en général ?
 - Incidents : 1 seul qui a mené à l'indisponibililité d'un de nos services utilisant PHP suite à une affluence plus importante qui a nécessité d'augmenter le nombre de processus PHP utilisables par le service PHP-FPM
-- Tickets : Principalement des tickets d'évolution d'infrastructure (Opensearch), 1 ticket d'adaptation d'un profil AIM utilisé pour nos déploiements d'infrastructure via Terraform car nous avons changé d'organisation Github hébergeant la configuration
-Nous aurons peut-être les sujets suivants d'évolution en 2026 (mais roadmap interne pas encore validée) : 
+- Tickets : Principalement des tickets de changement d'infrastructure (Opensearch), 1 ticket d'adaptation d'un profil AIM utilisé pour nos déploiements d'infrastructure via Terraform car nous avons changé d'organisation Github hébergeant la configuration
+Nous aurons peut-être les sujets suivants de changement en 2026 (mais roadmap interne pas encore validée) : 
 - Migration de bases de données RDS MySQL 8.0 vers 8.4 (recette et prod)
 - Migration Elasticache Redis 6.2 vers 8.4 (recette et prod)
 - Migration d'OS Debian 11 vers 13 (instances EC2 recette et prod)

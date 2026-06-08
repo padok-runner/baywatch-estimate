@@ -13,14 +13,14 @@ Le client recherche un partenaire pour l'infogérance cloud de cette plateforme,
 ### Deductive Data
 
 - **Dev team size:** Petite (2-5 développeurs)
-- **Evolution backlog:** Principalement technique — de nombreuses sections du TAD (Technical Architecture Document) sont marquées "TBD" :
+- **Change backlog:** Principalement technique — de nombreuses sections du TAD (Technical Architecture Document) sont marquées "TBD" :
   - Monitoring (Centreon, Kibana) : non encore déployé
   - Disaster Recovery Plan : TBD
   - Business Continuity Plan : TBD
   - Sécurité : TBD
   - Migration IaC : Azure CLI scripts → Terraform (planifié mais pas encore réalisé)
   - Backup : détails TBD
-  - Peu d'évolutions fonctionnelles côté infrastructure anticipées
+  - Peu de changements fonctionnels côté infrastructure anticipés
 
 ## Resource Inventory
 

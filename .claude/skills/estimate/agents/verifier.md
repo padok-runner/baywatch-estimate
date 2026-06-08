@@ -72,7 +72,7 @@ The methodology applies linear scaling : `MCO_bucket = base_rate × N × coeffic
 
 ### 7. Forfait / contingency / multi-year
 
-- If forfait: contingency applied ONLY to MCO + Governance, NOT evolutions?
+- If forfait: contingency applied ONLY to MCO + Governance, NOT changes?
 - Multi-year discount applied correctly (-3% for 2yr, -8% for 3yr+)?
 
 ### 8. Immobilisation and dispositif
@@ -109,7 +109,7 @@ The methodology applies linear scaling : `MCO_bucket = base_rate × N × coeffic
 
 - **Substrate VM line for self-hosted DB present** : check that a self-hosted DB has both the VM line (substrate) and the self-hosted off-the-shelf line (application). Sum them rather than picking one.
 - **Total monthly j/h < 1.0** : flag as WARN.
-- **Évolutions disproportionate to backlog** : flag as WARN.
+- **Changes disproportionate to backlog** : flag as WARN.
 - **Governance < 0.2 j/h with HDS scope** : flag as FAIL.
 
 ### 13. Précision

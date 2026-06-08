@@ -16,7 +16,7 @@ L'authentification utilisateurs s'appuie sur le **SI tiers Plage (opéré par l'
 
 ### Deductive Data (always present)
 - **Dev team size :** 0 (en sommeil, pas de release prévue)
-- **Evolution backlog :** Aucune. Seules les mises à jour images NumEcoEval (~1 majeure / an, mineures non systématiques) sont prévues, et elles sont intégrées au scope d'infogérance.
+- **Change backlog :** Aucune. Seules les mises à jour images NumEcoEval (~1 majeure / an, mineures non systématiques) sont prévues, et elles sont intégrées au scope d'infogérance.
 
 ### Empirical Data
 - **IaC access :** Partiel. Helm chart + application ArgoCD existent (structure simple connue), mais Theodo n'a pas encore d'accès direct au repo de déploiement → à confirmer en début de prestation.
@@ -27,18 +27,18 @@ L'authentification utilisateurs s'appuie sur le **SI tiers Plage (opéré par l'
     - Service requests : 0
     - Changements : **1** (MEP — bascule prod sur PFC Cloud + création preprod, mars 2026)
     - Hotfix : **1** (correction liée à la saturation disque)
-    - Évolutions : 0
+    - Changements : 0
     - Incidents sécurité : 0
   - Temps de résolution moyen : non renseigné dans l'EdB
   - Patterns récurrents : la saturation disque est le seul pattern identifié (1 occurrence ayant entraîné l'incident + le hotfix)
 - **Current FTEs :** 0 FTE (mode best-effort, pas de contrat formel)
   - MCO/run : 0 FTE
-  - Évolutions/build : 0 FTE
+  - Changements/build : 0 FTE
   - Gouvernance : 0 FTE
 - **Empirical estimate (derived from FTEs) :**
   - MCO : ~0 j/h/mois (état actuel — non viable, gap reconnu par l'ANS)
   - Gouvernance : ~0 j/h/mois
-  - Évolutions : ~0 j/h/mois
+  - Changements : ~0 j/h/mois
   - **Total empirique : ~0 j/h/mois — la baseline empirique confirme l'absence de couverture mais n'est pas exploitable comme cible. L'estimation est portée par la voie déductive.**
 - **Known inefficiencies/gaps :**
   - Aucune supervision proactive : l'incident de saturation disque a été détecté tardivement

@@ -43,7 +43,7 @@ For each (item type, coefficient) bucket :
 Distribute MCO_bucket across envs prorata of count, apply SLA per env.
 Sum across all buckets and envs.
 
-Total monthly j/h = MCO + Governance + Evolutions
+Total monthly j/h = MCO + Governance + Changes
 Price = Total × TJM + Immobilisation [+ Forfait contingency]
 ```
 
@@ -93,11 +93,11 @@ MCO_total = Σ buckets ( Σ envs ( MCO_bucket × (count_env / count_total_bucket
 
 The total MCO j/h/mois is the sum of these env-and-SLA-adjusted contributions across all buckets.
 
-### Step 3: Governance and Evolutions
+### Step 3: Governance and Changes
 
 **Governance:** compute from the abaques in `shared/pricing-rules.md` — COPROD per dispositif + COPIL if dédié + audits ROSE/YAMAS/LEAF. Convert each to j/h/mois: `effort_per_session × sessions_per_year / 12`.
 
-**Évolutions:** estimate from the evolution backlog in `qualification.md`. If unclear, ask the user.
+**Changements:** estimate from the change backlog in `qualification.md`. If unclear, ask the user.
 
 ### Step 4: Cross-checks (confirmation, no adjustment)
 
@@ -105,7 +105,7 @@ These are **confirmations**, never adjustments. The deductive total stands as-is
 
 **4a — Empirical (FTE) cross-check.** If `qualification.md` provides FTE breakdown, compute :
 ```
-Empirical estimate = (MCO_FTE + governance_FTE + evolutions_FTE) × 20 j/h/mois
+Empirical estimate = (MCO_FTE + governance_FTE + changes_FTE) × 20 j/h/mois
 ```
 
 Compare with the deductive total. **No adjustment** — just a sanity check :
@@ -131,7 +131,7 @@ Compare `ratio` against the **Calibration marché** band in `shared/pricing-rule
 ### Step 5: Final total & dispositif
 
 ```
-Total j/h/mois = MCO + Governance + Evolutions
+Total j/h/mois = MCO + Governance + Changes
 ```
 
 Determine the dispositif using thresholds in `shared/pricing-rules.md` (<10 mutualisé, 10–100 semi-dédié, >100 dédié).
@@ -158,7 +158,7 @@ TJM is the blended TJM from `shared/daily-rates.md` unless the user specifies ot
 ```
 MCO price = MCO j/h × TJM
 Governance price = Governance × TJM
-Evolution price = Évolutions × TJM
+Change price = Changements × TJM
 ```
 
 Note: SLA was already applied per env in Step 2. Don't apply it again here.
@@ -175,22 +175,22 @@ Two billing modes (`shared/pricing-rules.md`):
 
 **Configuration par défaut : Forfait socle + carnet temps passé** (engagement ≥2 ans requis) :
 - **Forfait socle** : Gouvernance + Audits + Immobilisation
-- **Temps passé** : MCO (toutes catégories) + Évolutions
+- **Temps passé** : MCO (toutes catégories) + Changements
 - Pas de plancher, pas de plafond. Le socle (immobilisation + gouvernance) et l'engagement multi-annuel forment la protection.
 
 ```
 Forfait socle      = Gouv × (1 + contingency) + Immobilisation
 Temps passé MCO    = conso_réelle × TJM blended
-Total mensuel      = Forfait socle + Temps passé MCO + Évolutions consommées
+Total mensuel      = Forfait socle + Temps passé MCO + Changements consommés
 ```
 
-Contingence Forfait socle (sur Gouv uniquement, jamais sur évolutions) :
+Contingence Forfait socle (sur Gouv uniquement, jamais sur changements) :
 - No uncertainty: 0% / Low: +10% / Medium: +20% / High: +30 to 40%
 
 L'enveloppe MCO déductive (calculée par `/estimate`) sert de référence de **dimensionnement** capacitaire et de pédagogie client (« voici ce que tu paierais en forfait classique »), mais n'est pas un plafond contractuel.
 
 **Cas particuliers** (à mentionner uniquement si pertinent, pas par défaut) :
-- **Forfait classique** (engagement <2 ans ou prédictibilité absolue exigée) : tout dans le forfait (MCO + Gouv + Immo), évolutions en temps passé. Repli si engagement multi-annuel impossible.
+- **Forfait classique** (engagement <2 ans ou prédictibilité absolue exigée) : tout dans le forfait (MCO + Gouv + Immo), changements en temps passé. Repli si engagement multi-annuel impossible.
 - **Temps passé pur** : très rare, PoC / audit-only seulement.
 
 ### Step 10: Multi-year discounts & nearshore
